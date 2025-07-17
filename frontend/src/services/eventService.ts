@@ -341,8 +341,12 @@ export class EventService {
       console.error('Full error response:', {
         status: fullError.response.status,
         data: fullError.response.data,
+<<<<<<< HEAD
         headers: fullError.response.headers,
         statusText: fullError.response.statusText
+=======
+        headers: fullError.response.headers
+>>>>>>> 4bef46714ae67e26ae572ebe427cd1dda89f8d1f
       });
     }
 
@@ -352,6 +356,7 @@ export class EventService {
     
     console.error('Extracted error data:', errorData);
     console.error('Extracted status:', status);
+<<<<<<< HEAD
 
     // First check if we have a specific error message from the backend
     if (errorData?.message) {
@@ -364,6 +369,8 @@ export class EventService {
         operation
       );
     }
+=======
+>>>>>>> 4bef46714ae67e26ae572ebe427cd1dda89f8d1f
 
     // Handle specific error types
     if (errorData?.success === false) {
