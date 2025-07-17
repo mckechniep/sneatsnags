@@ -62,7 +62,7 @@ export const HomePage: React.FC = () => {
     try {
       setLoading(true);
       console.log("Fetching events...");
-      
+
       // Fetch hero events (upcoming events)
       const heroResponse = await eventService.getEvents({
         limit: 5,
@@ -132,7 +132,6 @@ export const HomePage: React.FC = () => {
       const liveEventsData = liveResponse.data || [];
       console.log("Live events data:", liveEventsData);
       setLiveEvents(liveEventsData);
-
     } catch (error) {
       console.error("Error fetching events:", error);
       // Fallback to static slides if API fails
@@ -190,7 +189,6 @@ export const HomePage: React.FC = () => {
         "Fair market pricing with real-time adjustments. Get the best deals on premium events.",
     },
   ];
-
 
   const stats = [
     { number: "2.8M+", label: "Events Listed", icon: Calendar },
@@ -292,9 +290,12 @@ export const HomePage: React.FC = () => {
   const handleGetTicketsClick = (eventId: string) => {
     if (!isAuthenticated) {
       // Store the intended destination in localStorage so we can redirect after login
-      localStorage.setItem('redirectAfterLogin', `/buyer/dashboard?eventId=${eventId}`);
+      localStorage.setItem(
+        "redirectAfterLogin",
+        `/buyer/dashboard?eventId=${eventId}`
+      );
       // Redirect to login page
-      navigate('/login');
+      navigate("/login");
     } else {
       // If user is authenticated, redirect to buyer dashboard with event ID
       navigate(`/buyer/dashboard?eventId=${eventId}`);
@@ -363,7 +364,9 @@ export const HomePage: React.FC = () => {
               key={index}
               onClick={() => setCurrentSlide(index)}
               className={`w-3 h-3 rounded-full transition-all duration-300 shadow-lg ${
-                index === currentSlide ? "bg-blue-500 scale-125" : "bg-white/40 hover:bg-white/60"
+                index === currentSlide
+                  ? "bg-blue-500 scale-125"
+                  : "bg-white/40 hover:bg-white/60"
               }`}
             />
           ))}
@@ -421,9 +424,9 @@ export const HomePage: React.FC = () => {
                 <div className="text-3xl font-bold text-white">
                   {currentHeroSlide.price}
                 </div>
-                <Button 
-                  variant="secondary" 
-                  size="xl" 
+                <Button
+                  variant="secondary"
+                  size="xl"
                   className="group"
                   onClick={() => handleGetTicketsClick(currentHeroSlide.id)}
                 >
@@ -577,7 +580,9 @@ export const HomePage: React.FC = () => {
 
             <div className="grid md:grid-cols-3 gap-6">
               {liveEvents.map((event) => {
-                const isLive = new Date(event.eventDate) <= new Date(Date.now() + 24 * 60 * 60 * 1000);
+                const isLive =
+                  new Date(event.eventDate) <=
+                  new Date(Date.now() + 24 * 60 * 60 * 1000);
                 return (
                   <Card
                     key={event.id}
@@ -587,10 +592,15 @@ export const HomePage: React.FC = () => {
                     <CardContent className="p-6">
                       <div className="flex items-start justify-between mb-4">
                         <div className="text-4xl">
-                          {event.eventType === 'CONCERT' ? '🎤' : 
-                           event.eventType === 'SPORTS' ? '🏀' : 
-                           event.eventType === 'THEATER' ? '🎭' : 
-                           event.eventType === 'COMEDY' ? '🎭' : '🎟️'}
+                          {event.eventType === "CONCERT"
+                            ? "🎤"
+                            : event.eventType === "SPORTS"
+                            ? "🏀"
+                            : event.eventType === "THEATER"
+                            ? "🎭"
+                            : event.eventType === "COMEDY"
+                            ? "🎭"
+                            : "🎟️"}
                         </div>
                         <div className="flex items-center gap-2">
                           {isLive && (
@@ -602,7 +612,7 @@ export const HomePage: React.FC = () => {
                             </div>
                           )}
                           <span className="text-gray-500 text-sm">
-                            {event.eventType || 'Event'}
+                            {event.eventType || "Event"}
                           </span>
                         </div>
                       </div>
@@ -616,18 +626,25 @@ export const HomePage: React.FC = () => {
                         </div>
                         <div className="flex items-center">
                           <Clock className="h-4 w-4 mr-2" />
-                          <span>{new Date(event.eventDate).toLocaleDateString("en-US", {
-                            weekday: "short",
-                            month: "short",
-                            day: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}</span>
+                          <span>
+                            {new Date(event.eventDate).toLocaleDateString(
+                              "en-US",
+                              {
+                                weekday: "short",
+                                month: "short",
+                                day: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              }
+                            )}
+                          </span>
                         </div>
                         <div className="flex items-center">
                           <Ticket className="h-4 w-4 mr-2" />
                           <span className="font-semibold text-gray-900">
-                            {event.minPrice ? `From $${event.minPrice}` : 'Price TBA'}
+                            {event.minPrice
+                              ? `From $${event.minPrice}`
+                              : "Price TBA"}
                           </span>
                         </div>
                       </div>
