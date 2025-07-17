@@ -216,8 +216,11 @@ class SellerService {
     return response.data;
   }
 
-  async acceptOffer(offerId: string, listingId: string): Promise<SellerTransaction> {
-    const response = await api.post(`/sellers/offers/${offerId}/accept`, { listingId });
+  async acceptOffer(offerId: string, listingId: string, quantity?: number): Promise<SellerTransaction> {
+    const response = await api.post(`/sellers/offers/${offerId}/accept`, { 
+      listingId,
+      quantity 
+    });
     return response.data;
   }
 

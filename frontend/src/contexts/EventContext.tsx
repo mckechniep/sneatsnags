@@ -10,7 +10,7 @@ import {
   UseEventManagementReturn,
   DEFAULT_FILTERS,
 } from '../types/events';
-import { eventServiceV2, EventServiceError, handleEventServiceError } from '../services/eventService';
+import { eventService, EventServiceError, handleEventServiceError } from '../services/eventService';
 import { useAuth } from './AuthContext';
 
 // Initial state
@@ -124,7 +124,7 @@ export const EventProvider: React.FC<EventProviderProps> = ({ children }) => {
         Object.entries(searchQuery).filter(([_, value]) => value !== '' && value !== null && value !== undefined)
       );
 
-      const response = await eventServiceV2.getEvents(cleanQuery);
+      const response = await eventService.getEvents(cleanQuery);
       
       dispatch({ type: 'SET_EVENTS', payload: response.data || [] });
       dispatch({ type: 'SET_PAGINATION', payload: response.pagination });
@@ -139,7 +139,7 @@ export const EventProvider: React.FC<EventProviderProps> = ({ children }) => {
     dispatch({ type: 'SET_LOADING', payload: true });
     
     try {
-      const event = await eventServiceV2.getEventById(id, includeStats);
+      const event = await eventService.getEventById(id, includeStats);
       dispatch({ type: 'SET_CURRENT_EVENT', payload: event });
       return event;
     } catch (error) {
@@ -154,7 +154,7 @@ export const EventProvider: React.FC<EventProviderProps> = ({ children }) => {
     dispatch({ type: 'SET_LOADING', payload: true });
     
     try {
-      const event = await eventServiceV2.createEvent(data);
+      const event = await eventService.createEvent(data);
       dispatch({ type: 'ADD_EVENT', payload: event });
       return event;
     } catch (error) {
@@ -169,7 +169,7 @@ export const EventProvider: React.FC<EventProviderProps> = ({ children }) => {
     dispatch({ type: 'SET_LOADING', payload: true });
     
     try {
-      const event = await eventServiceV2.updateEvent(id, data);
+      const event = await eventService.updateEvent(id, data);
       dispatch({ type: 'UPDATE_EVENT', payload: event });
       return event;
     } catch (error) {
@@ -184,7 +184,7 @@ export const EventProvider: React.FC<EventProviderProps> = ({ children }) => {
     dispatch({ type: 'SET_LOADING', payload: true });
     
     try {
-      await eventServiceV2.deleteEvent(id);
+      await eventService.deleteEvent(id);
       dispatch({ type: 'DELETE_EVENT', payload: id });
     } catch (error) {
       const errorMessage = handleEventServiceError(error, 'Failed to delete event');
@@ -196,7 +196,7 @@ export const EventProvider: React.FC<EventProviderProps> = ({ children }) => {
   // Search events
   const searchEvents = useCallback(async (query: string): Promise<Event[]> => {
     try {
-      const events = await eventServiceV2.searchEvents(query, {
+      const events = await eventService.searchEvents(query, {
         limit: 20,
         ...state.filters,
       });
@@ -292,7 +292,7 @@ export const usePopularEvents = (limit = 10) => {
     setError(null);
     
     try {
-      const popularEvents = await eventServiceV2.getPopularEvents(limit);
+      const popularEvents = await eventService.getPopularEvents(limit);
       setEvents(popularEvents);
     } catch (error) {
       const errorMessage = handleEventServiceError(error, 'Failed to load popular events');
@@ -320,7 +320,7 @@ export const useUpcomingEvents = (limit = 10, city?: string, state?: string) => 
     setError(null);
     
     try {
-      const upcomingEvents = await eventServiceV2.getUpcomingEvents(limit, city, state);
+      const upcomingEvents = await eventService.getUpcomingEvents(limit, city, state);
       setEvents(upcomingEvents);
     } catch (error) {
       const errorMessage = handleEventServiceError(error, 'Failed to load upcoming events');
@@ -350,7 +350,7 @@ export const useEventStats = (eventId: string) => {
     setError(null);
     
     try {
-      const eventStats = await eventServiceV2.getEventStats(eventId);
+      const eventStats = await eventService.getEventStats(eventId);
       setStats(eventStats);
     } catch (error) {
       const errorMessage = handleEventServiceError(error, 'Failed to load event statistics');
@@ -385,7 +385,7 @@ export const useEventSearch = (delay = 300) => {
       setError(null);
       
       try {
-        const searchResults = await eventServiceV2.searchEvents(searchQuery);
+        const searchResults = await eventService.searchEvents(searchQuery);
         setResults(searchResults);
       } catch (error) {
         const errorMessage = handleEventServiceError(error, 'Failed to search events');

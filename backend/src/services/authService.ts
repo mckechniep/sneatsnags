@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import { prisma } from "../utils/prisma";
-import { generateToken, generateRefreshToken } from "../utils/jwt";
+import { generateToken, generateRefreshToken, verifyRefreshToken } from "../utils/jwt";
 import { sendVerificationEmail, sendPasswordResetEmail } from "../utils/email";
 import { RegisterRequest, LoginRequest, AuthResponse } from "../types/auth";
 import { logger } from "../utils/logger";
@@ -230,5 +230,35 @@ export class AuthService {
     logger.info(`Password reset for user: ${user.email}`);
 
     return { message: "Password reset successfully" };
+  }
+
+  async refreshToken(refreshToken: string): Promise<{ accessToken: string }> {
+    try {
+      const decoded = verifyRefreshToken(refreshToken);
+      
+      // Verify user still exists and is active
+      const user = await prisma.user.findUnique({
+        where: { id: decoded.userId },
+        select: {
+          id: true,
+          email: true,
+          isActive: true,
+        },
+      });
+
+      if (!user || !user.isActive) {
+        throw new InvalidTokenError("User not found or inactive");
+      }
+
+      // Generate new access token
+      const accessToken = generateToken({ userId: user.id });
+
+      logger.info(`Token refreshed for user: ${user.email}`);
+
+      return { accessToken };
+    } catch (error) {
+      logger.error("Token refresh error:", error);
+      throw new InvalidTokenError("Invalid refresh token");
+    }
   }
 }

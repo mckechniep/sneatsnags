@@ -9,7 +9,9 @@ export interface CreateNotificationRequest {
     | "OFFER_EXPIRED"
     | "PAYMENT_RECEIVED"
     | "TICKET_DELIVERED"
-    | "SYSTEM_ALERT";
+    | "SYSTEM_ALERT"
+    | "INVENTORY_LOW"
+    | "INVENTORY_OUT_OF_STOCK";
   title: string;
   message: string;
   data?: Record<string, any>;
@@ -168,4 +170,102 @@ export class NotificationService {
       sendEmail: true,
     });
   }
+
+  async notifyLowInventory(sellerId: string, listingId: string, currentQuantity: number, threshold: number) {
+    const listing = await prisma.listing.findUnique({
+      where: { id: listingId },
+      include: {
+        event: { select: { name: true, venue: true, eventDate: true } },
+        section: { select: { name: true } },
+      },
+    });
+
+    if (!listing) return;
+
+    const urgencyLevel = currentQuantity === 0 ? "critical" : currentQuantity <= 2 ? "high" : "medium";
+    const title = currentQuantity === 0 ? "Out of Stock Alert" : "Low Inventory Alert";
+    
+    const message = currentQuantity === 0
+      ? `Your listing for ${listing.event.name} - ${listing.section.name} is now out of stock. Consider creating a new listing if you have more tickets.`
+      : `Your listing for ${listing.event.name} - ${listing.section.name} has only ${currentQuantity} tickets remaining (threshold: ${threshold}).`;
+
+    await this.createNotification({
+      userId: sellerId,
+      type: currentQuantity === 0 ? "INVENTORY_OUT_OF_STOCK" : "INVENTORY_LOW",
+      title,
+      message,
+      data: { 
+        listingId, 
+        eventId: listing.eventId,
+        currentQuantity,
+        threshold,
+        urgencyLevel,
+        eventName: listing.event.name,
+        sectionName: listing.section.name,
+        eventDate: listing.event.eventDate
+      },
+      sendEmail: urgencyLevel === "critical" || urgencyLevel === "high",
+    });
+  }
+
+  async notifyInventoryUpdated(sellerId: string, listingId: string, oldQuantity: number, newQuantity: number) {
+    const listing = await prisma.listing.findUnique({
+      where: { id: listingId },
+      include: {
+        event: { select: { name: true, venue: true } },
+        section: { select: { name: true } },
+      },
+    });
+
+    if (!listing) return;
+
+    const quantityChange = newQuantity - oldQuantity;
+    const action = quantityChange > 0 ? "increased" : "decreased";
+    const title = "Inventory Updated";
+    
+    const message = `Your inventory for ${listing.event.name} - ${listing.section.name} has been ${action} from ${oldQuantity} to ${newQuantity} tickets.`;
+
+    await this.createNotification({
+      userId: sellerId,
+      type: "SYSTEM_ALERT",
+      title,
+      message,
+      data: { 
+        listingId, 
+        eventId: listing.eventId,
+        oldQuantity,
+        newQuantity,
+        quantityChange,
+        eventName: listing.event.name,
+        sectionName: listing.section.name
+      },
+      sendEmail: false,
+    });
+  }
+
+  async sendInventoryReportNotification(sellerId: string, reportData: any) {
+    const user = await prisma.user.findUnique({
+      where: { id: sellerId },
+      select: { firstName: true, email: true },
+    });
+
+    if (!user) return;
+
+    const title = "Weekly Inventory Report";
+    const message = `Your weekly inventory report is ready. Total listings: ${reportData.summary.totalListings}, Available inventory: ${reportData.summary.availableInventory}, Sold this week: ${reportData.summary.soldInventory}`;
+
+    await this.createNotification({
+      userId: sellerId,
+      type: "SYSTEM_ALERT",
+      title,
+      message,
+      data: { 
+        reportType: "weekly",
+        reportData,
+      },
+      sendEmail: true,
+    });
+  }
 }
+
+export const notificationService = new NotificationService();

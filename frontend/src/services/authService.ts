@@ -11,8 +11,9 @@ export const authService = {
   async login(credentials: LoginRequest): Promise<AuthResponse> {
     const response = await apiClient.post<AuthResponse>('/auth/login', credentials);
     
-    // Handle both ApiResponse format and direct data format
-    const authData = response.data || response;
+    // The backend returns data in { success, message, data } format
+    // where data contains the AuthResponse
+    const authData = (response as any).data || response;
     
     if (authData && authData.tokens && authData.user) {
       localStorage.setItem('accessToken', authData.tokens.accessToken);
@@ -26,8 +27,9 @@ export const authService = {
   async register(userData: RegisterRequest): Promise<AuthResponse> {
     const response = await apiClient.post<AuthResponse>('/auth/register', userData);
     
-    // Handle both ApiResponse format and direct data format
-    const authData = response.data || response;
+    // The backend returns data in { success, message, data } format
+    // where data contains the AuthResponse
+    const authData = (response as any).data || response;
     
     if (authData && authData.tokens && authData.user) {
       localStorage.setItem('accessToken', authData.tokens.accessToken);
@@ -72,14 +74,14 @@ export const authService = {
 
   async getProfile(): Promise<User> {
     const response = await apiClient.get<User>('/users/profile');
-    return response.data || response;
+    return (response as any).data || response;
   },
 
   async updateProfile(userData: Partial<User>): Promise<User> {
     const response = await apiClient.put<User>('/users/profile', userData);
     
     // Handle both ApiResponse format and direct data format
-    const userData_result = response.data || response;
+    const userData_result = (response as any).data || response;
     
     if (userData_result) {
       localStorage.setItem('user', JSON.stringify(userData_result));

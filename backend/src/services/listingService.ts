@@ -6,6 +6,7 @@ import {
 } from "../types/listing";
 import { PaginationResponse } from "../types/api";
 import { logger } from "../utils/logger";
+import { notificationService } from "./notificationService";
 
 export class ListingService {
   async createListing(sellerId: string, data: CreateListingRequest) {
@@ -672,6 +673,225 @@ export class ListingService {
     const totalOffers = await prisma.offer.count({ where });
 
     return { offers: filteredOffers, total: totalOffers };
+  }
+
+  async bulkUpdateInventory(updates: Array<{ listingId: string; quantity: number; sellerId: string }>) {
+    const results = await Promise.allSettled(
+      updates.map(async (update) => {
+        const listing = await prisma.listing.findFirst({
+          where: { id: update.listingId, sellerId: update.sellerId },
+        });
+
+        if (!listing) {
+          throw new Error(`Listing not found: ${update.listingId}`);
+        }
+
+        if (update.quantity < 0) {
+          throw new Error(`Invalid quantity: ${update.quantity}`);
+        }
+
+        const newStatus = update.quantity === 0 ? "SOLD" : "AVAILABLE";
+
+        return await prisma.listing.update({
+          where: { id: update.listingId },
+          data: {
+            quantity: update.quantity,
+            status: newStatus,
+          },
+        });
+      })
+    );
+
+    const successful = results.filter(r => r.status === 'fulfilled').length;
+    const failed = results.filter(r => r.status === 'rejected').length;
+
+    logger.info(`Bulk inventory update completed: ${successful} successful, ${failed} failed`);
+    
+    return {
+      successful,
+      failed,
+      results: results.map((result, index) => ({
+        listingId: updates[index].listingId,
+        success: result.status === 'fulfilled',
+        error: result.status === 'rejected' ? result.reason.message : null,
+        data: result.status === 'fulfilled' ? result.value : null,
+      })),
+    };
+  }
+
+  async adjustInventory(listingId: string, sellerId: string, adjustment: number) {
+    const listing = await prisma.listing.findFirst({
+      where: { id: listingId, sellerId },
+    });
+
+    if (!listing) {
+      throw new Error("Listing not found or not owned by seller");
+    }
+
+    const newQuantity = listing.quantity + adjustment;
+
+    if (newQuantity < 0) {
+      throw new Error("Cannot adjust inventory below zero");
+    }
+
+    const newStatus = newQuantity === 0 ? "SOLD" : "AVAILABLE";
+
+    const updatedListing = await prisma.listing.update({
+      where: { id: listingId },
+      data: {
+        quantity: newQuantity,
+        status: newStatus,
+      },
+    });
+
+    logger.info(`Inventory adjusted for listing ${listingId}: ${listing.quantity} -> ${newQuantity}`);
+    
+    // Send inventory notifications
+    await notificationService.notifyInventoryUpdated(sellerId, listingId, listing.quantity, newQuantity);
+    
+    if (newQuantity <= 5) {
+      await notificationService.notifyLowInventory(sellerId, listingId, newQuantity, 5);
+    }
+
+    return updatedListing;
+  }
+
+  async getInventoryLowStockAlerts(sellerId: string, threshold: number = 5) {
+    const lowStockListings = await prisma.listing.findMany({
+      where: {
+        sellerId,
+        status: "AVAILABLE",
+        quantity: { lte: threshold },
+      },
+      include: {
+        event: {
+          select: {
+            id: true,
+            name: true,
+            eventDate: true,
+            venue: true,
+          },
+        },
+        section: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+      orderBy: [
+        { quantity: "asc" },
+        { event: { eventDate: "asc" } },
+      ],
+    });
+
+    return lowStockListings.map(listing => ({
+      listingId: listing.id,
+      eventName: listing.event.name,
+      sectionName: listing.section.name,
+      currentQuantity: listing.quantity,
+      threshold,
+      eventDate: listing.event.eventDate,
+      venue: listing.event.venue,
+      urgency: listing.quantity === 0 ? "critical" : listing.quantity <= 2 ? "high" : "medium",
+    }));
+  }
+
+  async getInventoryReport(sellerId: string, params: { eventId?: string; dateFrom?: string; dateTo?: string } = {}) {
+    const { eventId, dateFrom, dateTo } = params;
+    
+    const where: any = { sellerId };
+    
+    if (eventId) where.eventId = eventId;
+    
+    if (dateFrom || dateTo) {
+      where.createdAt = {};
+      if (dateFrom) where.createdAt.gte = new Date(dateFrom);
+      if (dateTo) where.createdAt.lte = new Date(dateTo);
+    }
+
+    const [listings, inventoryStats] = await Promise.all([
+      prisma.listing.findMany({
+        where,
+        include: {
+          event: {
+            select: {
+              id: true,
+              name: true,
+              eventDate: true,
+              venue: true,
+            },
+          },
+          section: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+          transactions: {
+            select: {
+              quantity: true,
+              status: true,
+              createdAt: true,
+            },
+          },
+        },
+        orderBy: { createdAt: "desc" },
+      }),
+      prisma.listing.groupBy({
+        by: ['status'],
+        where,
+        _count: true,
+        _sum: { quantity: true },
+      }),
+    ]);
+
+    const totalInventory = inventoryStats.reduce((sum, stat) => sum + (stat._sum.quantity || 0), 0);
+    const totalListings = inventoryStats.reduce((sum, stat) => sum + stat._count, 0);
+
+    const statusBreakdown = inventoryStats.reduce((acc, stat) => {
+      acc[stat.status] = {
+        count: stat._count,
+        quantity: stat._sum.quantity || 0,
+      };
+      return acc;
+    }, {} as Record<string, { count: number; quantity: number }>);
+
+    const soldInventory = listings.reduce((sum, listing: any) => {
+      if (!listing.transactions) return sum;
+      return sum + listing.transactions
+        .filter((t: any) => t.status === "COMPLETED")
+        .reduce((txSum: number, tx: any) => txSum + (tx.quantity || 0), 0);
+    }, 0);
+
+    return {
+      summary: {
+        totalListings,
+        totalInventory,
+        soldInventory,
+        availableInventory: statusBreakdown.AVAILABLE?.quantity || 0,
+        soldListings: statusBreakdown.SOLD?.count || 0,
+        availableListings: statusBreakdown.AVAILABLE?.count || 0,
+      },
+      statusBreakdown,
+      listings: listings.map((listing: any) => ({
+        id: listing.id,
+        eventName: listing.event.name,
+        sectionName: listing.section.name,
+        originalQuantity: listing.quantity,
+        currentQuantity: listing.quantity,
+        soldQuantity: listing.transactions
+          ? listing.transactions
+              .filter((t: any) => t.status === "COMPLETED")
+              .reduce((sum: number, tx: any) => sum + (tx.quantity || 0), 0)
+          : 0,
+        status: listing.status,
+        price: listing.price,
+        venue: listing.event.venue,
+        eventDate: listing.event.eventDate,
+        createdAt: listing.createdAt,
+      })),
+    };
   }
 }
 

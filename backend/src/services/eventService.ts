@@ -17,13 +17,16 @@ export class EventService {
       );
       const { sections, ...eventData } = data;
 
+      const createData: any = { ...eventData };
+
+      if (sections && sections.length > 0) {
+        createData.sections = {
+          create: sections,
+        };
+      }
+
       const event = await prisma.event.create({
-        data: {
-          ...eventData,
-          sections: {
-            create: sections,
-          },
-        },
+        data: createData,
         include: {
           sections: true,
         },

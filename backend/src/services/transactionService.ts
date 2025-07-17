@@ -6,6 +6,7 @@ import { PaginationResponse } from "../types/api";
 type TransactionStatus = $Enums.TransactionStatus;
 import { logger } from "../utils/logger";
 import { stripeService } from "./stripeService";
+import { notificationService } from "./notificationService";
 
 export class TransactionService {
   async getTransactions(
@@ -397,6 +398,7 @@ export class TransactionService {
     offerId: string;
     listingId: string;
     sellerId: string;
+    quantityPurchased?: number;
   }) {
     return await prisma.$transaction(async (tx: any) => {
       const offer = await tx.offer.findUnique({
@@ -421,8 +423,46 @@ export class TransactionService {
         throw new Error("Listing is not available");
       }
 
-      const platformFee = Number(offer.maxPrice) * 0.05; // 5% platform fee
-      const sellerAmount = Number(offer.maxPrice) - platformFee;
+      // Validate seller owns the listing
+      if (listing.sellerId !== data.sellerId) {
+        throw new Error("Unauthorized: Seller does not own this listing");
+      }
+
+      // Check for concurrent transactions on the same listing
+      const pendingTransactions = await tx.transaction.findMany({
+        where: {
+          listingId: data.listingId,
+          status: { in: ["PENDING", "PROCESSING"] },
+        },
+        select: { quantity: true },
+      });
+
+      const reservedQuantity = pendingTransactions.reduce((sum: number, t: any) => sum + t.quantity, 0);
+      const availableQuantity = listing.quantity - reservedQuantity;
+
+      if (availableQuantity <= 0) {
+        throw new Error("No tickets available for purchase due to pending transactions");
+      }
+
+      // Determine quantity to purchase (default to offer quantity, max available in listing)
+      const quantityToPurchase = Math.min(
+        data.quantityPurchased || offer.quantity,
+        availableQuantity
+      );
+
+      if (quantityToPurchase <= 0) {
+        throw new Error("No tickets available for purchase");
+      }
+
+      // Additional validation: ensure we don't exceed offer quantity
+      if (quantityToPurchase > offer.quantity) {
+        throw new Error("Cannot purchase more tickets than requested in offer");
+      }
+
+      // Calculate total amount based on quantity purchased
+      const totalAmount = Number(offer.maxPrice) * quantityToPurchase;
+      const platformFee = totalAmount * 0.05; // 5% platform fee
+      const sellerAmount = totalAmount - platformFee;
 
       const transaction = await tx.transaction.create({
         data: {
@@ -431,9 +471,10 @@ export class TransactionService {
           offerId: data.offerId,
           listingId: data.listingId,
           eventId: offer.eventId,
-          amount: offer.maxPrice,
+          amount: totalAmount,
           platformFee,
           sellerAmount,
+          quantity: quantityToPurchase,
         },
         include: {
           buyer: true,
@@ -443,15 +484,30 @@ export class TransactionService {
         },
       });
 
+      // Update offer status
       await tx.offer.update({
         where: { id: data.offerId },
         data: { status: "ACCEPTED", acceptedAt: new Date(), acceptedBy: data.sellerId },
       });
 
+      // Update listing inventory
+      const newQuantity = listing.quantity - quantityToPurchase;
+      const newStatus = newQuantity <= 0 ? "SOLD" : "AVAILABLE";
+
       await tx.listing.update({
         where: { id: data.listingId },
-        data: { status: "RESERVED" },
+        data: { 
+          quantity: newQuantity,
+          status: newStatus,
+        },
       });
+
+      logger.info(`Transaction created: ${transaction.id}, purchased ${quantityToPurchase} tickets, remaining: ${newQuantity}`);
+
+      // Send inventory notifications if needed
+      if (newQuantity <= 5) {
+        await notificationService.notifyLowInventory(data.sellerId, data.listingId, newQuantity, 5);
+      }
 
       return transaction;
     });
@@ -884,8 +940,8 @@ export class TransactionService {
     return { transactions, total };
   }
 
-  async acceptOffer(offerId: string, listingId: string, sellerId: string) {
-    return this.createTransaction({ offerId, listingId, sellerId });
+  async acceptOffer(offerId: string, listingId: string, sellerId: string, quantityPurchased?: number) {
+    return this.createTransaction({ offerId, listingId, sellerId, quantityPurchased });
   }
 
   async createSellerAccount(sellerId: string, email: string) {
@@ -986,6 +1042,43 @@ export class TransactionService {
       logger.error(`Error processing seller payout for transaction ${transactionId}:`, error);
       throw new Error("Failed to process seller payout");
     }
+  }
+
+  async getListingAvailableInventory(listingId: string) {
+    const listing = await prisma.listing.findUnique({
+      where: { id: listingId },
+      select: { quantity: true, status: true },
+    });
+
+    if (!listing) {
+      throw new Error("Listing not found");
+    }
+
+    if (listing.status !== "AVAILABLE") {
+      return 0;
+    }
+
+    // Get pending transactions that might reserve inventory
+    const pendingTransactions = await prisma.transaction.findMany({
+      where: {
+        listingId,
+        status: { in: ["PENDING", "PROCESSING"] },
+      },
+      select: { quantity: true },
+    });
+
+    const reservedQuantity = pendingTransactions.reduce((sum, t) => sum + (t.quantity || 0), 0);
+    return Math.max(0, listing.quantity - reservedQuantity);
+  }
+
+  async validateInventoryAvailability(listingId: string, requestedQuantity: number) {
+    const availableQuantity = await this.getListingAvailableInventory(listingId);
+    
+    if (availableQuantity < requestedQuantity) {
+      throw new Error(`Insufficient inventory: ${availableQuantity} available, ${requestedQuantity} requested`);
+    }
+    
+    return availableQuantity;
   }
 
   async setupCustomerPaymentMethod(customerId: string) {

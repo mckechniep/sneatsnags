@@ -16,6 +16,7 @@ export const OffersBrowser = () => {
   });
 
   const [selectedListingId, setSelectedListingId] = useState<string>('');
+  const [selectedQuantity, setSelectedQuantity] = useState<Record<string, number>>({});
 
   const queryClient = useQueryClient();
 
@@ -36,12 +37,14 @@ export const OffersBrowser = () => {
   });
 
   const acceptOfferMutation = useMutation({
-    mutationFn: ({ offerId, listingId }: { offerId: string; listingId: string }) =>
-      sellerService.acceptOffer(offerId, listingId),
+    mutationFn: ({ offerId, listingId, quantity }: { offerId: string; listingId: string; quantity?: number }) =>
+      sellerService.acceptOffer(offerId, listingId, quantity),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['available-offers'] });
       queryClient.invalidateQueries({ queryKey: ['seller-transactions'] });
+      queryClient.invalidateQueries({ queryKey: ['seller-listings'] });
       setSelectedListingId('');
+      setSelectedQuantity({});
     },
   });
 
@@ -67,17 +70,31 @@ export const OffersBrowser = () => {
     const listing = listingsData?.data.find(l => l.id === listingId);
     if (!listing) return;
 
+    // Get the quantity to sell (default to offer quantity, max available in listing)
+    const quantityToSell = Math.min(
+      selectedQuantity[offerId] || offer.quantity,
+      listing.quantity,
+      offer.quantity
+    );
+
+    if (quantityToSell <= 0) {
+      SweetAlert.warning('Invalid Quantity', 'Please select a valid quantity to sell');
+      return;
+    }
+
     // Show detailed confirmation dialog
-    const platformFee = offer.maxPrice * 0.1;
-    const sellerAmount = offer.maxPrice * 0.9;
+    const platformFee = offer.maxPrice * quantityToSell * 0.1;
+    const sellerAmount = offer.maxPrice * quantityToSell * 0.9;
     
     const confirmMessage = `Event: ${offer.event.name}\n` +
       `Buyer: ${offer.buyer.firstName} ${offer.buyer.lastName}\n` +
-      `Quantity: ${offer.quantity} tickets\n` +
-      `Offer Price: $${offer.maxPrice}\n` +
+      `Quantity to Sell: ${quantityToSell} tickets\n` +
+      `Offer Price per Ticket: $${offer.maxPrice}\n` +
+      `Total Revenue: $${(offer.maxPrice * quantityToSell).toFixed(2)}\n` +
       `Platform Fee (10%): $${platformFee.toFixed(2)}\n` +
       `Your Earnings: $${sellerAmount.toFixed(2)}\n\n` +
-      `Your Listing: ${listing.event.name} - ${listing.section?.name || 'General'} - $${listing.price}`;
+      `Your Listing: ${listing.event.name} - ${listing.section?.name || 'General'} - $${listing.price}\n` +
+      `Remaining after sale: ${listing.quantity - quantityToSell} tickets`;
 
     const result = await SweetAlert.confirm(
       'Accept this offer?',
@@ -89,7 +106,7 @@ export const OffersBrowser = () => {
     if (result.isConfirmed) {
       try {
         SweetAlert.loading('Accepting Offer', 'Please wait while we process your acceptance...');
-        await acceptOfferMutation.mutateAsync({ offerId, listingId });
+        await acceptOfferMutation.mutateAsync({ offerId, listingId, quantity: quantityToSell });
         SweetAlert.close();
         SweetAlert.success('Offer Accepted!', 'The offer has been accepted successfully. The transaction will now be processed.');
       } catch (error) {
@@ -349,11 +366,49 @@ export const OffersBrowser = () => {
                     <div className="flex flex-col gap-2 ml-4">
                       {!expired && offer.status === 'ACTIVE' && (
                         <>
-                                                    {compatibleListings.length === 0 && !selectedListingId && (
-                                                      <div className="text-xs text-orange-600 bg-orange-50 p-2 rounded mb-2">
-                                                        ⚠️ No compatible listings found. Select a listing above to accept this offer.
-                                                      </div>
-                                                    )}
+                          {compatibleListings.length === 0 && !selectedListingId && (
+                            <div className="text-xs text-orange-600 bg-orange-50 p-2 rounded mb-2">
+                              ⚠️ No compatible listings found. Select a listing above to accept this offer.
+                            </div>
+                          )}
+                          
+                          {(selectedListingId || bestMatch) && (
+                            <div className="mb-2">
+                              <label className="block text-xs font-medium text-gray-700 mb-1">
+                                Quantity to Sell
+                              </label>
+                              <select
+                                value={selectedQuantity[offer.id] || offer.quantity}
+                                onChange={(e) => setSelectedQuantity(prev => ({
+                                  ...prev,
+                                  [offer.id]: parseInt(e.target.value)
+                                }))}
+                                className="w-full text-sm border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                              >
+                                {(() => {
+                                  const availableListing = listingsData?.data.find(l => l.id === (selectedListingId || bestMatch?.id));
+                                  const maxQuantity = Math.min(
+                                    offer.quantity,
+                                    availableListing?.quantity || 0
+                                  );
+                                  return Array.from({ length: maxQuantity }, (_, i) => i + 1).map(num => (
+                                    <option key={num} value={num}>
+                                      {num} ticket{num > 1 ? 's' : ''}
+                                    </option>
+                                  ));
+                                })()}
+                              </select>
+                              {(() => {
+                                const availableListing = listingsData?.data.find(l => l.id === (selectedListingId || bestMatch?.id));
+                                return availableListing && (
+                                  <p className="text-xs text-gray-500 mt-1">
+                                    Available: {availableListing.quantity} • Buyer wants: {offer.quantity}
+                                  </p>
+                                );
+                              })()}
+                            </div>
+                          )}
+                          
                           <Button
                             onClick={() => handleAcceptOffer(offer.id, bestMatch?.id)}
                             disabled={(!selectedListingId && !bestMatch) || acceptOfferMutation.isPending}

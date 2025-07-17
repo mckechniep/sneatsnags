@@ -121,9 +121,14 @@ export const sellerController = {
     try {
       const sellerId = req.user!.id;
       const { offerId } = req.params;
-      const { listingId } = req.body;
+      const { listingId, quantity } = req.body;
       
-      const transaction = await transactionService.acceptOffer(offerId, listingId, sellerId);
+      // Validate inventory availability before accepting offer
+      if (quantity) {
+        await transactionService.validateInventoryAvailability(listingId, quantity);
+      }
+      
+      const transaction = await transactionService.acceptOffer(offerId, listingId, sellerId, quantity);
       res.json(successResponse(transaction, "Offer accepted successfully"));
     } catch (error) {
       logger.error("Accept offer error:", error);
@@ -233,6 +238,98 @@ export const sellerController = {
     } catch (error) {
       logger.error("Get available offers error:", error);
       res.status(500).json(errorResponse("Failed to retrieve offers"));
+    }
+  },
+
+  // Bulk update inventory
+  bulkUpdateInventory: async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const sellerId = req.user!.id;
+      const { updates } = req.body;
+      
+      if (!Array.isArray(updates)) {
+        return res.status(400).json(errorResponse("Updates must be an array"));
+      }
+
+      const updatesWithSeller = updates.map(update => ({
+        ...update,
+        sellerId,
+      }));
+
+      const result = await listingService.bulkUpdateInventory(updatesWithSeller);
+      res.json(successResponse(result, "Inventory updated successfully"));
+    } catch (error) {
+      logger.error("Bulk update inventory error:", error);
+      res.status(500).json(errorResponse("Failed to update inventory"));
+    }
+  },
+
+  // Adjust inventory for a specific listing
+  adjustInventory: async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const sellerId = req.user!.id;
+      const { listingId } = req.params;
+      const { adjustment } = req.body;
+      
+      if (typeof adjustment !== 'number') {
+        return res.status(400).json(errorResponse("Adjustment must be a number"));
+      }
+
+      const listing = await listingService.adjustInventory(listingId, sellerId, adjustment);
+      res.json(successResponse(listing, "Inventory adjusted successfully"));
+    } catch (error) {
+      logger.error("Adjust inventory error:", error);
+      res.status(500).json(errorResponse("Failed to adjust inventory"));
+    }
+  },
+
+  // Get low stock alerts
+  getLowStockAlerts: async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const sellerId = req.user!.id;
+      const { threshold } = req.query;
+      
+      const alerts = await listingService.getInventoryLowStockAlerts(
+        sellerId,
+        threshold ? parseInt(threshold as string) : undefined
+      );
+      
+      res.json(successResponse(alerts, "Low stock alerts retrieved"));
+    } catch (error) {
+      logger.error("Get low stock alerts error:", error);
+      res.status(500).json(errorResponse("Failed to retrieve alerts"));
+    }
+  },
+
+  // Get inventory report
+  getInventoryReport: async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const sellerId = req.user!.id;
+      const { eventId, dateFrom, dateTo } = req.query;
+      
+      const report = await listingService.getInventoryReport(sellerId, {
+        eventId: eventId as string,
+        dateFrom: dateFrom as string,
+        dateTo: dateTo as string,
+      });
+      
+      res.json(successResponse(report, "Inventory report retrieved"));
+    } catch (error) {
+      logger.error("Get inventory report error:", error);
+      res.status(500).json(errorResponse("Failed to retrieve inventory report"));
+    }
+  },
+
+  // Get available inventory for a listing
+  getListingInventory: async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const { listingId } = req.params;
+      const availableQuantity = await transactionService.getListingAvailableInventory(listingId);
+      
+      res.json(successResponse({ availableQuantity }, "Available inventory retrieved"));
+    } catch (error) {
+      logger.error("Get listing inventory error:", error);
+      res.status(500).json(errorResponse("Failed to retrieve available inventory"));
     }
   },
 };

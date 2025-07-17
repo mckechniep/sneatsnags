@@ -96,7 +96,8 @@ export const eventController = {
         "Creating event with data:",
         JSON.stringify(req.body, null, 2)
       );
-      const event = await eventService.createEvent(req.body);
+      const validatedData = createEventSchema.parse(req.body);
+      const event = await eventService.createEvent(validatedData);
       logger.info("Event created successfully:", event.id);
       res
         .status(201)

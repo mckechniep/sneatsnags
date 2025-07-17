@@ -27,6 +27,10 @@ export const verifyEmailSchema = z.object({
   token: z.string().min(1, "Token is required"),
 });
 
+export const refreshTokenSchema = z.object({
+  refreshToken: z.string().min(1, "Refresh token is required"),
+});
+
 export const updateProfileSchema = z.object({
   firstName: z.string().optional(),
   lastName: z.string().optional(),

@@ -6,6 +6,7 @@ import {
   forgotPasswordSchema,
   resetPasswordSchema,
   verifyEmailSchema,
+  refreshTokenSchema,
 } from "../utils/validations";
 import { logger } from "../utils/logger";
 import { ZodError } from "zod";
@@ -112,4 +113,22 @@ export const logout = async (req: Request, res: Response) => {
     success: true, 
     message: "Logged out successfully" 
   });
+};
+
+export const refreshToken = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const validatedData = refreshTokenSchema.parse(req.body);
+    const result = await authService.refreshToken(validatedData.refreshToken);
+    res.json({
+      success: true,
+      message: "Token refreshed successfully",
+      data: result
+    });
+  } catch (error: any) {
+    next(error);
+  }
 };

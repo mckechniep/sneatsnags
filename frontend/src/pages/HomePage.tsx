@@ -392,12 +392,12 @@ export const HomePage: React.FC = () => {
 
               {/* Event Title */}
               <h1 className="text-5xl md:text-7xl font-bold text-white/80 mb-6 leading-tight drop-shadow-lg">
-                {currentHeroSlide.title}
+                {currentHeroSlide?.title}
               </h1>
 
               {/* Subtitle */}
               <p className="text-xl md:text-2xl text-white/90 mb-8">
-                {currentHeroSlide.subtitle}
+                {currentHeroSlide?.subtitle}
               </p>
 
               {/* Event Details */}

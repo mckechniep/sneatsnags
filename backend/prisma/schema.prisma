@@ -180,7 +180,7 @@ model Listing {
   seller          User          @relation(fields: [sellerId], references: [id])
   event           Event         @relation(fields: [eventId], references: [id])
   section         Section       @relation(fields: [sectionId], references: [id])
-  transaction     Transaction?
+  transactions    Transaction[]
 
   @@map("listings")
 }
@@ -190,8 +190,9 @@ model Transaction {
   buyerId               String
   sellerId              String
   offerId               String            @unique
-  listingId             String            @unique
+  listingId             String            // Remove @unique to allow multiple transactions per listing
   eventId               String
+  quantity              Int               @default(1) // Add quantity field
   amount                Decimal           @db.Decimal(10,2)
   platformFee           Decimal           @db.Decimal(10,2)
   sellerAmount          Decimal           @db.Decimal(10,2)
@@ -380,6 +381,8 @@ enum NotificationType {
   PAYMENT_RECEIVED
   TICKET_DELIVERED
   SYSTEM_ALERT
+  INVENTORY_LOW
+  INVENTORY_OUT_OF_STOCK
 }
 
 enum TicketStatus {

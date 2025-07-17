@@ -9,12 +9,14 @@ import {
   Edit,
   ArrowLeft,
   Download,
-  MoreHorizontal
+  MoreHorizontal,
+  RefreshCw
 } from 'lucide-react';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { adminService } from '../services/adminService';
+import { SweetAlert } from '../utils/sweetAlert';
 import type { User } from '../types/auth';
 import type { PaginatedResponse } from '../types/api';
 
@@ -43,11 +45,14 @@ export const AdminUsersPage: React.FC = () => {
         search: searchQuery || undefined,
       });
 
-      setUsers(response.data.items || []);
-      setTotalUsers(response.data.total || 0);
+      setUsers(response.data || []);
+      setTotalUsers(response.pagination?.total || 0);
     } catch (err) {
       console.error('Failed to fetch users:', err);
-      console.error('Failed to load users:', err);
+      setUsers([]);
+      setTotalUsers(0);
+      // Show error message to user
+      SweetAlert.error('Failed to load users', 'Please try again.');
     } finally {
       setLoading(false);
     }
@@ -60,24 +65,47 @@ export const AdminUsersPage: React.FC = () => {
   };
 
   const handleDeactivateUser = async (userId: string) => {
-    if (!confirm('Are you sure you want to deactivate this user?')) return;
+    const confirmed = await SweetAlert.confirm(
+      'Deactivate User?',
+      'Are you sure you want to deactivate this user? They will lose access to the platform.'
+    );
+    
+    if (!confirmed) return;
 
     try {
       await adminService.deactivateUser(userId, 'Admin deactivation');
-      fetchUsers();
+      await fetchUsers(); // Refresh the users list
+      SweetAlert.success('User Deactivated', 'User has been deactivated successfully');
     } catch (err) {
       console.error('Failed to deactivate user:', err);
-      alert('Failed to deactivate user');
+      SweetAlert.error('Failed to deactivate user', 'Please try again.');
     }
   };
 
   const handleReactivateUser = async (userId: string) => {
     try {
       await adminService.reactivateUser(userId);
-      fetchUsers();
+      await fetchUsers(); // Refresh the users list
+      SweetAlert.success('User Reactivated', 'User has been reactivated successfully');
     } catch (err) {
       console.error('Failed to reactivate user:', err);
-      alert('Failed to reactivate user');
+      SweetAlert.error('Failed to reactivate user', 'Please try again.');
+    }
+  };
+
+  const exportUsers = async () => {
+    try {
+      const result = await adminService.exportData({
+        type: 'users',
+        format: 'csv',
+      });
+      
+      // Open the export URL in a new tab
+      window.open(result.url, '_blank');
+      SweetAlert.success('Export Started', 'Users export has been initiated successfully');
+    } catch (err) {
+      console.error('Failed to export users:', err);
+      SweetAlert.error('Failed to export users', 'Please try again.');
     }
   };
 
@@ -145,11 +173,61 @@ export const AdminUsersPage: React.FC = () => {
               {totalUsers.toLocaleString()} total users
             </p>
           </div>
-          <Button variant="outline">
-            <Download className="h-4 w-4 mr-2" />
-            Export Users
-          </Button>
+          <div className="flex items-center space-x-3">
+            <Button variant="outline" onClick={() => fetchUsers()} disabled={loading}>
+              <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+              {loading ? 'Refreshing...' : 'Refresh'}
+            </Button>
+            <Button variant="outline" onClick={() => exportUsers()}>
+              <Download className="h-4 w-4 mr-2" />
+              Export Users
+            </Button>
+          </div>
         </div>
+      </div>
+
+      {/* User Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <Card className="p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Total Users</p>
+              <p className="text-2xl font-bold text-gray-900">{totalUsers.toLocaleString()}</p>
+            </div>
+            <Users className="h-8 w-8 text-blue-600" />
+          </div>
+        </Card>
+        <Card className="p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Active Users</p>
+              <p className="text-2xl font-bold text-green-600">
+                {users.filter(u => u.isActive).length}
+              </p>
+            </div>
+            <UserCheck className="h-8 w-8 text-green-600" />
+          </div>
+        </Card>
+        <Card className="p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Inactive Users</p>
+              <p className="text-2xl font-bold text-red-600">
+                {users.filter(u => !u.isActive).length}
+              </p>
+            </div>
+            <UserX className="h-8 w-8 text-red-600" />
+          </div>
+        </Card>
+        <Card className="p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">This Page</p>
+              <p className="text-2xl font-bold text-gray-900">{users.length}</p>
+            </div>
+            <Filter className="h-8 w-8 text-gray-600" />
+          </div>
+        </Card>
       </div>
 
       {/* Filters and Search */}
@@ -241,7 +319,17 @@ export const AdminUsersPage: React.FC = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {users.map((user) => (
+              {loading && users.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="px-6 py-8 text-center">
+                    <div className="flex justify-center">
+                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+                    </div>
+                    <p className="mt-2 text-sm text-gray-500">Loading users...</p>
+                  </td>
+                </tr>
+              ) : (
+                users.map((user) => (
                 <tr key={user.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
@@ -321,7 +409,8 @@ export const AdminUsersPage: React.FC = () => {
                     </div>
                   </td>
                 </tr>
-              ))}
+                ))
+              )}
             </tbody>
           </table>
         </div>
