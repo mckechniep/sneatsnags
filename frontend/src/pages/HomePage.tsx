@@ -302,7 +302,7 @@ export const HomePage: React.FC = () => {
   };
 
   return (
-    <div className="relative overflow-hidden">
+    <div className="relative overflow-hidden min-h-screen flex flex-col">
       {/* Clean background */}
       <div className="absolute inset-0 bg-gradient-to-br from-slate-50 to-white"></div>
 
@@ -317,53 +317,53 @@ export const HomePage: React.FC = () => {
       />
 
       {/* Hero Slider Section */}
-      <section className="relative h-[60vh] flex items-center justify-center px-4 sm:px-6 lg:px-8">
+      <section className="relative h-[60vh] flex items-center justify-center px-4 sm:px-6 lg:px-8 rounded-b-3xl overflow-hidden">
         {/* Dynamic Background Image */}
         {!loading && currentHeroSlide && (
           <div
-            className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-1000"
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-1000 rounded-b-3xl"
             style={{
               backgroundImage: `url(${currentHeroSlide.image})`,
             }}
           >
-            <div className="absolute inset-0 bg-black/60"></div>
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-900/30 to-indigo-900/30"></div>
+            <div className="absolute inset-0 bg-black/60 rounded-b-3xl"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-900/30 to-indigo-900/30 rounded-b-3xl"></div>
           </div>
         )}
 
         {/* Fallback background for loading state */}
         {loading && (
-          <div className="absolute inset-0 bg-gradient-to-br from-slate-800 to-slate-900">
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-900/20 to-indigo-900/20"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-slate-800 to-slate-900 rounded-b-3xl">
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-900/20 to-indigo-900/20 rounded-b-3xl"></div>
           </div>
         )}
 
         {/* Slider Navigation */}
-        <div className="absolute top-1/2 left-4 transform -translate-y-1/2 z-20">
+        <div className="absolute top-1/2 left-8 transform -translate-y-1/2 z-20">
           <button
             onClick={prevSlide}
-            className="p-3 rounded-full bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-all duration-300 border border-white/20"
+            className="p-4 rounded-full bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-all duration-300 border border-white/20 shadow-lg hover:shadow-xl"
           >
             <ChevronLeft className="h-6 w-6 text-white" />
           </button>
         </div>
-        <div className="absolute top-1/2 right-4 transform -translate-y-1/2 z-20">
+        <div className="absolute top-1/2 right-8 transform -translate-y-1/2 z-20">
           <button
             onClick={nextSlide}
-            className="p-3 rounded-full bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-all duration-300 border border-white/20"
+            className="p-4 rounded-full bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-all duration-300 border border-white/20 shadow-lg hover:shadow-xl"
           >
             <ChevronRight className="h-6 w-6 text-white" />
           </button>
         </div>
 
         {/* Slide Indicators */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2 z-20">
+        <div className="absolute bottom-12 left-1/2 transform -translate-x-1/2 flex space-x-3 z-20">
           {heroSlides.map((_, index) => (
             <button
               key={index}
               onClick={() => setCurrentSlide(index)}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                index === currentSlide ? "bg-blue-500" : "bg-white/30"
+              className={`w-3 h-3 rounded-full transition-all duration-300 shadow-lg ${
+                index === currentSlide ? "bg-blue-500 scale-125" : "bg-white/40 hover:bg-white/60"
               }`}
             />
           ))}
@@ -447,10 +447,10 @@ export const HomePage: React.FC = () => {
       </section>
 
       {/* Main Content */}
-      <div className="relative z-10 bg-white">
+      <div className="relative z-10 bg-white flex-1">
         {/* Stats Section */}
         <section className="py-16 bg-slate-50">
-          <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold text-gray-900 mb-4">
                 Trusted by Millions
@@ -481,7 +481,7 @@ export const HomePage: React.FC = () => {
 
         {/* Search Section */}
         <section className="py-20 bg-white">
-          <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-8">
               <div className="inline-flex items-center px-4 py-2 rounded-full bg-blue-50 border border-blue-200 mb-6">
                 <Sparkles className="h-4 w-4 text-blue-600 mr-2" />
@@ -558,7 +558,7 @@ export const HomePage: React.FC = () => {
 
         {/* Live Events Section */}
         <section className="py-20 bg-slate-50">
-          <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between mb-12">
               <div>
                 <h2 className="text-3xl font-bold text-gray-900 mb-2">
@@ -641,7 +641,7 @@ export const HomePage: React.FC = () => {
 
         {/* Event Categories */}
         <section className="py-20 bg-white">
-          <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold text-gray-900 mb-4">
                 Explore by Category
@@ -676,7 +676,7 @@ export const HomePage: React.FC = () => {
 
         {/* Features Section */}
         <section className="py-20 bg-slate-50">
-          <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
               <h2 className="text-3xl font-bold text-gray-900 mb-4">
                 Why Choose AutoMatch?
@@ -714,7 +714,7 @@ export const HomePage: React.FC = () => {
 
         {/* Event Organizer Section */}
         <section className="py-20 bg-white">
-          <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               <div>
                 <h2 className="text-3xl font-bold text-gray-900 mb-6">
@@ -805,7 +805,7 @@ export const HomePage: React.FC = () => {
 
         {/* Testimonials Section */}
         <section className="py-20 bg-slate-50">
-          <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
               <h2 className="text-3xl font-bold text-gray-900 mb-4">
                 Trusted by Millions
@@ -915,9 +915,9 @@ export const HomePage: React.FC = () => {
       </div>
 
       {/* Full-Width Footer */}
-      <footer className="bg-slate-800 text-white">
+      <footer className="bg-slate-800 text-white mt-auto">
         <div className="py-16">
-          <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
               {/* Brand */}
               <div className="col-span-1 md:col-span-2">
@@ -1015,7 +1015,7 @@ export const HomePage: React.FC = () => {
 
         {/* Bottom Bar */}
         <div className="border-t border-slate-700 py-6">
-          <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col md:flex-row justify-between items-center">
               <div className="text-slate-400 mb-4 md:mb-0">
                 © 2024 AutoMatch. All rights reserved.
