@@ -18,7 +18,7 @@ export interface CreateEventRequest {
   minPrice?: number;
   maxPrice?: number;
   totalSeats?: number;
-  sections: CreateSectionRequest[];
+  sections?: CreateSectionRequest[];
 }
 
 export interface CreateSectionRequest {
