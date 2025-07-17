@@ -97,26 +97,33 @@ export class EventService {
    */
   async createEvent(data: CreateEventRequest): Promise<Event> {
     try {
-      console.log('CreateEvent request payload:', JSON.stringify(data, null, 2));
-      
+      console.log(
+        "CreateEvent request payload:",
+        JSON.stringify(data, null, 2)
+      );
+
       const response = await apiClient.post<ApiResponse<Event>>(
         this.baseUrl,
         data
       );
 
-      console.log('CreateEvent full response:', response);
-      console.log('CreateEvent response.data:', response.data);
+      console.log("CreateEvent full response:", response);
+      console.log("CreateEvent response.data:", response.data);
 
       // Handle different response formats the backend might return
       if (response.data?.data) {
         // Standard format: { success: true, data: event }
         return response.data.data;
-      } else if (response.data && typeof response.data === 'object' && (response.data as any).id) {
+      } else if (
+        response.data &&
+        typeof response.data === "object" &&
+        (response.data as any).id
+      ) {
         // Direct event object: { id: "...", name: "...", ... }
         return response.data as unknown as Event;
       } else if (response.data) {
         // Check if response.data itself contains the event
-        console.log('Trying to parse response.data as event:', response.data);
+        console.log("Trying to parse response.data as event:", response.data);
         return response.data as unknown as Event;
       }
 
@@ -131,26 +138,30 @@ export class EventService {
    */
   async updateEvent(id: string, data: UpdateEventRequest): Promise<Event> {
     try {
-      console.log('UpdateEvent request:', { id, data });
-      
+      console.log("UpdateEvent request:", { id, data });
+
       const response = await apiClient.put<ApiResponse<Event>>(
         `${this.baseUrl}/${id}`,
         data
       );
 
-      console.log('UpdateEvent full response:', response);
-      console.log('UpdateEvent response.data:', response.data);
+      console.log("UpdateEvent full response:", response);
+      console.log("UpdateEvent response.data:", response.data);
 
       // Handle different response formats the backend might return
       if (response.data?.data) {
         // Standard format: { success: true, data: event }
         return response.data.data;
-      } else if (response.data && typeof response.data === 'object' && (response.data as any).id) {
+      } else if (
+        response.data &&
+        typeof response.data === "object" &&
+        (response.data as any).id
+      ) {
         // Direct event object: { id: "...", name: "...", ... }
         return response.data as unknown as Event;
       } else if (response.data) {
         // Check if response.data itself contains the event
-        console.log('Trying to parse response.data as event:', response.data);
+        console.log("Trying to parse response.data as event:", response.data);
         return response.data as unknown as Event;
       }
 
@@ -332,35 +343,30 @@ export class EventService {
    */
   private handleError(error: unknown, operation: string): Error {
     console.error(`EventService.${operation} failed:`, error);
-    
+
     // Log the full error response for debugging
     const fullError = error as any;
-    console.error('Full error object:', fullError);
-    
+    console.error("Full error object:", fullError);
+
     if (fullError?.response) {
-      console.error('Full error response:', {
+      console.error("Full error response:", {
         status: fullError.response.status,
         data: fullError.response.data,
-<<<<<<< HEAD
         headers: fullError.response.headers,
-        statusText: fullError.response.statusText
-=======
-        headers: fullError.response.headers
->>>>>>> 4bef46714ae67e26ae572ebe427cd1dda89f8d1f
+        statusText: fullError.response.statusText,
       });
     }
 
     // Extract error information from the response
     const errorData = fullError?.response?.data;
     const status = fullError?.response?.status;
-    
-    console.error('Extracted error data:', errorData);
-    console.error('Extracted status:', status);
-<<<<<<< HEAD
+
+    console.error("Extracted error data:", errorData);
+    console.error("Extracted status:", status);
 
     // First check if we have a specific error message from the backend
     if (errorData?.message) {
-      console.error('Backend error message:', errorData.message);
+      console.error("Backend error message:", errorData.message);
       return new EventServiceError(
         errorData.message,
         errorData.code || "BACKEND_ERROR",
@@ -369,8 +375,6 @@ export class EventService {
         operation
       );
     }
-=======
->>>>>>> 4bef46714ae67e26ae572ebe427cd1dda89f8d1f
 
     // Handle specific error types
     if (errorData?.success === false) {
@@ -386,29 +390,33 @@ export class EventService {
     // Handle HTTP status codes
     switch (status) {
       case 400:
-        console.error('400 validation error details:', errorData);
+        console.error("400 validation error details:", errorData);
         let validationMessage = "Invalid request data";
-        
+
         if (errorData?.error) {
           validationMessage = errorData.error;
         } else if (errorData?.message) {
           validationMessage = errorData.message;
         } else if (errorData?.details) {
-          const details = Array.isArray(errorData.details) 
-            ? errorData.details.map((d: any) => d.message || d.path || d).join(', ')
+          const details = Array.isArray(errorData.details)
+            ? errorData.details
+                .map((d: any) => d.message || d.path || d)
+                .join(", ")
             : JSON.stringify(errorData.details);
           validationMessage = `Validation failed: ${details}`;
-        } else if (errorData && typeof errorData === 'object') {
+        } else if (errorData && typeof errorData === "object") {
           // Handle field-specific validation errors like {imageUrl: ["Invalid image URL"]}
           const fieldErrors = Object.entries(errorData)
             .map(([field, messages]) => {
-              const errorMessages = Array.isArray(messages) ? messages.join(', ') : messages;
+              const errorMessages = Array.isArray(messages)
+                ? messages.join(", ")
+                : messages;
               return `${field}: ${errorMessages}`;
             })
-            .join('; ');
+            .join("; ");
           validationMessage = `Validation failed: ${fieldErrors}`;
         }
-        
+
         return new EventServiceError(
           validationMessage,
           "VALIDATION_ERROR",
@@ -475,7 +483,8 @@ export class EventService {
       default:
         // Network or other errors
         if (
-          (error as { code?: string; response?: unknown })?.code === "NETWORK_ERROR" ||
+          (error as { code?: string; response?: unknown })?.code ===
+            "NETWORK_ERROR" ||
           !(error as { code?: string; response?: unknown })?.response
         ) {
           return new EventServiceError(
@@ -488,7 +497,8 @@ export class EventService {
         }
 
         return new EventServiceError(
-          (error as { message?: string })?.message || "An unexpected error occurred",
+          (error as { message?: string })?.message ||
+            "An unexpected error occurred",
           "UNKNOWN_ERROR",
           undefined,
           status,
