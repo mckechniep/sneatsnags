@@ -17,14 +17,10 @@ import {
   Handshake,
   AlertTriangle,
   Package,
-  TrendingUp,
-  Settings,
   RefreshCw,
   Download,
   BarChart3,
   AlertCircle,
-  Activity,
-  Archive,
   Zap,
 } from 'lucide-react';
 import { Button } from '../components/ui/Button';
@@ -34,6 +30,7 @@ import { CreateListingForm } from '../components/listings/CreateListingForm';
 import { ListingOffersModal } from '../components/offers/ListingOffersModal';
 import { sellerService } from '../services/sellerService';
 import SweetAlert from '../utils/sweetAlert';
+import Swal from 'sweetalert2';
 import type { Listing, ListingStatus } from '../types/listing';
 import type { SellerListing } from '../services/sellerService';
 
@@ -55,7 +52,7 @@ export const ListingManagementPage: React.FC = () => {
   const [selectedListings, setSelectedListings] = useState<string[]>([]);
   const [bulkAction, setBulkAction] = useState<string>('');
   const [showInventoryModal, setShowInventoryModal] = useState(false);
-  const [inventoryAdjustment, setInventoryAdjustment] = useState<{ listingId: string; quantity: number } | null>(null);
+  // const [inventoryAdjustment, setInventoryAdjustment] = useState<{ listingId: string; quantity: number } | null>(null);
   const [sortBy, setSortBy] = useState<'name' | 'date' | 'price' | 'quantity' | 'status'>('date');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [showAlerts, setShowAlerts] = useState(false);
@@ -190,7 +187,7 @@ export const ListingManagementPage: React.FC = () => {
       return;
     }
 
-    const { value: quantity } = await SweetAlert.input({
+    const { value: quantity } = await Swal.fire({
       title: 'Update Inventory',
       text: `Set quantity for ${selectedListings.length} selected listings:`,
       input: 'number',
@@ -234,7 +231,7 @@ export const ListingManagementPage: React.FC = () => {
   };
 
   const handleAdjustInventory = async (listingId: string, currentQuantity: number) => {
-    const { value: adjustment } = await SweetAlert.input({
+    const { value: adjustment } = await Swal.fire({
       title: 'Adjust Inventory',
       text: `Current quantity: ${currentQuantity}. Enter adjustment (+/-):`,
       input: 'number',
@@ -604,7 +601,7 @@ export const ListingManagementPage: React.FC = () => {
                 {Object.entries(inventoryReport.statusBreakdown).map(([status, data]) => (
                   <div key={status} className="flex justify-between items-center">
                     <span className="text-sm text-gray-600">{status}</span>
-                    <span className="text-sm font-medium">{data.quantity} tickets ({data.count} listings)</span>
+                    <span className="text-sm font-medium">{(data as any).quantity} tickets ({(data as any).count} listings)</span>
                   </div>
                 ))}
               </div>
@@ -691,7 +688,7 @@ export const ListingManagementPage: React.FC = () => {
             <div>
               <p className="text-sm font-medium text-gray-600">Total Value</p>
               <p className="text-2xl font-bold text-gray-900">
-                {formatPrice(listings.reduce((sum, l) => sum + (l.price * l.quantity), 0))}
+                {formatPrice(listings.reduce((sum, l) => sum + (Number(l.price) * l.quantity), 0))}
               </p>
             </div>
           </div>
@@ -824,7 +821,6 @@ export const ListingManagementPage: React.FC = () => {
               Apply Filters
             </Button>
           </div>
-          </div>
         </form>
       </Card>
 
@@ -876,24 +872,24 @@ export const ListingManagementPage: React.FC = () => {
                     <div className="flex items-center space-x-2">
                       <span className="font-medium">{listing.quantity}</span>
                       {listing.quantity <= 5 && listing.quantity > 0 && (
-                        <AlertTriangle className="h-4 w-4 text-orange-500" title="Low stock" />
+                        <AlertTriangle className="h-4 w-4 text-orange-500" />
                       )}
                       {listing.quantity === 0 && (
-                        <AlertCircle className="h-4 w-4 text-red-500" title="Out of stock" />
+                        <AlertCircle className="h-4 w-4 text-red-500" />
                       )}
                     </div>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-gray-500">Price each:</span>
-                    <span className="font-medium">{formatPrice(listing.price)}</span>
+                    <span className="font-medium">{formatPrice(Number(listing.price))}</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-gray-500">Total:</span>
-                    <span className="font-bold text-lg">{formatPrice(listing.price * listing.quantity)}</span>
+                    <span className="font-bold text-lg">{formatPrice(Number(listing.price) * listing.quantity)}</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-gray-500">Status:</span>
-                    {getStatusBadge(listing.status)}
+                    {getStatusBadge(listing.status as ListingStatus)}
                   </div>
                   {listing.row && (
                     <div className="flex items-center justify-between">
