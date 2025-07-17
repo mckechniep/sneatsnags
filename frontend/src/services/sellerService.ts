@@ -279,6 +279,77 @@ class SellerService {
     const response = await api.get('/sellers/offers', query);
     return response.data;
   }
+
+  // Inventory Management Functions
+  async bulkUpdateInventory(updates: Array<{ listingId: string; quantity: number }>): Promise<{
+    successful: number;
+    failed: number;
+    results: Array<{
+      listingId: string;
+      success: boolean;
+      error?: string;
+      data?: SellerListing;
+    }>;
+  }> {
+    const response = await api.post('/sellers/inventory/bulk-update', { updates });
+    return response.data;
+  }
+
+  async adjustInventory(listingId: string, adjustment: number): Promise<SellerListing> {
+    const response = await api.put(`/sellers/inventory/adjust/${listingId}`, { adjustment });
+    return response.data;
+  }
+
+  async getLowStockAlerts(threshold?: number): Promise<Array<{
+    listingId: string;
+    eventName: string;
+    sectionName: string;
+    currentQuantity: number;
+    threshold: number;
+    eventDate: string;
+    venue: string;
+    urgency: 'critical' | 'high' | 'medium';
+  }>> {
+    const response = await api.get('/sellers/inventory/alerts', { threshold });
+    return response.data;
+  }
+
+  async getInventoryReport(params?: {
+    eventId?: string;
+    dateFrom?: string;
+    dateTo?: string;
+  }): Promise<{
+    summary: {
+      totalListings: number;
+      totalInventory: number;
+      soldInventory: number;
+      availableInventory: number;
+      soldListings: number;
+      availableListings: number;
+    };
+    statusBreakdown: Record<string, { count: number; quantity: number }>;
+    listings: Array<{
+      id: string;
+      eventName: string;
+      sectionName: string;
+      originalQuantity: number;
+      currentQuantity: number;
+      soldQuantity: number;
+      status: string;
+      price: number;
+      venue: string;
+      eventDate: string;
+      createdAt: string;
+    }>;
+  }> {
+    const response = await api.get('/sellers/inventory/report', params);
+    return response.data;
+  }
+
+  async getListingInventory(listingId: string): Promise<{ availableQuantity: number }> {
+    const response = await api.get(`/sellers/inventory/${listingId}`);
+    return response.data;
+  }
 }
 
 export const sellerService = new SellerService();

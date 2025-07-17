@@ -15,6 +15,17 @@ import {
   Clock,
   XCircle,
   Handshake,
+  AlertTriangle,
+  Package,
+  TrendingUp,
+  Settings,
+  RefreshCw,
+  Download,
+  BarChart3,
+  AlertCircle,
+  Activity,
+  Archive,
+  Zap,
 } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
@@ -37,10 +48,42 @@ export const ListingManagementPage: React.FC = () => {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [showOffersModal, setShowOffersModal] = useState(false);
   const [selectedListingId, setSelectedListingId] = useState<string | null>(null);
+  
+  // New inventory management state
+  const [lowStockAlerts, setLowStockAlerts] = useState<any[]>([]);
+  const [inventoryReport, setInventoryReport] = useState<any>(null);
+  const [selectedListings, setSelectedListings] = useState<string[]>([]);
+  const [bulkAction, setBulkAction] = useState<string>('');
+  const [showInventoryModal, setShowInventoryModal] = useState(false);
+  const [inventoryAdjustment, setInventoryAdjustment] = useState<{ listingId: string; quantity: number } | null>(null);
+  const [sortBy, setSortBy] = useState<'name' | 'date' | 'price' | 'quantity' | 'status'>('date');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [showAlerts, setShowAlerts] = useState(false);
+  const [showReport, setShowReport] = useState(false);
 
   useEffect(() => {
     fetchListings();
+    fetchLowStockAlerts();
+    fetchInventoryReport();
   }, [currentPage, selectedStatus]);
+
+  const fetchLowStockAlerts = async () => {
+    try {
+      const alerts = await sellerService.getLowStockAlerts(5);
+      setLowStockAlerts(alerts);
+    } catch (error) {
+      console.error('Failed to fetch low stock alerts:', error);
+    }
+  };
+
+  const fetchInventoryReport = async () => {
+    try {
+      const report = await sellerService.getInventoryReport();
+      setInventoryReport(report);
+    } catch (error) {
+      console.error('Failed to fetch inventory report:', error);
+    }
+  };
 
   const fetchListings = async () => {
     try {
@@ -140,6 +183,234 @@ export const ListingManagementPage: React.FC = () => {
     fetchListings();
   };
 
+  // New inventory management functions
+  const handleBulkInventoryUpdate = async () => {
+    if (selectedListings.length === 0) {
+      SweetAlert.warning('No Listings Selected', 'Please select at least one listing to update.');
+      return;
+    }
+
+    const { value: quantity } = await SweetAlert.input({
+      title: 'Update Inventory',
+      text: `Set quantity for ${selectedListings.length} selected listings:`,
+      input: 'number',
+      inputAttributes: {
+        min: '0',
+        step: '1',
+      },
+      showCancelButton: true,
+      inputValidator: (value) => {
+        if (!value || parseInt(value) < 0) {
+          return 'Please enter a valid quantity (0 or greater)';
+        }
+      },
+    });
+
+    if (quantity) {
+      try {
+        const updates = selectedListings.map(listingId => ({
+          listingId,
+          quantity: parseInt(quantity),
+        }));
+
+        const result = await sellerService.bulkUpdateInventory(updates);
+        
+        if (result.successful > 0) {
+          SweetAlert.success(
+            'Inventory Updated',
+            `Successfully updated ${result.successful} listings${result.failed > 0 ? `, ${result.failed} failed` : ''}.`
+          );
+          setSelectedListings([]);
+          fetchListings();
+          fetchLowStockAlerts();
+          fetchInventoryReport();
+        } else {
+          SweetAlert.error('Update Failed', 'Failed to update inventory for selected listings.');
+        }
+      } catch (error) {
+        SweetAlert.error('Update Failed', 'Failed to update inventory. Please try again.');
+      }
+    }
+  };
+
+  const handleAdjustInventory = async (listingId: string, currentQuantity: number) => {
+    const { value: adjustment } = await SweetAlert.input({
+      title: 'Adjust Inventory',
+      text: `Current quantity: ${currentQuantity}. Enter adjustment (+/-):`,
+      input: 'number',
+      inputAttributes: {
+        step: '1',
+      },
+      showCancelButton: true,
+      inputValidator: (value) => {
+        if (!value) {
+          return 'Please enter an adjustment value';
+        }
+        const adj = parseInt(value);
+        if (currentQuantity + adj < 0) {
+          return 'Adjustment would result in negative quantity';
+        }
+      },
+    });
+
+    if (adjustment) {
+      try {
+        await sellerService.adjustInventory(listingId, parseInt(adjustment));
+        SweetAlert.success('Inventory Adjusted', 'Inventory has been updated successfully.');
+        fetchListings();
+        fetchLowStockAlerts();
+        fetchInventoryReport();
+      } catch (error) {
+        SweetAlert.error('Adjustment Failed', 'Failed to adjust inventory. Please try again.');
+      }
+    }
+  };
+
+  const handleBulkAction = async () => {
+    if (selectedListings.length === 0) {
+      SweetAlert.warning('No Listings Selected', 'Please select at least one listing.');
+      return;
+    }
+
+    switch (bulkAction) {
+      case 'update-inventory':
+        await handleBulkInventoryUpdate();
+        break;
+      case 'mark-sold':
+        await handleBulkMarkSold();
+        break;
+      case 'delete':
+        await handleBulkDelete();
+        break;
+      case 'archive':
+        await handleBulkArchive();
+        break;
+      default:
+        SweetAlert.warning('No Action Selected', 'Please select an action to perform.');
+    }
+  };
+
+  const handleBulkMarkSold = async () => {
+    const result = await SweetAlert.confirm(
+      'Mark as Sold',
+      `Are you sure you want to mark ${selectedListings.length} listings as sold?`,
+      'Mark Sold',
+      'Cancel'
+    );
+
+    if (result.isConfirmed) {
+      try {
+        const promises = selectedListings.map(id => sellerService.updateListing(id, { status: 'SOLD' }));
+        await Promise.all(promises);
+        
+        SweetAlert.success('Listings Updated', `${selectedListings.length} listings marked as sold.`);
+        setSelectedListings([]);
+        fetchListings();
+        fetchInventoryReport();
+      } catch (error) {
+        SweetAlert.error('Update Failed', 'Failed to update listings. Please try again.');
+      }
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    const result = await SweetAlert.confirm(
+      'Delete Listings',
+      `Are you sure you want to delete ${selectedListings.length} listings? This action cannot be undone.`,
+      'Delete',
+      'Cancel'
+    );
+
+    if (result.isConfirmed) {
+      try {
+        const promises = selectedListings.map(id => sellerService.deleteListing(id));
+        await Promise.all(promises);
+        
+        SweetAlert.success('Listings Deleted', `${selectedListings.length} listings deleted successfully.`);
+        setSelectedListings([]);
+        fetchListings();
+        fetchInventoryReport();
+      } catch (error) {
+        SweetAlert.error('Delete Failed', 'Failed to delete listings. Please try again.');
+      }
+    }
+  };
+
+  const handleBulkArchive = async () => {
+    const result = await SweetAlert.confirm(
+      'Archive Listings',
+      `Are you sure you want to archive ${selectedListings.length} listings?`,
+      'Archive',
+      'Cancel'
+    );
+
+    if (result.isConfirmed) {
+      try {
+        const promises = selectedListings.map(id => sellerService.updateListing(id, { status: 'CANCELLED' }));
+        await Promise.all(promises);
+        
+        SweetAlert.success('Listings Archived', `${selectedListings.length} listings archived successfully.`);
+        setSelectedListings([]);
+        fetchListings();
+        fetchInventoryReport();
+      } catch (error) {
+        SweetAlert.error('Archive Failed', 'Failed to archive listings. Please try again.');
+      }
+    }
+  };
+
+  const handleSelectListing = (listingId: string) => {
+    setSelectedListings(prev => 
+      prev.includes(listingId) 
+        ? prev.filter(id => id !== listingId)
+        : [...prev, listingId]
+    );
+  };
+
+  const handleSelectAll = () => {
+    if (selectedListings.length === listings.length) {
+      setSelectedListings([]);
+    } else {
+      setSelectedListings(listings.map(l => l.id));
+    }
+  };
+
+  const sortedListings = [...listings].sort((a, b) => {
+    let aValue, bValue;
+    
+    switch (sortBy) {
+      case 'name':
+        aValue = a.event.name.toLowerCase();
+        bValue = b.event.name.toLowerCase();
+        break;
+      case 'date':
+        aValue = new Date(a.event.eventDate).getTime();
+        bValue = new Date(b.event.eventDate).getTime();
+        break;
+      case 'price':
+        aValue = a.price;
+        bValue = b.price;
+        break;
+      case 'quantity':
+        aValue = a.quantity;
+        bValue = b.quantity;
+        break;
+      case 'status':
+        aValue = a.status;
+        bValue = b.status;
+        break;
+      default:
+        aValue = new Date(a.createdAt).getTime();
+        bValue = new Date(b.createdAt).getTime();
+    }
+
+    if (sortOrder === 'asc') {
+      return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
+    } else {
+      return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
+    }
+  });
+
   const totalPages = Math.ceil(totalListings / 20);
 
   if (showCreateForm) {
@@ -195,14 +466,178 @@ export const ListingManagementPage: React.FC = () => {
             <h1 className="text-3xl font-bold text-gray-900">My Listings</h1>
             <p className="text-gray-600 mt-1">
               {totalListings.toLocaleString()} total listings
+              {lowStockAlerts.length > 0 && (
+                <span className="ml-2 px-2 py-1 bg-red-100 text-red-800 text-xs rounded-full">
+                  {lowStockAlerts.length} low stock alerts
+                </span>
+              )}
             </p>
           </div>
-          <Button onClick={() => setShowCreateForm(true)}>
-            <Plus className="h-4 w-4 mr-2" />
-            Create Listing
-          </Button>
+          <div className="flex items-center space-x-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowAlerts(!showAlerts)}
+            >
+              <AlertTriangle className="h-4 w-4 mr-2" />
+              Alerts ({lowStockAlerts.length})
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowReport(!showReport)}
+            >
+              <BarChart3 className="h-4 w-4 mr-2" />
+              Report
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                fetchListings();
+                fetchLowStockAlerts();
+                fetchInventoryReport();
+              }}
+            >
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Refresh
+            </Button>
+            <Button onClick={() => setShowCreateForm(true)}>
+              <Plus className="h-4 w-4 mr-2" />
+              Create Listing
+            </Button>
+          </div>
         </div>
       </div>
+
+      {/* Low Stock Alerts */}
+      {showAlerts && lowStockAlerts.length > 0 && (
+        <Card className="p-6 mb-6 border-l-4 border-red-500 bg-red-50">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-red-800 flex items-center">
+              <AlertTriangle className="h-5 w-5 mr-2" />
+              Low Stock Alerts
+            </h2>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowAlerts(false)}
+            >
+              <XCircle className="h-4 w-4" />
+            </Button>
+          </div>
+          <div className="space-y-3">
+            {lowStockAlerts.map((alert) => (
+              <div
+                key={alert.listingId}
+                className={`p-3 rounded-lg border ${
+                  alert.urgency === 'critical'
+                    ? 'bg-red-100 border-red-300'
+                    : alert.urgency === 'high'
+                    ? 'bg-orange-100 border-orange-300'
+                    : 'bg-yellow-100 border-yellow-300'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium text-gray-900">{alert.eventName}</p>
+                    <p className="text-sm text-gray-600">
+                      {alert.sectionName} • {alert.venue}
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      {formatDate(alert.eventDate)}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className={`font-bold ${
+                      alert.urgency === 'critical' ? 'text-red-800' : 
+                      alert.urgency === 'high' ? 'text-orange-800' : 'text-yellow-800'
+                    }`}>
+                      {alert.currentQuantity} left
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      Threshold: {alert.threshold}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
+
+      {/* Inventory Report */}
+      {showReport && inventoryReport && (
+        <Card className="p-6 mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-gray-900 flex items-center">
+              <BarChart3 className="h-5 w-5 mr-2" />
+              Inventory Report
+            </h2>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowReport(false)}
+            >
+              <XCircle className="h-4 w-4" />
+            </Button>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div className="bg-blue-50 p-4 rounded-lg">
+              <p className="text-sm text-blue-600">Total Inventory</p>
+              <p className="text-2xl font-bold text-blue-900">{inventoryReport.summary.totalInventory}</p>
+            </div>
+            <div className="bg-green-50 p-4 rounded-lg">
+              <p className="text-sm text-green-600">Available</p>
+              <p className="text-2xl font-bold text-green-900">{inventoryReport.summary.availableInventory}</p>
+            </div>
+            <div className="bg-purple-50 p-4 rounded-lg">
+              <p className="text-sm text-purple-600">Sold</p>
+              <p className="text-2xl font-bold text-purple-900">{inventoryReport.summary.soldInventory}</p>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <h3 className="font-medium text-gray-900 mb-2">Status Breakdown</h3>
+              <div className="space-y-2">
+                {Object.entries(inventoryReport.statusBreakdown).map(([status, data]) => (
+                  <div key={status} className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">{status}</span>
+                    <span className="text-sm font-medium">{data.quantity} tickets ({data.count} listings)</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div>
+              <h3 className="font-medium text-gray-900 mb-2">Quick Actions</h3>
+              <div className="space-y-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => fetchInventoryReport()}
+                  className="w-full"
+                >
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                  Refresh Report
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    // TODO: Implement export functionality
+                    SweetAlert.info('Export', 'Export functionality coming soon!');
+                  }}
+                  className="w-full"
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  Export Report
+                </Button>
+              </div>
+            </div>
+          </div>
+        </Card>
+      )}
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
@@ -263,10 +698,50 @@ export const ListingManagementPage: React.FC = () => {
         </Card>
       </div>
 
+      {/* Bulk Actions */}
+      {selectedListings.length > 0 && (
+        <Card className="p-4 mb-6 border-l-4 border-blue-500 bg-blue-50">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <p className="text-sm font-medium text-blue-900">
+                {selectedListings.length} listing{selectedListings.length > 1 ? 's' : ''} selected
+              </p>
+              <select
+                value={bulkAction}
+                onChange={(e) => setBulkAction(e.target.value)}
+                className="px-3 py-2 border border-blue-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm"
+              >
+                <option value="">Select action...</option>
+                <option value="update-inventory">Update Inventory</option>
+                <option value="mark-sold">Mark as Sold</option>
+                <option value="archive">Archive</option>
+                <option value="delete">Delete</option>
+              </select>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleBulkAction}
+                disabled={!bulkAction}
+              >
+                <Zap className="h-4 w-4 mr-2" />
+                Apply Action
+              </Button>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setSelectedListings([])}
+            >
+              Clear Selection
+            </Button>
+          </div>
+        </Card>
+      )}
+
       {/* Filters and Search */}
       <Card className="p-6 mb-6">
         <form onSubmit={handleSearch} className="space-y-4">
-          <div className="grid md:grid-cols-3 gap-4">
+          <div className="grid md:grid-cols-4 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Search Listings
@@ -300,28 +775,80 @@ export const ListingManagementPage: React.FC = () => {
               </select>
             </div>
 
-            <div className="flex items-end">
-              <Button type="submit" className="w-full">
-                <Filter className="h-4 w-4 mr-2" />
-                Apply Filters
-              </Button>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Sort By
+              </label>
+              <select
+                value={`${sortBy}-${sortOrder}`}
+                onChange={(e) => {
+                  const [field, order] = e.target.value.split('-');
+                  setSortBy(field as any);
+                  setSortOrder(order as any);
+                }}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
+              >
+                <option value="date-desc">Date (Newest First)</option>
+                <option value="date-asc">Date (Oldest First)</option>
+                <option value="name-asc">Name (A-Z)</option>
+                <option value="name-desc">Name (Z-A)</option>
+                <option value="price-desc">Price (High to Low)</option>
+                <option value="price-asc">Price (Low to High)</option>
+                <option value="quantity-desc">Quantity (High to Low)</option>
+                <option value="quantity-asc">Quantity (Low to High)</option>
+                <option value="status-asc">Status</option>
+              </select>
             </div>
+          </div>
+          
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <label className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={selectedListings.length === listings.length && listings.length > 0}
+                  onChange={handleSelectAll}
+                  className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                />
+                <span className="ml-2 text-sm text-gray-700">Select All</span>
+              </label>
+              {selectedListings.length > 0 && (
+                <span className="text-sm text-gray-600">
+                  {selectedListings.length} selected
+                </span>
+              )}
+            </div>
+            
+            <Button type="submit">
+              <Filter className="h-4 w-4 mr-2" />
+              Apply Filters
+            </Button>
+          </div>
           </div>
         </form>
       </Card>
 
       {/* Listings Grid */}
       <div className="grid gap-6">
-        {listings.map((listing) => (
+        {sortedListings.map((listing) => (
           <Card key={listing.id} className="p-6">
-            <div className="grid lg:grid-cols-4 gap-6">
+            <div className="grid lg:grid-cols-5 gap-6">
+              {/* Selection Checkbox */}
+              <div className="lg:col-span-1 flex items-center">
+                <input
+                  type="checkbox"
+                  checked={selectedListings.includes(listing.id)}
+                  onChange={() => handleSelectListing(listing.id)}
+                  className="rounded border-gray-300 text-primary-600 focus:ring-primary-500 mr-3"
+                />
+                <div className="h-16 w-16 bg-gradient-to-br from-primary-400 to-primary-600 rounded-lg flex items-center justify-center">
+                  <Calendar className="h-8 w-8 text-white" />
+                </div>
+              </div>
+              
               {/* Event Info */}
               <div className="lg:col-span-2">
                 <div className="flex items-start space-x-4">
-                  <div className="h-16 w-16 bg-gradient-to-br from-primary-400 to-primary-600 rounded-lg flex items-center justify-center">
-                    <Calendar className="h-8 w-8 text-white" />
-                  </div>
-                  
                   <div className="flex-1 min-w-0">
                     <h3 className="text-lg font-semibold text-gray-900 truncate">
                       {listing.event.name}
@@ -346,7 +873,15 @@ export const ListingManagementPage: React.FC = () => {
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-gray-500">Quantity:</span>
-                    <span className="font-medium">{listing.quantity}</span>
+                    <div className="flex items-center space-x-2">
+                      <span className="font-medium">{listing.quantity}</span>
+                      {listing.quantity <= 5 && listing.quantity > 0 && (
+                        <AlertTriangle className="h-4 w-4 text-orange-500" title="Low stock" />
+                      )}
+                      {listing.quantity === 0 && (
+                        <AlertCircle className="h-4 w-4 text-red-500" title="Out of stock" />
+                      )}
+                    </div>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-gray-500">Price each:</span>
@@ -396,6 +931,16 @@ export const ListingManagementPage: React.FC = () => {
                       <Edit className="h-4 w-4 mr-2" />
                       Edit
                     </Button>
+                    
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleAdjustInventory(listing.id, listing.quantity)}
+                    >
+                      <Package className="h-4 w-4 mr-2" />
+                      Adjust Qty
+                    </Button>
+                    
                     <Button
                       variant="outline"
                       size="sm"
