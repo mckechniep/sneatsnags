@@ -28,11 +28,13 @@ export interface SellerListing {
   seats: string[];
   notes?: string;
   status: string;
-  ticketFiles: string[];
+  ticketFiles: (string | { filename?: string; url: string })[];
   isVerified: boolean;
   verifiedAt?: string;
   createdAt: string;
   updatedAt: string;
+  views?: number;
+  interested?: number;
   event: {
     id: string;
     name: string;

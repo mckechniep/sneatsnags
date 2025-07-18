@@ -14,9 +14,6 @@ import {
   XCircle,
   Share2,
   Heart,
-  MessageCircle,
-  Phone,
-  Mail,
   Download,
   Eye,
   AlertCircle,
@@ -244,7 +241,7 @@ export const ListingDetailPage: React.FC = () => {
             <p className="text-gray-600 mt-1">Listing Details</p>
           </div>
           <div className="flex items-center space-x-2">
-            {getStatusBadge(listing.status)}
+            {getStatusBadge(listing.status as ListingStatus)}
             {listing.isVerified && (
               <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">
                 <CheckCircle className="h-3 w-3 mr-1" />
@@ -377,9 +374,15 @@ export const ListingDetailPage: React.FC = () => {
                     <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                       <div className="flex items-center">
                         <Download className="h-4 w-4 text-gray-400 mr-2" />
-                        <span className="text-sm font-medium">{file.filename || `Ticket File ${index + 1}`}</span>
+                        <span className="text-sm font-medium">
+                          {typeof file === 'string' ? `Ticket File ${index + 1}` : file.filename || `Ticket File ${index + 1}`}
+                        </span>
                       </div>
-                      <Button size="sm" variant="outline" onClick={() => window.open(file.url, '_blank')}>
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        onClick={() => window.open(typeof file === 'string' ? file : file.url, '_blank')}
+                      >
                         View
                       </Button>
                     </div>

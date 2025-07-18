@@ -12,17 +12,23 @@ export default defineConfig(({ mode }) => ({
     }),
   },
   build: {
-    ...(mode === 'production' && {
-      // Disable minification to avoid potential issues
-      minify: 'esbuild',
-      rollupOptions: {
-        onwarn(warning, warn) {
-          // Suppress specific warnings that might cause build failures
-          if (warning.code === 'UNUSED_EXTERNAL_IMPORT') return
-          if (warning.code === 'CIRCULAR_DEPENDENCY') return
-          warn(warning)
-        },
+    // Add cache busting with hash in filenames
+    rollupOptions: {
+      output: {
+        // Ensure assets have unique hashes for cache busting
+        assetFileNames: 'assets/[name].[hash][extname]',
+        chunkFileNames: 'assets/[name].[hash].js',
+        entryFileNames: 'assets/[name].[hash].js',
       },
+      onwarn(warning, warn) {
+        // Suppress specific warnings that might cause build failures
+        if (warning.code === 'UNUSED_EXTERNAL_IMPORT') return
+        if (warning.code === 'CIRCULAR_DEPENDENCY') return
+        warn(warning)
+      },
+    },
+    ...(mode === 'production' && {
+      minify: 'esbuild',
     }),
   },
 }))
