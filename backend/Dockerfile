@@ -1,70 +1,84 @@
-# Multi-stage build for production
-FROM node:20-alpine AS builder
+# Multi-stage build for production optimization
+FROM node:20-alpine AS base
 
-# Install necessary packages
-RUN apk add --no-cache openssl
+# Install necessary packages and security updates
+RUN apk add --no-cache \
+    openssl \
+    ca-certificates \
+    tzdata \
+    && apk upgrade
+
+# Set timezone
+ENV TZ=UTC
 
 WORKDIR /app
 
 # Copy package files
 COPY package*.json ./
 
-# Install all dependencies (including dev dependencies for build)
-RUN npm ci
+# Builder stage
+FROM base AS builder
 
-# Copy prisma schema
+# Install all dependencies (including dev dependencies for build)
+RUN npm ci --include=dev
+
+# Copy prisma schema and source code
 COPY prisma ./prisma
+COPY src ./src
+COPY tsconfig.json ./
 
 # Generate Prisma client
 RUN npx prisma generate
 
-# Copy source code
-COPY . .
-
 # Build the application
 RUN npm run build
 
-# Production stage
-FROM node:20-alpine AS production
-
-# Install necessary packages
-RUN apk add --no-cache openssl
-
-WORKDIR /app
-
-# Copy package files
-COPY package*.json ./
-
-# Create non-root user first
-RUN addgroup -g 1001 -S nodejs
-RUN adduser -S nodejs -u 1001
+# Production dependencies stage
+FROM base AS deps
 
 # Install only production dependencies
-RUN npm ci --only=production
+RUN npm ci --only=production --no-optional
 
-# Copy built application from builder stage
+# Production stage
+FROM base AS production
+
+# Create non-root user
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nodejs -u 1001
+
+# Copy production dependencies
+COPY --from=deps /app/node_modules ./node_modules
+
+# Copy built application and schemas
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 
-# Create uploads directory
-RUN mkdir -p /app/uploads
+# Copy package.json for npm scripts
+COPY package*.json ./
 
-# Change ownership of the app directory BEFORE switching user
+# Create necessary directories
+RUN mkdir -p /app/uploads /app/logs
+
+# Set proper permissions
 RUN chown -R nodejs:nodejs /app
-RUN chown -R nodejs:nodejs /app/node_modules
 
 # Switch to non-root user
 USER nodejs
 
-# Generate Prisma client for production (as nodejs user)
-RUN npx prisma generate
+# Set production environment
+ENV NODE_ENV=production
+ENV NODE_OPTIONS="--max-old-space-size=1024"
 
-# Expose port (Render uses PORT environment variable)
-EXPOSE 10000
+# Expose port
+EXPOSE ${PORT:-10000}
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:10000/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })"
+# Add health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:${PORT:-10000}/api/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })" || exit 1
 
-# Start the application
-CMD ["sh", "-c", "npx prisma migrate deploy && node dist/index.js"]
+# Graceful shutdown handling
+STOPSIGNAL SIGTERM
+
+# Start script with proper error handling
+CMD ["sh", "-c", "set -e && npx prisma migrate deploy --accept-data-loss && node dist/index.js"]

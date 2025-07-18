@@ -1,0 +1,128 @@
+# Render Deployment Configuration
+# Multi-service deployment for SneatSnags platform
+
+services:
+  # Backend API Service
+  - type: web
+    name: sneatsnags-backend
+    plan: starter # Change to professional for production
+    env: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    region: oregon # Choose your preferred region
+    branch: main
+    rootDir: ./backend
+    buildFilter:
+      paths:
+        - backend/**
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: DATABASE_URL
+        fromDatabase:
+          name: sneatsnags-postgres
+          property: connectionString
+      - key: FRONTEND_URL
+        value: https://sneatsnags.onrender.com
+      - key: CORS_ORIGIN
+        value: https://sneatsnags.onrender.com
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 24h
+      - key: JWT_REFRESH_EXPIRES_IN
+        value: 7d
+      - key: BCRYPT_ROUNDS
+        value: 12
+      - key: STRIPE_SECRET_KEY
+        sync: false # Set manually in Render dashboard
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false # Set manually in Render dashboard
+      - key: SMTP_HOST
+        value: smtp.gmail.com
+      - key: SMTP_PORT
+        value: 587
+      - key: SMTP_USER
+        sync: false # Set manually in Render dashboard
+      - key: SMTP_PASS
+        sync: false # Set manually in Render dashboard
+      - key: FROM_EMAIL
+        sync: false # Set manually in Render dashboard
+      - key: FROM_NAME
+        value: SneatSnags
+      - key: LOG_LEVEL
+        value: info
+      - key: RATE_LIMIT_WINDOW_MS
+        value: 900000
+      - key: RATE_LIMIT_MAX_REQUESTS
+        value: 100
+    healthCheckPath: /api/health
+    startCommand: npm run start:prod
+    buildCommand: npm ci && npm run build
+    
+  # Frontend Static Site
+  - type: web
+    name: sneatsnags-frontend
+    plan: starter # Change to professional for production
+    env: static
+    staticPublishPath: ./dist
+    region: oregon # Choose your preferred region
+    branch: main
+    rootDir: ./frontend
+    buildFilter:
+      paths:
+        - frontend/**
+    buildCommand: npm ci && npm run build:production
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+        status: 200
+    headers:
+      # Static assets caching (1 year)
+      - path: /assets/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+      # HTML files (no cache)
+      - path: /*
+        name: Cache-Control
+        value: no-cache, no-store, must-revalidate
+      - path: /index.html
+        name: Cache-Control
+        value: no-cache, no-store, must-revalidate
+      # Security headers
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+      - path: /*
+        name: X-XSS-Protection
+        value: 1; mode=block
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: VITE_API_BASE_URL
+        value: https://sneatsnags-backend.onrender.com/api
+      - key: VITE_APP_NAME
+        value: SneatSnags
+      - key: VITE_STRIPE_PUBLISHABLE_KEY
+        sync: false # Set manually in Render dashboard
+      - key: VITE_SENTRY_DSN
+        sync: false # Optional: Set for error tracking
+
+# Database Configuration
+databases:
+  - name: sneatsnags-postgres
+    plan: starter # Change to professional for production
+    databaseName: sneatsnags_production
+    user: sneatsnags_user
+    region: oregon # Same region as services
