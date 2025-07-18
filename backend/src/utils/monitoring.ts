@@ -7,7 +7,7 @@ export const performanceMonitoring = (req: Request, res: Response, next: NextFun
   
   // Override res.end to capture response time
   const originalEnd = res.end;
-  res.end = function(chunk?: any, encoding?: any) {
+  res.end = function(chunk?: any, encoding?: any, cb?: () => void) {
     const endTime = Date.now();
     const responseTime = endTime - startTime;
     
@@ -33,7 +33,7 @@ export const performanceMonitoring = (req: Request, res: Response, next: NextFun
     }
     
     // Call original end function
-    originalEnd.call(this, chunk, encoding);
+    return originalEnd.call(this, chunk, encoding, cb);
   };
   
   next();

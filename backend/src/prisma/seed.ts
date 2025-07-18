@@ -310,8 +310,77 @@ async function main() {
     }
   }
 
+  // Create testimonials
+  const testimonials = [
+    {
+      name: "Alex Chen",
+      role: "Event Organizer",
+      company: "Live Nation",
+      content: "AutoMatch revolutionized how I sell tickets. The AI matching increased my sales by 340% in just 3 months.",
+      rating: 5,
+      avatar: "👨‍💼",
+      isVerified: true,
+      isFeatured: true,
+    },
+    {
+      name: "Sarah Rodriguez",
+      role: "Concert Enthusiast",
+      content: "Found front-row seats to a sold-out show at face value! The platform's verification system is incredible.",
+      rating: 5,
+      avatar: "👩‍🎤",
+      isVerified: true,
+      isFeatured: true,
+    },
+    {
+      name: "Mike Johnson",
+      role: "Sports Fan",
+      content: "Last-minute playoff tickets? No problem! Got seats 2 hours before the game. Game-changer for spontaneous fans.",
+      rating: 5,
+      avatar: "⚽",
+      isVerified: true,
+      isFeatured: true,
+    },
+    {
+      name: "Emily Davis",
+      role: "Theater Director",
+      company: "Broadway Productions",
+      content: "The analytics and insights from AutoMatch helped us understand our audience better and optimize our pricing strategy.",
+      rating: 5,
+      avatar: "🎭",
+      isVerified: true,
+      isFeatured: true,
+    },
+    {
+      name: "David Kim",
+      role: "Festival Organizer",
+      company: "City Music Festival",
+      content: "Seamless integration with our existing systems. The automated matching saved us countless hours of manual work.",
+      rating: 5,
+      avatar: "🎵",
+      isVerified: true,
+      isFeatured: true,
+    },
+    {
+      name: "Lisa Thompson",
+      role: "Comedy Club Owner",
+      company: "Laugh Track Comedy",
+      content: "Our ticket sales increased by 280% after implementing AutoMatch. The customer support is also top-notch.",
+      rating: 5,
+      avatar: "😂",
+      isVerified: true,
+      isFeatured: true,
+    },
+  ];
+
+  for (const testimonial of testimonials) {
+    await prisma.testimonial.create({
+      data: testimonial,
+    });
+  }
+
   console.log("✅ Database seed completed successfully!");
   console.log(`📊 Created ${events.length} events with sections`);
+  console.log(`💬 Created ${testimonials.length} testimonials`);
 }
 
 function getSectionsForVenueType(eventType: EventType): string[] {

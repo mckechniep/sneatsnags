@@ -300,6 +300,23 @@ model SupportTicket {
   @@map("support_tickets")
 }
 
+model Testimonial {
+  id          String   @id @default(cuid())
+  name        String
+  role        String
+  company     String?
+  content     String
+  rating      Int      @default(5)
+  avatar      String?
+  isVerified  Boolean  @default(false)
+  isFeatured  Boolean  @default(false)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("testimonials")
+}
+
 // Enums
 enum UserRole {
   BUYER

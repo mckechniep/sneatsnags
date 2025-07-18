@@ -17,6 +17,7 @@ import { transactionRoutes } from "./routes/transaction";
 import { brokerRoutes } from "./routes/broker";
 import { adminRoutes } from "./routes/admin";
 import webhookRoutes from "./routes/webhook";
+import testimonialRoutes from "./routes/testimonial";
 import { setupSwagger } from "./config/swagger";
 
 const app = express();
@@ -74,6 +75,7 @@ app.use("/api/listings", listingRoutes);
 app.use("/api/transactions", transactionRoutes);
 app.use("/api/brokers", brokerRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/testimonials", testimonialRoutes);
 
 //Error handling
 app.use(errorHandler);

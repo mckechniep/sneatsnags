@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { eventService } from "../services/eventService";
+import { testimonialService, type Testimonial } from "../services/testimonialService";
 import type { Event } from "../types/events";
 import {
   Search,
@@ -55,13 +56,14 @@ export const HomePage: React.FC = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [heroSlides, setHeroSlides] = useState<HeroSlide[]>([]);
   const [liveEvents, setLiveEvents] = useState<Event[]>([]);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Fetch events for hero slider and live events
   const fetchEvents = async () => {
     try {
       setLoading(true);
-      console.log("Fetching events...");
+      console.log("Fetching events and testimonials...");
 
       // Fetch hero events (upcoming events)
       const heroResponse = await eventService.getEvents({
@@ -132,6 +134,57 @@ export const HomePage: React.FC = () => {
       const liveEventsData = liveResponse.data || [];
       console.log("Live events data:", liveEventsData);
       setLiveEvents(liveEventsData);
+
+      // Fetch testimonials
+      try {
+        const testimonialsData = await testimonialService.getFeaturedTestimonials();
+        console.log("Testimonials data:", testimonialsData);
+        setTestimonials(testimonialsData);
+      } catch (testimonialError) {
+        console.error("Error fetching testimonials:", testimonialError);
+        // Set fallback testimonials if API fails
+        setTestimonials([
+          {
+            id: '1',
+            name: 'Alex Chen',
+            role: 'Event Organizer',
+            content: 'AutoMatch revolutionized how I sell tickets. The AI matching increased my sales by 340% in just 3 months.',
+            avatar: '👨‍💼',
+            rating: 5,
+            isVerified: true,
+            isFeatured: true,
+            isActive: true,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          },
+          {
+            id: '2',
+            name: 'Sarah Rodriguez',
+            role: 'Concert Enthusiast',
+            content: 'Found front-row seats to a sold-out show at face value! The platform\'s verification system is incredible.',
+            avatar: '👩‍🎤',
+            rating: 5,
+            isVerified: true,
+            isFeatured: true,
+            isActive: true,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          },
+          {
+            id: '3',
+            name: 'Mike Johnson',
+            role: 'Sports Fan',
+            content: 'Last-minute playoff tickets? No problem! Got seats 2 hours before the game. Game-changer for spontaneous fans.',
+            avatar: '⚽',
+            rating: 5,
+            isVerified: true,
+            isFeatured: true,
+            isActive: true,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          }
+        ]);
+      }
     } catch (error) {
       console.error("Error fetching events:", error);
       // Fallback to static slides if API fails
@@ -150,6 +203,7 @@ export const HomePage: React.FC = () => {
         },
       ]);
       setLiveEvents([]);
+      setTestimonials([]);
     } finally {
       setLoading(false);
     }
@@ -197,35 +251,6 @@ export const HomePage: React.FC = () => {
     { number: "24/7", label: "Live Support", icon: Headphones },
   ];
 
-  const testimonials = [
-    {
-      name: "Alex Chen",
-      role: "Event Organizer",
-      content:
-        "AutoMatch revolutionized how I sell tickets. The AI matching increased my sales by 340% in just 3 months.",
-      avatar: "👨‍💼",
-      rating: 5,
-      verified: true,
-    },
-    {
-      name: "Sarah Rodriguez",
-      role: "Concert Enthusiast",
-      content:
-        "Found front-row seats to a sold-out show at face value! The platform's verification system is incredible.",
-      avatar: "👩‍🎤",
-      rating: 5,
-      verified: true,
-    },
-    {
-      name: "Mike Johnson",
-      role: "Sports Fan",
-      content:
-        "Last-minute playoff tickets? No problem! Got seats 2 hours before the game. Game-changer for spontaneous fans.",
-      avatar: "⚽",
-      rating: 5,
-      verified: true,
-    },
-  ];
 
   const organizerFeatures = [
     {
@@ -845,7 +870,7 @@ export const HomePage: React.FC = () => {
                           />
                         ))}
                       </div>
-                      {testimonial.verified && (
+                      {testimonial.isVerified && (
                         <div className="flex items-center px-2 py-1 bg-green-100 rounded-full">
                           <CheckCircle className="h-4 w-4 text-green-600 mr-1" />
                           <span className="text-green-600 text-xs font-medium">
@@ -859,14 +884,14 @@ export const HomePage: React.FC = () => {
                     </p>
                     <div className="flex items-center">
                       <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-2xl mr-4">
-                        {testimonial.avatar}
+                        {testimonial.avatar || '👤'}
                       </div>
                       <div>
                         <div className="font-semibold text-gray-900">
                           {testimonial.name}
                         </div>
                         <div className="text-gray-600 text-sm">
-                          {testimonial.role}
+                          {testimonial.role}{testimonial.company ? ` at ${testimonial.company}` : ''}
                         </div>
                       </div>
                     </div>
