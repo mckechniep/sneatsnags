@@ -26,7 +26,8 @@ RUN npm ci --include=dev
 COPY prisma ./prisma
 COPY src ./src
 COPY tsconfig.json ./
-COPY .eslintrc.js ./
+# Copy ESLint config (handle both root and backend contexts)
+COPY .eslintrc.js ./ 2>/dev/null || COPY backend/.eslintrc.js ./ 2>/dev/null || echo "ESLint config not found"
 
 # Generate Prisma client
 RUN npx prisma generate
