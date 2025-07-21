@@ -215,7 +215,7 @@ export const BuyerDashboard = () => {
           </Card>
         </Grid>
 
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid item xs={12} sm={12} md={4}>
           <Card sx={{ 
             height: '100%',
             background: `linear-gradient(135deg, ${alpha(theme.palette.secondary.main, 0.1)} 0%, ${alpha(theme.palette.secondary.light, 0.05)} 100%)`,
@@ -259,7 +259,7 @@ export const BuyerDashboard = () => {
         borderRadius: 3,
         mb: 4
       }}>
-        <CardContent sx={{ p: 4 }}>
+        <CardContent sx={{ p: { xs: 2, sm: 3, md: 4 } }}>
           <Typography variant="h5" sx={{ fontWeight: 700, mb: 3, color: 'text.primary' }}>
             Getting Started
           </Typography>
@@ -275,17 +275,19 @@ export const BuyerDashboard = () => {
                 transform: 'translateY(-2px)'
               }
             }}>
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <Avatar sx={{ bgcolor: 'primary.main', mr: 2, width: 48, height: 48 }}>
-                  <Typography variant="h6" sx={{ fontWeight: 700 }}>1</Typography>
-                </Avatar>
-                <Box sx={{ flex: 1 }}>
-                  <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>
-                    Browse Events
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Find the events you're interested in
-                  </Typography>
+              <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: { xs: 'stretch', sm: 'center' }, gap: { xs: 2, sm: 0 } }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', flex: 1 }}>
+                  <Avatar sx={{ bgcolor: 'primary.main', mr: 2, width: 48, height: 48 }}>
+                    <Typography variant="h6" sx={{ fontWeight: 700 }}>1</Typography>
+                  </Avatar>
+                  <Box sx={{ flex: 1 }}>
+                    <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>
+                      Browse Events
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      Find the events you're interested in
+                    </Typography>
+                  </Box>
                 </Box>
                 <Button 
                   component={Link} 
@@ -293,6 +295,7 @@ export const BuyerDashboard = () => {
                   variant="primary" 
                   size="sm"
                   endIcon={<ArrowForward />}
+                  sx={{ width: { xs: '100%', sm: 'auto' } }}
                 >
                   Browse Events
                 </Button>
@@ -310,17 +313,19 @@ export const BuyerDashboard = () => {
                 transform: 'translateY(-2px)'
               }
             }}>
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <Avatar sx={{ bgcolor: 'success.main', mr: 2, width: 48, height: 48 }}>
-                  <Typography variant="h6" sx={{ fontWeight: 700 }}>2</Typography>
-                </Avatar>
-                <Box sx={{ flex: 1 }}>
-                  <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>
-                    Search Tickets
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Find tickets that match your criteria
-                  </Typography>
+              <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: { xs: 'stretch', sm: 'center' }, gap: { xs: 2, sm: 0 } }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', flex: 1 }}>
+                  <Avatar sx={{ bgcolor: 'success.main', mr: 2, width: 48, height: 48 }}>
+                    <Typography variant="h6" sx={{ fontWeight: 700 }}>2</Typography>
+                  </Avatar>
+                  <Box sx={{ flex: 1 }}>
+                    <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>
+                      Search Tickets
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      Find tickets that match your criteria
+                    </Typography>
+                  </Box>
                 </Box>
                 <Button 
                   component={Link} 
@@ -328,6 +333,7 @@ export const BuyerDashboard = () => {
                   variant="secondary" 
                   size="sm"
                   endIcon={<ArrowForward />}
+                  sx={{ width: { xs: '100%', sm: 'auto' } }}
                 >
                   Browse Tickets
                 </Button>
@@ -345,17 +351,19 @@ export const BuyerDashboard = () => {
                 transform: 'translateY(-2px)'
               }
             }}>
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <Avatar sx={{ bgcolor: 'secondary.main', mr: 2, width: 48, height: 48 }}>
-                  <Typography variant="h6" sx={{ fontWeight: 700 }}>3</Typography>
-                </Avatar>
-                <Box sx={{ flex: 1 }}>
-                  <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>
-                    Make Offers
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Submit offers on tickets you want to buy
-                  </Typography>
+              <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: { xs: 'stretch', sm: 'center' }, gap: { xs: 2, sm: 0 } }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', flex: 1 }}>
+                  <Avatar sx={{ bgcolor: 'secondary.main', mr: 2, width: 48, height: 48 }}>
+                    <Typography variant="h6" sx={{ fontWeight: 700 }}>3</Typography>
+                  </Avatar>
+                  <Box sx={{ flex: 1 }}>
+                    <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>
+                      Make Offers
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      Submit offers on tickets you want to buy
+                    </Typography>
+                  </Box>
                 </Box>
                 <Button 
                   component={Link} 
@@ -363,6 +371,7 @@ export const BuyerDashboard = () => {
                   variant="outline" 
                   size="sm"
                   endIcon={<ArrowForward />}
+                  sx={{ width: { xs: '100%', sm: 'auto' } }}
                 >
                   Browse Offers
                 </Button>
@@ -379,12 +388,12 @@ export const BuyerDashboard = () => {
         border: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
         borderRadius: 3
       }}>
-        <CardContent sx={{ p: 4 }}>
+        <CardContent sx={{ p: { xs: 2, sm: 3, md: 4 } }}>
           <Typography variant="h5" sx={{ fontWeight: 700, mb: 3, color: 'text.primary' }}>
             Quick Actions
           </Typography>
           <Grid container spacing={3}>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} sm={6} md={6}>
               <Button 
                 component={Link} 
                 to="/listings" 
@@ -403,7 +412,7 @@ export const BuyerDashboard = () => {
                 Browse Tickets
               </Button>
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} sm={6} md={6}>
               <Button 
                 component={Link} 
                 to="/my-offers" 

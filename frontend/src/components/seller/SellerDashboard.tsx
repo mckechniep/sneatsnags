@@ -280,8 +280,8 @@ export const SellerDashboard = () => {
       </Grid>
 
       {/* Main Content Grid */}
-      <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid item xs={12} md={6} lg={4}>
+      <Grid container spacing={{ xs: 2, sm: 3 }} sx={{ mb: 4 }}>
+        <Grid item xs={12} sm={12} md={6} lg={4}>
           <Card sx={{ 
             height: '100%',
             background: `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.8)} 0%, ${alpha(theme.palette.background.default, 0.4)} 100%)`,
@@ -339,7 +339,7 @@ export const SellerDashboard = () => {
           </Card>
         </Grid>
 
-        <Grid item xs={12} md={6} lg={4}>
+        <Grid item xs={12} sm={12} md={6} lg={4}>
           <Card sx={{ 
             height: '100%',
             background: `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.8)} 0%, ${alpha(theme.palette.background.default, 0.4)} 100%)`,
@@ -358,17 +358,19 @@ export const SellerDashboard = () => {
                   border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
                   borderRadius: 2
                 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Avatar sx={{ bgcolor: 'primary.main', mr: 2, width: 32, height: 32 }}>
-                      <Typography variant="body2" sx={{ fontWeight: 700 }}>1</Typography>
-                    </Avatar>
-                    <Box sx={{ flex: 1 }}>
-                      <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-                        Create Your First Listing
-                      </Typography>
-                      <Typography variant="caption" color="text.secondary">
-                        Start selling tickets by creating your first listing
-                      </Typography>
+                  <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: { xs: 'stretch', sm: 'center' }, gap: { xs: 2, sm: 0 } }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', flex: 1 }}>
+                      <Avatar sx={{ bgcolor: 'primary.main', mr: 2, width: 32, height: 32 }}>
+                        <Typography variant="body2" sx={{ fontWeight: 700 }}>1</Typography>
+                      </Avatar>
+                      <Box sx={{ flex: 1 }}>
+                        <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+                          Create Your First Listing
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          Start selling tickets by creating your first listing
+                        </Typography>
+                      </Box>
                     </Box>
                     <Button 
                       component={Link} 
@@ -376,6 +378,7 @@ export const SellerDashboard = () => {
                       variant="primary" 
                       size="xs"
                       endIcon={<ArrowForward />}
+                      sx={{ width: { xs: '100%', sm: 'auto' } }}
                     >
                       Create
                     </Button>
@@ -388,17 +391,19 @@ export const SellerDashboard = () => {
                   border: `1px solid ${alpha(theme.palette.success.main, 0.1)}`,
                   borderRadius: 2
                 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Avatar sx={{ bgcolor: 'success.main', mr: 2, width: 32, height: 32 }}>
-                      <Typography variant="body2" sx={{ fontWeight: 700 }}>2</Typography>
-                    </Avatar>
-                    <Box sx={{ flex: 1 }}>
-                      <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-                        Manage Your Listings
-                      </Typography>
-                      <Typography variant="caption" color="text.secondary">
-                        View and edit your active listings
-                      </Typography>
+                  <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: { xs: 'stretch', sm: 'center' }, gap: { xs: 2, sm: 0 } }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', flex: 1 }}>
+                      <Avatar sx={{ bgcolor: 'success.main', mr: 2, width: 32, height: 32 }}>
+                        <Typography variant="body2" sx={{ fontWeight: 700 }}>2</Typography>
+                      </Avatar>
+                      <Box sx={{ flex: 1 }}>
+                        <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+                          Manage Your Listings
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          View and edit your active listings
+                        </Typography>
+                      </Box>
                     </Box>
                     <Button 
                       component={Link} 
@@ -406,6 +411,7 @@ export const SellerDashboard = () => {
                       variant="secondary" 
                       size="xs"
                       endIcon={<ArrowForward />}
+                      sx={{ width: { xs: '100%', sm: 'auto' } }}
                     >
                       Manage
                     </Button>
@@ -418,17 +424,19 @@ export const SellerDashboard = () => {
                   border: `1px solid ${alpha(theme.palette.secondary.main, 0.1)}`,
                   borderRadius: 2
                 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Avatar sx={{ bgcolor: 'secondary.main', mr: 2, width: 32, height: 32 }}>
-                      <Typography variant="body2" sx={{ fontWeight: 700 }}>3</Typography>
-                    </Avatar>
-                    <Box sx={{ flex: 1 }}>
-                      <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-                        Manage Transactions
-                      </Typography>
-                      <Typography variant="caption" color="text.secondary">
-                        Track sales and deliver tickets to buyers
-                      </Typography>
+                  <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: { xs: 'stretch', sm: 'center' }, gap: { xs: 2, sm: 0 } }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', flex: 1 }}>
+                      <Avatar sx={{ bgcolor: 'secondary.main', mr: 2, width: 32, height: 32 }}>
+                        <Typography variant="body2" sx={{ fontWeight: 700 }}>3</Typography>
+                      </Avatar>
+                      <Box sx={{ flex: 1 }}>
+                        <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+                          Manage Transactions
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          Track sales and deliver tickets to buyers
+                        </Typography>
+                      </Box>
                     </Box>
                     <Button 
                       component={Link} 
@@ -436,6 +444,7 @@ export const SellerDashboard = () => {
                       variant="outline" 
                       size="xs"
                       endIcon={<ArrowForward />}
+                      sx={{ width: { xs: '100%', sm: 'auto' } }}
                     >
                       View
                     </Button>
@@ -446,7 +455,7 @@ export const SellerDashboard = () => {
           </Card>
         </Grid>
 
-        <Grid item xs={12} md={12} lg={4}>
+        <Grid item xs={12} sm={12} md={12} lg={4}>
           <Card sx={{ 
             height: '100%',
             background: `linear-gradient(135deg, ${alpha(theme.palette.info.main, 0.08)} 0%, ${alpha(theme.palette.info.light, 0.04)} 100%)`,
@@ -536,7 +545,7 @@ export const SellerDashboard = () => {
         border: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
         borderRadius: 3
       }}>
-        <CardContent sx={{ p: 4 }}>
+        <CardContent sx={{ p: { xs: 2, sm: 3, md: 4 } }}>
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
             <Avatar sx={{ bgcolor: 'warning.main', mr: 2 }}>
               <Lightbulb />
@@ -545,10 +554,10 @@ export const SellerDashboard = () => {
               Tips for Success
             </Typography>
           </Box>
-          <Grid container spacing={4}>
+          <Grid container spacing={{ xs: 2, sm: 3, md: 4 }}>
             <Grid item xs={12} md={6}>
               <Box sx={{ 
-                p: 3,
+                p: { xs: 2, sm: 3 },
                 background: `linear-gradient(135deg, ${alpha(theme.palette.success.main, 0.08)} 0%, ${alpha(theme.palette.success.light, 0.04)} 100%)`,
                 border: `1px solid ${alpha(theme.palette.success.main, 0.1)}`,
                 borderRadius: 2
@@ -590,8 +599,8 @@ export const SellerDashboard = () => {
             </Grid>
             <Grid item xs={12} md={6}>
               <Box sx={{ 
-                p: 3,
-                background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.08)} 0%, ${alpha(theme.palette.primary.light, 0.04)} 100%)`,
+                p: { xs: 2, sm: 3 },
+                background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.08)} 0%, ${alpha(theme.palette.primary.light, 0.04)} 100%),`
                 border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
                 borderRadius: 2
               }}>
