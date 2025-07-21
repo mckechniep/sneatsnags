@@ -600,7 +600,7 @@ export const SellerDashboard = () => {
             <Grid item xs={12} md={6}>
               <Box sx={{ 
                 p: { xs: 2, sm: 3 },
-                background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.08)} 0%, ${alpha(theme.palette.primary.light, 0.04)} 100%),`
+                background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.08)} 0%, ${alpha(theme.palette.primary.light, 0.04)} 100%)`,
                 border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
                 borderRadius: 2
               }}>
