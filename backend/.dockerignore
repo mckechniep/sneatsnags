@@ -20,7 +20,6 @@ uploads/*
 !uploads/.gitkeep
 *.md
 !README.md
-.eslintrc.js
 .prettierrc
 .github
 Dockerfile
