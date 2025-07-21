@@ -561,7 +561,8 @@ export const HomePage: React.FC = () => {
               </h2>
               <div className="flex justify-center">
                 <p className="text-xl text-gray-600 max-w-3xl text-center">
-                  Join the world's most trusted event marketplace, powering connections between event organizers and attendees globally
+                  Join the world's most trusted event marketplace, powering
+                  connections between event organizers and attendees globally
                 </p>
               </div>
             </div>
@@ -792,7 +793,8 @@ export const HomePage: React.FC = () => {
               </h2>
               <div className="flex justify-center">
                 <p className="text-xl text-gray-600 max-w-2xl text-center">
-                  Discover events tailored to your interests with our curated categories
+                  Discover events tailored to your interests with our curated
+                  categories
                 </p>
               </div>
             </div>
@@ -834,7 +836,8 @@ export const HomePage: React.FC = () => {
               </h2>
               <div className="flex justify-center">
                 <p className="text-xl text-gray-600 max-w-4xl leading-relaxed text-center">
-                  Advanced technology meets seamless user experience to deliver the world's most trusted event marketplace
+                  Advanced technology meets seamless user experience to deliver
+                  the world's most trusted event marketplace
                 </p>
               </div>
             </div>
@@ -1003,7 +1006,8 @@ export const HomePage: React.FC = () => {
               </h2>
               <div className="flex justify-center">
                 <p className="text-lg text-gray-600 mb-12 max-w-2xl leading-relaxed text-center">
-                  Join thousands of satisfied event-goers and organizers who trust AutoMatch for their ticketing needs
+                  Join thousands of satisfied event-goers and organizers who
+                  trust AutoMatch for their ticketing needs
                 </p>
               </div>
             </div>
