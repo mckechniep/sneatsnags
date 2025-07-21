@@ -26,7 +26,30 @@ class ApiClient {
       (config) => {
         const token = localStorage.getItem('accessToken');
         if (token) {
-          config.headers.Authorization = `Bearer ${token}`;
+          // Check if token is expired before making request
+          try {
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            const currentTime = Date.now() / 1000;
+            
+            if (payload.exp <= currentTime) {
+              // Token is expired, clear it and don't add to headers
+              localStorage.removeItem('accessToken');
+              localStorage.removeItem('refreshToken');
+              localStorage.removeItem('user');
+              
+              // Return a rejected promise to trigger 401 handling
+              return Promise.reject({
+                response: { status: 401, data: { message: 'Token expired' } }
+              });
+            }
+            
+            config.headers.Authorization = `Bearer ${token}`;
+          } catch (error) {
+            // Invalid token format, clear and continue without auth
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+            localStorage.removeItem('user');
+          }
         }
         return config;
       },
@@ -55,10 +78,15 @@ class ApiClient {
               return this.client(originalRequest);
             }
           } catch (refreshError) {
-            // Refresh failed, redirect to login
+            // Refresh failed, clear all auth data and redirect to login
             localStorage.removeItem('accessToken');
             localStorage.removeItem('refreshToken');
-            window.location.href = '/login';
+            localStorage.removeItem('user');
+            
+            // If we're not already on the login page, redirect
+            if (window.location.pathname !== '/login') {
+              window.location.href = '/login';
+            }
           }
         }
 

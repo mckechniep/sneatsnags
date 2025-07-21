@@ -208,7 +208,7 @@ export const Header: React.FC = () => {
       }}
     >
       <Box sx={{ p: 2 }}>
-        <LogoText>SneatSnags</LogoText>
+        <LogoText>SeatSnags</LogoText>
       </Box>
       <Divider />
       <List>
@@ -326,7 +326,7 @@ export const Header: React.FC = () => {
                 to="/"
                 sx={{ textDecoration: 'none' }}
               >
-                SneatSnags
+                SeatSnags
               </LogoText>
             </Box>
 

@@ -1,7 +1,7 @@
 {
   "name": "sneatsnags",
   "version": "1.0.0",
-  "description": "SneatSnags - Ticket marketplace platform",
+  "description": "SeatSnags - Ticket marketplace platform",
   "main": "backend/dist/index.js",
   "scripts": {
     "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",

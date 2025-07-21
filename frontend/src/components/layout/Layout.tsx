@@ -2,12 +2,15 @@ import React from 'react';
 import { Box, Container } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { Header } from './Header';
+import { Footer } from './Footer';
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
 const StyledBox = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
   minHeight: '100vh',
   background: 'linear-gradient(135deg, #f8fafc 0%, #e0f2fe 50%, #e8f4fd 100%)',
   paddingTop: theme.spacing(2),
@@ -17,6 +20,7 @@ const StyledBox = styled(Box)(({ theme }) => ({
 }));
 
 const MainContent = styled('main')(({ theme }) => ({
+  flex: 1,
   paddingTop: theme.spacing(10),
   paddingBottom: theme.spacing(4),
   [theme.breakpoints.up('sm')]: {
@@ -39,6 +43,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           {children}
         </Container>
       </MainContent>
+      <Footer />
     </StyledBox>
   );
 };

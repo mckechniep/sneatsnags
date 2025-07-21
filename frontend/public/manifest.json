@@ -1,6 +1,6 @@
 {
-  "name": "SneatSnags - Premium Ticket Marketplace",
-  "short_name": "SneatSnags",
+  "name": "SeatSnags - Premium Ticket Marketplace",
+  "short_name": "SeatSnags",
   "description": "Buy and sell tickets for concerts, sports, theater, and comedy shows. Secure transactions, verified tickets, and unbeatable prices.",
   "start_url": "/",
   "display": "standalone",

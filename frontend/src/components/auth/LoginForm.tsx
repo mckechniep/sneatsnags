@@ -99,43 +99,36 @@ export const LoginForm: React.FC = () => {
   };
 
   return (
-    <Card variant="glass" sx={{ maxWidth: '100%', mx: 'auto' }}>
-      <CardHeader>
-        <Box sx={{ textAlign: 'center', mb: 2 }}>
+    <Box sx={{ p: 4 }}>
+        <Box sx={{ textAlign: 'center', mb: 4 }}>
           <Avatar
             sx={{
-              width: 64,
-              height: 64,
+              width: 56,
+              height: 56,
               mx: 'auto',
-              mb: 2,
-              background: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)',
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+              mb: 3,
+              bgcolor: 'primary.main',
+              boxShadow: 2,
             }}
           >
-            <Ticket size={32} style={{ color: 'white' }} />
+            <Ticket size={28} style={{ color: 'white' }} />
           </Avatar>
           <Typography
             variant="h3"
             component="h1"
             sx={{
-              fontSize: { xs: '1.75rem', sm: '2rem', md: '2.5rem' },
-              fontWeight: 700,
-              background: 'linear-gradient(135deg, #1e293b 0%, #64748b 100%)',
-              backgroundClip: 'text',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
+              fontSize: { xs: '1.75rem', sm: '2rem' },
+              fontWeight: 600,
+              color: 'text.primary',
               mb: 1,
             }}
           >
             Welcome Back
           </Typography>
           <Typography variant="body1" color="text.secondary">
-            Sign in to your SneatSnags account
+            Sign in to your SeatSnags account
           </Typography>
         </Box>
-      </CardHeader>
-
-      <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} aria-label="Login form">
           {apiError && (
             <Alert 
@@ -143,10 +136,6 @@ export const LoginForm: React.FC = () => {
               sx={{ 
                 mb: 3, 
                 borderRadius: 2,
-                backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                '& .MuiAlert-icon': {
-                  color: '#ef4444',
-                }
               }}
             >
               {apiError}
@@ -169,7 +158,7 @@ export const LoginForm: React.FC = () => {
                 input: {
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Mail size={20} color="#64748b" />
+                      <Mail size={20} />
                     </InputAdornment>
                   ),
                 },
@@ -177,42 +166,7 @@ export const LoginForm: React.FC = () => {
               sx={{
                 mb: 2,
                 '& .MuiOutlinedInput-root': {
-                  backgroundColor: 'rgba(255, 255, 255, 0.25)',
-                  backdropFilter: 'blur(10px)',
-                  borderRadius: '12px',
-                  minHeight: '48px',
-                  '& fieldset': {
-                    borderColor: 'rgba(255, 255, 255, 0.3)',
-                  },
-                  '&:hover fieldset': {
-                    borderColor: 'rgba(255, 255, 255, 0.5)',
-                  },
-                  '&.Mui-focused fieldset': {
-                    borderColor: '#2563eb',
-                    borderWidth: '2px',
-                    boxShadow: '0 0 0 3px rgba(37, 99, 235, 0.1)',
-                  },
-                  '&.Mui-error fieldset': {
-                    borderColor: '#ef4444',
-                  },
-                  '&.Mui-error:hover fieldset': {
-                    borderColor: '#ef4444',
-                  },
-                  '&.Mui-error.Mui-focused fieldset': {
-                    borderColor: '#ef4444',
-                    boxShadow: '0 0 0 3px rgba(239, 68, 68, 0.1)',
-                  },
-                },
-                '& .MuiInputLabel-root': {
-                  color: '#64748b',
-                  fontWeight: 500,
-                  '&.Mui-focused': {
-                    color: '#2563eb',
-                    fontWeight: 600,
-                  },
-                  '&.Mui-error': {
-                    color: '#ef4444',
-                  },
+                  borderRadius: 2,
                 },
               }}
             />
@@ -232,7 +186,7 @@ export const LoginForm: React.FC = () => {
                 input: {
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Lock size={20} color="#64748b" />
+                      <Lock size={20} />
                     </InputAdornment>
                   ),
                   endAdornment: (
@@ -251,42 +205,7 @@ export const LoginForm: React.FC = () => {
               }}
               sx={{
                 '& .MuiOutlinedInput-root': {
-                  backgroundColor: 'rgba(255, 255, 255, 0.25)',
-                  backdropFilter: 'blur(10px)',
-                  borderRadius: '12px',
-                  minHeight: '48px',
-                  '& fieldset': {
-                    borderColor: 'rgba(255, 255, 255, 0.3)',
-                  },
-                  '&:hover fieldset': {
-                    borderColor: 'rgba(255, 255, 255, 0.5)',
-                  },
-                  '&.Mui-focused fieldset': {
-                    borderColor: '#2563eb',
-                    borderWidth: '2px',
-                    boxShadow: '0 0 0 3px rgba(37, 99, 235, 0.1)',
-                  },
-                  '&.Mui-error fieldset': {
-                    borderColor: '#ef4444',
-                  },
-                  '&.Mui-error:hover fieldset': {
-                    borderColor: '#ef4444',
-                  },
-                  '&.Mui-error.Mui-focused fieldset': {
-                    borderColor: '#ef4444',
-                    boxShadow: '0 0 0 3px rgba(239, 68, 68, 0.1)',
-                  },
-                },
-                '& .MuiInputLabel-root': {
-                  color: '#64748b',
-                  fontWeight: 500,
-                  '&.Mui-focused': {
-                    color: '#2563eb',
-                    fontWeight: 600,
-                  },
-                  '&.Mui-error': {
-                    color: '#ef4444',
-                  },
+                  borderRadius: 2,
                 },
               }}
             />
@@ -331,7 +250,7 @@ export const LoginForm: React.FC = () => {
 
           <Button
             type="submit"
-            variant="gradient"
+            variant="primary"
             size="lg"
             sx={{ width: '100%', mb: 3 }}
             isLoading={isSubmitting}
@@ -348,7 +267,7 @@ export const LoginForm: React.FC = () => {
           </Button>
 
           <Box sx={{ position: 'relative', mb: 3 }}>
-            <Divider sx={{ color: 'text.secondary', '&::before, &::after': { borderColor: 'rgba(255, 255, 255, 0.2)' } }}>
+            <Divider sx={{ color: 'text.secondary' }}>
               <Typography variant="body2" color="text.secondary" sx={{ px: 2 }}>
                 Or continue with
               </Typography>
@@ -399,28 +318,27 @@ export const LoginForm: React.FC = () => {
             </Button>
           </Box>
         </form>
-      </CardContent>
 
-      <Box sx={{ textAlign: 'center', pt: 2, borderTop: '1px solid rgba(255, 255, 255, 0.2)' }}>
-        <Typography variant="body2" color="text.secondary">
-          Don't have an account?{' '}
-          <Typography
-            component={Link}
-            to="/register"
-            variant="body2"
-            sx={{
-              color: 'primary.main',
-              textDecoration: 'none',
-              fontWeight: 600,
-              '&:hover': {
-                textDecoration: 'underline',
-              },
-            }}
-          >
-            Create one now
+        <Box sx={{ textAlign: 'center', pt: 3, mt: 2, borderTop: 1, borderColor: 'divider' }}>
+          <Typography variant="body2" color="text.secondary">
+            Don't have an account?{' '}
+            <Typography
+              component={Link}
+              to="/register"
+              variant="body2"
+              sx={{
+                color: 'primary.main',
+                textDecoration: 'none',
+                fontWeight: 600,
+                '&:hover': {
+                  textDecoration: 'underline',
+                },
+              }}
+            >
+              Create one now
+            </Typography>
           </Typography>
-        </Typography>
-      </Box>
-    </Card>
+        </Box>
+    </Box>
   );
 };

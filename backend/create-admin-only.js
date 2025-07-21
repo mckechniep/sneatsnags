@@ -8,7 +8,7 @@ async function createAdminOnly() {
     console.log('🔑 Creating admin user...');
     
     // You can customize these values
-    const adminEmail = process.env.ADMIN_EMAIL || 'admin@sneatsnags.com';
+    const adminEmail = process.env.ADMIN_EMAIL || 'admin@seatsnags.com';
     const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
     const adminFirstName = process.env.ADMIN_FIRST_NAME || 'Admin';
     const adminLastName = process.env.ADMIN_LAST_NAME || 'User';
@@ -36,7 +36,7 @@ async function createAdminOnly() {
   } catch (error) {
     if (error.code === 'P2002') {
       console.log('⚠️  Admin user already exists!');
-      console.log(`📧 Email: ${process.env.ADMIN_EMAIL || 'admin@sneatsnags.com'}`);
+      console.log(`📧 Email: ${process.env.ADMIN_EMAIL || 'admin@seatsnags.com'}`);
       console.log('🔑 Use your existing password or reset it through the app');
     } else {
       console.error('❌ Error creating admin user:', error);

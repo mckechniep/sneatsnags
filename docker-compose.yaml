@@ -30,7 +30,7 @@ services:
       - SMTP_USER=samuelgates271@gmail.com
       - SMTP_PASS=swsekwdunecbckh
       - FROM_EMAIL=samuelgates271@gmail.com
-      - FROM_NAME=SneatSnags Platform
+      - FROM_NAME=SeatSnags Platform
 
       # Security Configuration
       - HMAC_VERIFICATION_CODE_SECRET=your-hmac-secret-change-this-in-production

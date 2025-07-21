@@ -34,18 +34,30 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     const initializeAuth = async () => {
       try {
-        const token = authService.getToken();
+        // Get token directly from localStorage to avoid the getToken() logic
+        const token = localStorage.getItem('accessToken');
         const savedUser = authService.getCurrentUser();
 
         if (token && savedUser) {
-          // Verify the token is still valid by fetching current user profile
-          try {
-            const currentUser = await authService.getProfile();
-            setUser(currentUser);
-          } catch (error) {
-            // Token is invalid, clear storage
-            await authService.logout();
+          // Check if token is expired first
+          if (authService.isTokenExpired(token)) {
+            // Token is expired, clear storage manually
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+            localStorage.removeItem('user');
             setUser(null);
+          } else {
+            // Token appears valid, verify with backend
+            try {
+              const currentUser = await authService.getProfile();
+              setUser(currentUser);
+            } catch (error) {
+              // Token is invalid, clear storage manually
+              localStorage.removeItem('accessToken');
+              localStorage.removeItem('refreshToken');
+              localStorage.removeItem('user');
+              setUser(null);
+            }
           }
         } else {
           setUser(null);
@@ -60,6 +72,26 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     initializeAuth();
   }, []);
+
+  // Periodic token validation
+  useEffect(() => {
+    if (!user) return;
+
+    const interval = setInterval(async () => {
+      const token = localStorage.getItem('accessToken');
+      if (token && authService.isTokenExpired(token)) {
+        console.log('Token expired, logging out user');
+        try {
+          await authService.logout();
+          setUser(null);
+        } catch (error) {
+          console.error('Error during automatic logout:', error);
+        }
+      }
+    }, 60000); // Check every minute
+
+    return () => clearInterval(interval);
+  }, [user]);
 
   const login = async (email: string, password: string): Promise<User> => {
     setIsLoading(true);

@@ -82,7 +82,7 @@ export const RegisterForm: React.FC = () => {
         lastName: data.lastName,
         role: data.role,
       });
-      SweetAlert.success('Welcome to SneatSnags!', 'Your account has been created successfully');
+      SweetAlert.success('Welcome to SeatSnags!', 'Your account has been created successfully');
       
       // Navigate to role-specific dashboard
       if (user.role === UserRole.BUYER) {
@@ -109,43 +109,36 @@ export const RegisterForm: React.FC = () => {
   ];
 
   return (
-    <Card variant="glass" sx={{ maxWidth: '100%', mx: 'auto', position: 'relative' }}>
-      <CardHeader>
-        <Box sx={{ textAlign: 'center', mb: 2 }}>
+    <Box sx={{ p: 4 }}>
+        <Box sx={{ textAlign: 'center', mb: 4 }}>
           <Avatar
             sx={{
-              width: 64,
-              height: 64,
+              width: 56,
+              height: 56,
               mx: 'auto',
-              mb: 2,
-              background: 'linear-gradient(135deg, #4CAF50 0%, #2196F3 100%)',
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+              mb: 3,
+              bgcolor: 'primary.main',
+              boxShadow: 2,
             }}
           >
-            <PersonAdd sx={{ fontSize: 32, color: 'white' }} />
+            <PersonAdd sx={{ fontSize: 28, color: 'white' }} />
           </Avatar>
           <Typography
             variant="h3"
             component="h1"
             sx={{
-              fontSize: { xs: '1.75rem', sm: '2rem', md: '2.5rem' },
-              fontWeight: 700,
-              background: 'linear-gradient(135deg, #1e293b 0%, #64748b 100%)',
-              backgroundClip: 'text',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
+              fontSize: { xs: '1.75rem', sm: '2rem' },
+              fontWeight: 600,
+              color: 'text.primary',
               mb: 1,
             }}
           >
-            Join SneatSnags
+            Join SeatSnags
           </Typography>
           <Typography variant="body1" color="text.secondary">
             Create your account and start trading tickets
           </Typography>
         </Box>
-      </CardHeader>
-
-      <CardContent>
         <form onSubmit={handleSubmit(onSubmit)}>
           {apiError && (
             <Alert 
@@ -153,10 +146,6 @@ export const RegisterForm: React.FC = () => {
               sx={{ 
                 mb: 3, 
                 borderRadius: 2,
-                backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                '& .MuiAlert-icon': {
-                  color: '#ef4444',
-                }
               }}
             >
               {apiError}
@@ -175,49 +164,14 @@ export const RegisterForm: React.FC = () => {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <User size={20} color="#64748b" />
+                    <User size={20} />
                   </InputAdornment>
                 ),
               }}
               sx={{
                 mb: 2,
                 '& .MuiOutlinedInput-root': {
-                  backgroundColor: 'rgba(255, 255, 255, 0.25)',
-                  backdropFilter: 'blur(10px)',
-                  borderRadius: '12px',
-                  minHeight: '48px',
-                  '& fieldset': {
-                    borderColor: 'rgba(255, 255, 255, 0.3)',
-                  },
-                  '&:hover fieldset': {
-                    borderColor: 'rgba(255, 255, 255, 0.5)',
-                  },
-                  '&.Mui-focused fieldset': {
-                    borderColor: '#2563eb',
-                    borderWidth: '2px',
-                    boxShadow: '0 0 0 3px rgba(37, 99, 235, 0.1)',
-                  },
-                  '&.Mui-error fieldset': {
-                    borderColor: '#ef4444',
-                  },
-                  '&.Mui-error:hover fieldset': {
-                    borderColor: '#ef4444',
-                  },
-                  '&.Mui-error.Mui-focused fieldset': {
-                    borderColor: '#ef4444',
-                    boxShadow: '0 0 0 3px rgba(239, 68, 68, 0.1)',
-                  },
-                },
-                '& .MuiInputLabel-root': {
-                  color: '#64748b',
-                  fontWeight: 500,
-                  '&.Mui-focused': {
-                    color: '#2563eb',
-                    fontWeight: 600,
-                  },
-                  '&.Mui-error': {
-                    color: '#ef4444',
-                  },
+                  borderRadius: 2,
                 },
               }}
             />
@@ -233,48 +187,13 @@ export const RegisterForm: React.FC = () => {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <User size={20} color="#64748b" />
+                    <User size={20} />
                   </InputAdornment>
                 ),
               }}
               sx={{
                 '& .MuiOutlinedInput-root': {
-                  backgroundColor: 'rgba(255, 255, 255, 0.25)',
-                  backdropFilter: 'blur(10px)',
-                  borderRadius: '12px',
-                  minHeight: '48px',
-                  '& fieldset': {
-                    borderColor: 'rgba(255, 255, 255, 0.3)',
-                  },
-                  '&:hover fieldset': {
-                    borderColor: 'rgba(255, 255, 255, 0.5)',
-                  },
-                  '&.Mui-focused fieldset': {
-                    borderColor: '#2563eb',
-                    borderWidth: '2px',
-                    boxShadow: '0 0 0 3px rgba(37, 99, 235, 0.1)',
-                  },
-                  '&.Mui-error fieldset': {
-                    borderColor: '#ef4444',
-                  },
-                  '&.Mui-error:hover fieldset': {
-                    borderColor: '#ef4444',
-                  },
-                  '&.Mui-error.Mui-focused fieldset': {
-                    borderColor: '#ef4444',
-                    boxShadow: '0 0 0 3px rgba(239, 68, 68, 0.1)',
-                  },
-                },
-                '& .MuiInputLabel-root': {
-                  color: '#64748b',
-                  fontWeight: 500,
-                  '&.Mui-focused': {
-                    color: '#2563eb',
-                    fontWeight: 600,
-                  },
-                  '&.Mui-error': {
-                    color: '#ef4444',
-                  },
+                  borderRadius: 2,
                 },
               }}
             />
@@ -293,48 +212,13 @@ export const RegisterForm: React.FC = () => {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Mail size={20} color="#64748b" />
+                    <Mail size={20} />
                   </InputAdornment>
                 ),
               }}
               sx={{
                 '& .MuiOutlinedInput-root': {
-                  backgroundColor: 'rgba(255, 255, 255, 0.25)',
-                  backdropFilter: 'blur(10px)',
-                  borderRadius: '12px',
-                  minHeight: '48px',
-                  '& fieldset': {
-                    borderColor: 'rgba(255, 255, 255, 0.3)',
-                  },
-                  '&:hover fieldset': {
-                    borderColor: 'rgba(255, 255, 255, 0.5)',
-                  },
-                  '&.Mui-focused fieldset': {
-                    borderColor: '#2563eb',
-                    borderWidth: '2px',
-                    boxShadow: '0 0 0 3px rgba(37, 99, 235, 0.1)',
-                  },
-                  '&.Mui-error fieldset': {
-                    borderColor: '#ef4444',
-                  },
-                  '&.Mui-error:hover fieldset': {
-                    borderColor: '#ef4444',
-                  },
-                  '&.Mui-error.Mui-focused fieldset': {
-                    borderColor: '#ef4444',
-                    boxShadow: '0 0 0 3px rgba(239, 68, 68, 0.1)',
-                  },
-                },
-                '& .MuiInputLabel-root': {
-                  color: '#64748b',
-                  fontWeight: 500,
-                  '&.Mui-focused': {
-                    color: '#2563eb',
-                    fontWeight: 600,
-                  },
-                  '&.Mui-error': {
-                    color: '#ef4444',
-                  },
+                  borderRadius: 2,
                 },
               }}
             />
@@ -426,7 +310,7 @@ export const RegisterForm: React.FC = () => {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Lock size={20} color="#64748b" />
+                    <Lock size={20} />
                   </InputAdornment>
                 ),
                 endAdornment: (
@@ -444,42 +328,7 @@ export const RegisterForm: React.FC = () => {
               sx={{
                 mb: 2,
                 '& .MuiOutlinedInput-root': {
-                  backgroundColor: 'rgba(255, 255, 255, 0.25)',
-                  backdropFilter: 'blur(10px)',
-                  borderRadius: '12px',
-                  minHeight: '48px',
-                  '& fieldset': {
-                    borderColor: 'rgba(255, 255, 255, 0.3)',
-                  },
-                  '&:hover fieldset': {
-                    borderColor: 'rgba(255, 255, 255, 0.5)',
-                  },
-                  '&.Mui-focused fieldset': {
-                    borderColor: '#2563eb',
-                    borderWidth: '2px',
-                    boxShadow: '0 0 0 3px rgba(37, 99, 235, 0.1)',
-                  },
-                  '&.Mui-error fieldset': {
-                    borderColor: '#ef4444',
-                  },
-                  '&.Mui-error:hover fieldset': {
-                    borderColor: '#ef4444',
-                  },
-                  '&.Mui-error.Mui-focused fieldset': {
-                    borderColor: '#ef4444',
-                    boxShadow: '0 0 0 3px rgba(239, 68, 68, 0.1)',
-                  },
-                },
-                '& .MuiInputLabel-root': {
-                  color: '#64748b',
-                  fontWeight: 500,
-                  '&.Mui-focused': {
-                    color: '#2563eb',
-                    fontWeight: 600,
-                  },
-                  '&.Mui-error': {
-                    color: '#ef4444',
-                  },
+                  borderRadius: 2,
                 },
               }}
             />
@@ -496,7 +345,7 @@ export const RegisterForm: React.FC = () => {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Lock size={20} color="#64748b" />
+                    <Lock size={20} />
                   </InputAdornment>
                 ),
                 endAdornment: (
@@ -513,42 +362,7 @@ export const RegisterForm: React.FC = () => {
               }}
               sx={{
                 '& .MuiOutlinedInput-root': {
-                  backgroundColor: 'rgba(255, 255, 255, 0.25)',
-                  backdropFilter: 'blur(10px)',
-                  borderRadius: '12px',
-                  minHeight: '48px',
-                  '& fieldset': {
-                    borderColor: 'rgba(255, 255, 255, 0.3)',
-                  },
-                  '&:hover fieldset': {
-                    borderColor: 'rgba(255, 255, 255, 0.5)',
-                  },
-                  '&.Mui-focused fieldset': {
-                    borderColor: '#2563eb',
-                    borderWidth: '2px',
-                    boxShadow: '0 0 0 3px rgba(37, 99, 235, 0.1)',
-                  },
-                  '&.Mui-error fieldset': {
-                    borderColor: '#ef4444',
-                  },
-                  '&.Mui-error:hover fieldset': {
-                    borderColor: '#ef4444',
-                  },
-                  '&.Mui-error.Mui-focused fieldset': {
-                    borderColor: '#ef4444',
-                    boxShadow: '0 0 0 3px rgba(239, 68, 68, 0.1)',
-                  },
-                },
-                '& .MuiInputLabel-root': {
-                  color: '#64748b',
-                  fontWeight: 500,
-                  '&.Mui-focused': {
-                    color: '#2563eb',
-                    fontWeight: 600,
-                  },
-                  '&.Mui-error': {
-                    color: '#ef4444',
-                  },
+                  borderRadius: 2,
                 },
               }}
             />
@@ -613,7 +427,7 @@ export const RegisterForm: React.FC = () => {
 
           <Button
             type="submit"
-            variant="gradient"
+            variant="primary"
             size="lg"
             sx={{ width: '100%' }}
             isLoading={isSubmitting}
@@ -628,28 +442,27 @@ export const RegisterForm: React.FC = () => {
             )}
           </Button>
         </form>
-      </CardContent>
 
-      <Box sx={{ textAlign: 'center', pt: 2, borderTop: '1px solid rgba(255, 255, 255, 0.2)' }}>
-        <Typography variant="body2" color="text.secondary">
-          Already have an account?{' '}
-          <Typography
-            component={Link}
-            to="/login"
-            variant="body2"
-            sx={{
-              color: 'primary.main',
-              textDecoration: 'none',
-              fontWeight: 600,
-              '&:hover': {
-                textDecoration: 'underline',
-              },
-            }}
-          >
-            Sign in here
+        <Box sx={{ textAlign: 'center', pt: 3, mt: 2, borderTop: 1, borderColor: 'divider' }}>
+          <Typography variant="body2" color="text.secondary">
+            Already have an account?{' '}
+            <Typography
+              component={Link}
+              to="/login"
+              variant="body2"
+              sx={{
+                color: 'primary.main',
+                textDecoration: 'none',
+                fontWeight: 600,
+                '&:hover': {
+                  textDecoration: 'underline',
+                },
+              }}
+            >
+              Sign in here
+            </Typography>
           </Typography>
-        </Typography>
-      </Box>
-    </Card>
+        </Box>
+    </Box>
   );
 };

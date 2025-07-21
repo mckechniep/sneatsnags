@@ -1,4 +1,4 @@
-# SneatSnags - Ticket Marketplace Platform
+# SeatSnags - Ticket Marketplace Platform
 
 A comprehensive reverse marketplace for ticket resales where buyers post offers and sellers accept them. Built with modern technologies and integrated with Stripe for secure payment processing.
 
@@ -468,7 +468,7 @@ npm run test:coverage
 
 ## 📄 License
 
-This project is proprietary software for SneatSnags Platform.
+This project is proprietary software for SeatSnags Platform.
 
 ---
 

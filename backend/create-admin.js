@@ -11,7 +11,7 @@ async function createAdmin() {
     
     const adminUser = await prisma.user.create({
       data: {
-        email: 'admin@sneatsnags.com',
+        email: 'admin@seatsnags.com',
         password: adminPassword,
         firstName: 'Admin',
         lastName: 'User',
@@ -22,7 +22,7 @@ async function createAdmin() {
     });
 
     console.log('✅ Admin user created successfully!');
-    console.log('📧 Email: admin@sneatsnags.com');
+    console.log('📧 Email: admin@seatsnags.com');
     console.log('🔑 Password: admin123');
     console.log('🎯 Role: ADMIN');
     
@@ -30,7 +30,7 @@ async function createAdmin() {
     const buyerPassword = await bcrypt.hash('buyer123', 12);
     await prisma.user.create({
       data: {
-        email: 'buyer@sneatsnags.com',
+        email: 'buyer@seatsnags.com',
         password: buyerPassword,
         firstName: 'John',
         lastName: 'Buyer',
@@ -43,7 +43,7 @@ async function createAdmin() {
     const sellerPassword = await bcrypt.hash('seller123', 12);
     await prisma.user.create({
       data: {
-        email: 'seller@sneatsnags.com',
+        email: 'seller@seatsnags.com',
         password: sellerPassword,
         firstName: 'Jane',
         lastName: 'Seller',
@@ -54,13 +54,13 @@ async function createAdmin() {
     });
 
     console.log('✅ Sample users also created:');
-    console.log('🛒 Buyer: buyer@sneatsnags.com / buyer123');
-    console.log('💰 Seller: seller@sneatsnags.com / seller123');
+    console.log('🛒 Buyer: buyer@seatsnags.com / buyer123');
+    console.log('💰 Seller: seller@seatsnags.com / seller123');
     
   } catch (error) {
     if (error.code === 'P2002') {
       console.log('⚠️  Admin user already exists!');
-      console.log('📧 Email: admin@sneatsnags.com');
+      console.log('📧 Email: admin@seatsnags.com');
       console.log('🔑 Password: admin123');
     } else {
       console.error('❌ Error creating admin user:', error);

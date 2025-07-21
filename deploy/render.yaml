@@ -1,5 +1,5 @@
 # Render Deployment Configuration
-# Multi-service deployment for SneatSnags platform
+# Multi-service deployment for SeatSnags platform
 
 services:
   # Backend API Service
@@ -53,7 +53,7 @@ services:
       - key: FROM_EMAIL
         sync: false # Set manually in Render dashboard
       - key: FROM_NAME
-        value: SneatSnags
+        value: SeatSnags
       - key: LOG_LEVEL
         value: info
       - key: RATE_LIMIT_WINDOW_MS
@@ -113,7 +113,7 @@ services:
       - key: VITE_API_BASE_URL
         value: https://sneatsnags-backend.onrender.com/api
       - key: VITE_APP_NAME
-        value: SneatSnags
+        value: SeatSnags
       - key: VITE_STRIPE_PUBLISHABLE_KEY
         sync: false # Set manually in Render dashboard
       - key: VITE_SENTRY_DSN
