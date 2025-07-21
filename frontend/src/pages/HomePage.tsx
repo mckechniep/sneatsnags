@@ -231,7 +231,7 @@ export const HomePage: React.FC = () => {
         const testimonialsData =
           await testimonialService.getFeaturedTestimonials();
         console.log("Testimonials data:", testimonialsData);
-        setTestimonials(testimonialsData);
+        setTestimonials(testimonialsData || []);
       } catch (testimonialError) {
         console.error("Error fetching testimonials:", testimonialError);
         // Set fallback testimonials if API fails
@@ -1013,7 +1013,7 @@ export const HomePage: React.FC = () => {
             </div>
 
             <div className="grid md:grid-cols-3 gap-8">
-              {testimonials.map((testimonial, index) => (
+              {testimonials?.map((testimonial, index) => (
                 <Card
                   key={index}
                   variant="elevated"
