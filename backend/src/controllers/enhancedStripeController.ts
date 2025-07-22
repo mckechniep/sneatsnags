@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
 import { enhancedStripeService } from '../services/enhancedStripeService';
 import { logger } from '../utils/logger';
-import { AuthRequest } from '../types/auth';
+import { AuthenticatedRequest } from '../types/auth';
 
 export class EnhancedStripeController {
-  async createPaymentIntent(req: AuthRequest, res: Response) {
+  async createPaymentIntent(req: AuthenticatedRequest, res: Response) {
     try {
       const { amount, listingId, sellerId } = req.body;
       const buyerId = req.user!.id;
@@ -43,7 +43,7 @@ export class EnhancedStripeController {
     }
   }
 
-  async setupSellerAccount(req: AuthRequest, res: Response) {
+  async setupSellerAccount(req: AuthenticatedRequest, res: Response) {
     try {
       const {
         businessType = 'individual',
@@ -93,7 +93,7 @@ export class EnhancedStripeController {
     }
   }
 
-  async createRefund(req: AuthRequest, res: Response) {
+  async createRefund(req: AuthenticatedRequest, res: Response) {
     try {
       const { transactionId, reason } = req.body;
 
@@ -118,7 +118,7 @@ export class EnhancedStripeController {
     }
   }
 
-  async getAccountBalance(req: AuthRequest, res: Response) {
+  async getAccountBalance(req: AuthenticatedRequest, res: Response) {
     try {
       const user = req.user!;
       

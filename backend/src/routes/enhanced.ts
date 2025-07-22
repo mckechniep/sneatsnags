@@ -1,33 +1,33 @@
 import { Router } from 'express';
 import { enhancedStripeController } from '../controllers/enhancedStripeController';
 import { autoMatchController } from '../controllers/autoMatchController';
-import { auth } from '../middleware/auth';
-import { validate } from '../middleware/validate';
+import { authenticate } from '../middlewares/auth';
+import { validateBody } from '../middlewares/validation';
 import { body, param, query } from 'express-validator';
 
 const router = Router();
 
 // Enhanced Stripe Routes
 router.post('/stripe/payment-intent',
-  auth,
+  authenticate,
   [
     body('amount').isNumeric().withMessage('Amount must be a number'),
     body('listingId').isUUID().withMessage('Valid listing ID required'),
     body('sellerId').isUUID().withMessage('Valid seller ID required'),
   ],
-  validate,
+  validateBody,
   enhancedStripeController.createPaymentIntent
 );
 
 router.post('/stripe/seller-account',
-  auth,
+  authenticate,
   [
     body('businessType').optional().isIn(['individual', 'company']),
     body('country').optional().isLength({ min: 2, max: 2 }),
     body('returnUrl').optional().isURL(),
     body('refreshUrl').optional().isURL(),
   ],
-  validate,
+  validateBody,
   enhancedStripeController.setupSellerAccount
 );
 
@@ -36,17 +36,17 @@ router.post('/stripe/webhook',
 );
 
 router.post('/stripe/refund',
-  auth,
+  authenticate,
   [
     body('transactionId').isUUID().withMessage('Valid transaction ID required'),
     body('reason').optional().isString(),
   ],
-  validate,
+  validateBody,
   enhancedStripeController.createRefund
 );
 
 router.get('/stripe/balance',
-  auth,
+  authenticate,
   enhancedStripeController.getAccountBalance
 );
 
@@ -54,13 +54,13 @@ router.get('/stripe/fees',
   [
     query('amount').isNumeric().withMessage('Amount must be a number'),
   ],
-  validate,
+  validateBody,
   enhancedStripeController.calculateFees
 );
 
 // AutoMatch Engine Routes
 router.post('/automatch/find',
-  auth,
+  authenticate,
   [
     body('maxPrice').isNumeric().withMessage('Max price must be a number'),
     body('minPrice').optional().isNumeric().withMessage('Min price must be a number'),
@@ -69,12 +69,12 @@ router.post('/automatch/find',
     body('eventId').optional().isUUID().withMessage('Valid event ID required'),
     body('preferredSections').optional().isArray(),
   ],
-  validate,
+  validateBody,
   autoMatchController.findMatches
 );
 
 router.post('/automatch/preferences',
-  auth,
+  authenticate,
   [
     body('maxPrice').isNumeric().withMessage('Max price must be a number'),
     body('minPrice').optional().isNumeric(),
@@ -86,81 +86,81 @@ router.post('/automatch/preferences',
     body('instantBuyEnabled').optional().isBoolean(),
     body('notificationEnabled').optional().isBoolean(),
   ],
-  validate,
+  validateBody,
   autoMatchController.createBuyerPreferences
 );
 
 router.get('/automatch/preferences',
-  auth,
+  authenticate,
   autoMatchController.getBuyerPreferences
 );
 
 router.put('/automatch/preferences/:id',
-  auth,
+  authenticate,
   [
     param('id').isUUID().withMessage('Valid preference ID required'),
   ],
-  validate,
+  validateBody,
   autoMatchController.updateBuyerPreferences
 );
 
 router.delete('/automatch/preferences/:id',
-  auth,
+  authenticate,
   [
     param('id').isUUID().withMessage('Valid preference ID required'),
   ],
-  validate,
+  validateBody,
   autoMatchController.deleteBuyerPreferences
 );
 
 router.get('/automatch/history',
-  auth,
+  authenticate,
   [
     query('page').optional().isInt({ min: 1 }),
     query('limit').optional().isInt({ min: 1, max: 100 }),
   ],
-  validate,
+  validateBody,
   autoMatchController.getMatchHistory
 );
 
 router.put('/automatch/matches/:matchId/view',
-  auth,
+  authenticate,
   [
     param('matchId').isUUID().withMessage('Valid match ID required'),
   ],
-  validate,
+  validateBody,
   autoMatchController.markMatchViewed
 );
 
 // Price Alert Routes
 router.post('/automatch/price-alerts',
-  auth,
+  authenticate,
   [
     body('eventId').isUUID().withMessage('Valid event ID required'),
     body('targetPrice').isNumeric().withMessage('Target price must be a number'),
     body('sectionId').optional().isUUID(),
   ],
-  validate,
+  validateBody,
   autoMatchController.createPriceAlert
 );
 
 router.get('/automatch/price-alerts',
-  auth,
+  authenticate,
   autoMatchController.getPriceAlerts
 );
 
 router.delete('/automatch/price-alerts/:alertId',
-  auth,
+  authenticate,
   [
     param('alertId').isUUID().withMessage('Valid alert ID required'),
   ],
-  validate,
+  validateBody,
   autoMatchController.deleteAlert
 );
 
 // Admin Routes
 router.post('/automatch/trigger-matching',
-  auth,
+  authenticate,
   autoMatchController.triggerMatching
 );
 

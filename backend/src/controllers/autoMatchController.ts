@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
 import { autoMatchEngine, BuyerPreferences } from '../services/autoMatchEngine';
 import { logger } from '../utils/logger';
-import { AuthRequest } from '../types/auth';
+import { AuthenticatedRequest } from '../types/auth';
 import { prisma } from '../utils/prisma';
 
 export class AutoMatchController {
-  async findMatches(req: AuthRequest, res: Response) {
+  async findMatches(req: AuthenticatedRequest, res: Response) {
     try {
       const userId = req.user!.id;
       const {
@@ -49,7 +49,7 @@ export class AutoMatchController {
     }
   }
 
-  async createBuyerPreferences(req: AuthRequest, res: Response) {
+  async createBuyerPreferences(req: AuthenticatedRequest, res: Response) {
     try {
       const userId = req.user!.id;
       const preferences = { ...req.body, userId };
@@ -63,7 +63,7 @@ export class AutoMatchController {
     }
   }
 
-  async getBuyerPreferences(req: AuthRequest, res: Response) {
+  async getBuyerPreferences(req: AuthenticatedRequest, res: Response) {
     try {
       const userId = req.user!.id;
 
@@ -89,7 +89,7 @@ export class AutoMatchController {
     }
   }
 
-  async updateBuyerPreferences(req: AuthRequest, res: Response) {
+  async updateBuyerPreferences(req: AuthenticatedRequest, res: Response) {
     try {
       const userId = req.user!.id;
       const { id } = req.params;
@@ -121,7 +121,7 @@ export class AutoMatchController {
     }
   }
 
-  async deleteBuyerPreferences(req: AuthRequest, res: Response) {
+  async deleteBuyerPreferences(req: AuthenticatedRequest, res: Response) {
     try {
       const userId = req.user!.id;
       const { id } = req.params;
@@ -144,7 +144,7 @@ export class AutoMatchController {
     }
   }
 
-  async getMatchHistory(req: AuthRequest, res: Response) {
+  async getMatchHistory(req: AuthenticatedRequest, res: Response) {
     try {
       const userId = req.user!.id;
       const { page = 1, limit = 20 } = req.query;
@@ -201,7 +201,7 @@ export class AutoMatchController {
     }
   }
 
-  async markMatchViewed(req: AuthRequest, res: Response) {
+  async markMatchViewed(req: AuthenticatedRequest, res: Response) {
     try {
       const userId = req.user!.id;
       const { matchId } = req.params;
@@ -212,8 +212,7 @@ export class AutoMatchController {
           buyerId: userId 
         },
         data: { 
-          viewed: true,
-          updatedAt: new Date(),
+          isViewed: true,
         },
       });
 
@@ -228,12 +227,12 @@ export class AutoMatchController {
     }
   }
 
-  async createPriceAlert(req: AuthRequest, res: Response) {
+  async createPriceAlert(req: AuthenticatedRequest, res: Response) {
     try {
       const userId = req.user!.id;
-      const { eventId, sectionId, targetPrice } = req.body;
+      const { eventId, sectionId, maxPrice } = req.body;
 
-      if (!eventId || !targetPrice || targetPrice <= 0) {
+      if (!eventId || !maxPrice || maxPrice <= 0) {
         return res.status(400).json({ 
           error: 'Event ID and valid target price are required' 
         });
@@ -260,7 +259,7 @@ export class AutoMatchController {
           userId,
           eventId,
           sectionId,
-          targetPrice,
+          maxPrice,
         },
       });
 
@@ -271,7 +270,7 @@ export class AutoMatchController {
     }
   }
 
-  async getPriceAlerts(req: AuthRequest, res: Response) {
+  async getPriceAlerts(req: AuthenticatedRequest, res: Response) {
     try {
       const userId = req.user!.id;
 
@@ -301,7 +300,7 @@ export class AutoMatchController {
     }
   }
 
-  async deleteAlert(req: AuthRequest, res: Response) {
+  async deleteAlert(req: AuthenticatedRequest, res: Response) {
     try {
       const userId = req.user!.id;
       const { alertId } = req.params;
@@ -325,7 +324,7 @@ export class AutoMatchController {
   }
 
   // Admin endpoint to trigger manual matching
-  async triggerMatching(req: AuthRequest, res: Response) {
+  async triggerMatching(req: AuthenticatedRequest, res: Response) {
     try {
       // Only allow admin users to trigger manual matching
       if (req.user?.role !== 'ADMIN') {

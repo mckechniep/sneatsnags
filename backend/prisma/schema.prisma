@@ -51,6 +51,8 @@ model User {
   preferences       UserPreferences?
   buyerPreferences  BuyerPreference[]
   notificationPreferences NotificationPreference?
+  matchResults      MatchResult[]
+  priceAlerts       PriceAlert[]
 
   @@map("users")
 }
@@ -105,6 +107,8 @@ model Event {
   listings        Listing[]
   transactions    Transaction[]
   buyerPreferences BuyerPreference[]
+  matchResults    MatchResult[]
+  priceAlerts     PriceAlert[]
 
   @@map("events")
 }
@@ -122,6 +126,7 @@ model Section {
   event       Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
   offerSections OfferSection[]
   listings    Listing[]
+  priceAlerts PriceAlert[]
 
   @@map("sections")
 }
@@ -192,6 +197,7 @@ model Listing {
   event           Event         @relation(fields: [eventId], references: [id])
   section         Section       @relation(fields: [sectionId], references: [id])
   transactions    Transaction[]
+  matchResults    MatchResult[]
 
   @@map("listings")
 }
@@ -321,6 +327,49 @@ model NotificationPreference {
   user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("notification_preferences")
+}
+
+model MatchResult {
+  id          String   @id @default(cuid())
+  buyerId     String
+  sellerId    String
+  eventId     String
+  listingId   String
+  matchScore  Float
+  confidence  String   // LOW, MEDIUM, HIGH
+  reasons     String[] @default([])
+  price       Decimal  @db.Decimal(10,2)
+  quantity    Int      @default(1)
+  isViewed    Boolean  @default(false)
+  isAccepted  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relationships
+  buyer       User     @relation(fields: [buyerId], references: [id], onDelete: Cascade)
+  event       Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  listing     Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@map("match_results")
+}
+
+model PriceAlert {
+  id          String   @id @default(cuid())
+  userId      String
+  eventId     String
+  sectionId   String?
+  maxPrice    Decimal  @db.Decimal(10,2)
+  isActive    Boolean  @default(true)
+  lastTriggered DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relationships
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event       Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  section     Section? @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+
+  @@map("price_alerts")
 }
 
 model SupportTicket {
