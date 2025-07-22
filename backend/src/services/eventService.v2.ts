@@ -1,24 +1,16 @@
 import { prisma } from "../utils/prisma";
 import { logger } from "../utils/logger";
 import { 
-  CreateEventRequest, 
+  CreateEventRequest,
   UpdateEventRequest, 
-  EventSearchQuery,
-  CreateSectionRequest,
-  UpdateSectionRequest,
-  BulkEventOperation,
-  EventStatsQuery
+  EventSearchQuery
 } from "../validations/eventValidation";
 import {
-  EventError,
   EventNotFoundError,
   EventAlreadyExistsError,
-  EventDatabaseError,
   EventBusinessLogicError,
   EventCapacityError,
   EventDateConflictError,
-  EventTransactionError,
-  toEventError,
   handleEventError,
 } from "../errors/eventErrors";
 import { Prisma } from "@prisma/client";
@@ -78,8 +70,6 @@ export interface EventStatsDTO {
 export class EventServiceV2 {
   private readonly MAX_SECTIONS_PER_EVENT = 50;
   private readonly MAX_EVENTS_PER_VENUE_PER_DAY = 10;
-  private readonly MIN_EVENT_DURATION_HOURS = 1;
-  private readonly MAX_EVENT_DURATION_HOURS = 24;
 
   /**
    * Creates a new event with full transaction support and rollback capability
@@ -146,7 +136,7 @@ export class EventServiceV2 {
         );
 
         // Validate total capacity consistency
-        const totalSectionCapacity = sections.reduce((sum, section) => 
+        const totalSectionCapacity = sections.reduce((sum: number, section: any) => 
           sum + (section.seatCount || 0), 0
         );
 

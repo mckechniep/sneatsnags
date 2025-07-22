@@ -28,8 +28,14 @@ model User {
   resetPasswordExpires DateTime?
   stripeCustomerId  String?
   stripeAccountId   String? // For sellers using Stripe Connect
+  stripeConnectedAccountId String? // Connected account ID for sellers
+  stripeAccountStatus String? // Status of Stripe account  
   profileImage      String?
   isActive          Boolean  @default(true)
+  // Seller-specific fields
+  rating            Float?   @default(0.0) 
+  totalSales        Int      @default(0)
+  memberSince       DateTime @default(now())
   lastLoginAt       DateTime?
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
@@ -37,11 +43,14 @@ model User {
   // Relationships
   buyerOffers       Offer[]
   sellerListings    Listing[]
-  transactions      Transaction[]
+  buyerTransactions Transaction[] @relation(name: "BuyerTransactions")
+  sellerTransactions Transaction[] @relation(name: "SellerTransactions")
   brokerIntegrations BrokerIntegration[]
   notifications     Notification[]
   supportTickets    SupportTicket[]
   preferences       UserPreferences?
+  buyerPreferences  BuyerPreference[]
+  notificationPreferences NotificationPreference?
 
   @@map("users")
 }
@@ -95,6 +104,7 @@ model Event {
   offers          Offer[]
   listings        Listing[]
   transactions    Transaction[]
+  buyerPreferences BuyerPreference[]
 
   @@map("events")
 }
@@ -163,6 +173,7 @@ model Listing {
   seats           String[]      // Array of seat numbers
   price           Decimal       @db.Decimal(10,2)
   quantity        Int           @default(1)
+  availableQuantity Int         @default(1) // Available quantity for sale
   notes           String?
   status          ListingStatus @default(AVAILABLE)
   sourceType      SourceType    @default(MANUAL)
@@ -194,6 +205,7 @@ model Transaction {
   eventId               String
   quantity              Int               @default(1) // Add quantity field
   amount                Decimal           @db.Decimal(10,2)
+  buyerAmount           Decimal           @db.Decimal(10,2) // Amount buyer pays including fees
   platformFee           Decimal           @db.Decimal(10,2)
   sellerAmount          Decimal           @db.Decimal(10,2)
   stripePaymentIntent   String?
@@ -213,7 +225,8 @@ model Transaction {
   updatedAt             DateTime          @updatedAt
 
   // Relationships
-  buyer                 User              @relation(fields: [buyerId], references: [id])
+  buyer                 User              @relation(fields: [buyerId], references: [id], name: "BuyerTransactions")
+  seller                User              @relation(fields: [sellerId], references: [id], name: "SellerTransactions")
   event                 Event             @relation(fields: [eventId], references: [id])
   offer                 Offer             @relation(fields: [offerId], references: [id])
   listing               Listing           @relation(fields: [listingId], references: [id])
@@ -273,12 +286,41 @@ model Notification {
   data        Json?              // Additional notification data
   isRead      Boolean            @default(false)
   readAt      DateTime?
+  deliveredAt DateTime?          // When notification was delivered
+  emailSentAt DateTime?          // When email was sent
   createdAt   DateTime           @default(now())
+  expiresAt   DateTime?          // When notification expires
 
   // Relationships
   user        User               @relation(fields: [userId], references: [id])
 
   @@map("notifications")
+}
+
+model NotificationPreference {
+  id                    String   @id @default(cuid())
+  userId                String   @unique
+  emailEnabled          Boolean  @default(true)
+  smsEnabled            Boolean  @default(false)
+  pushEnabled           Boolean  @default(true)
+  inAppEnabled          Boolean  @default(true)
+  offerNotifications    Boolean  @default(true)
+  paymentNotifications  Boolean  @default(true)
+  marketingNotifications Boolean @default(false)
+  autoMatchNotifications Boolean @default(true)
+  priceAlerts           Boolean  @default(true)
+  eventReminders        Boolean  @default(true)
+  weeklyReports         Boolean  @default(true)
+  quietHoursStart       String?  // Format: "HH:MM"
+  quietHoursEnd         String?
+  timezone              String?  @default("UTC")
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  // Relationships
+  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notification_preferences")
 }
 
 model SupportTicket {
@@ -315,6 +357,33 @@ model Testimonial {
   updatedAt   DateTime @updatedAt
 
   @@map("testimonials")
+}
+
+model BuyerPreference {
+  id                   String   @id @default(cuid())
+  userId               String   
+  eventId              String?
+  maxPrice             Float
+  minPrice             Float?
+  maxQuantity          Int
+  minQuantity          Int?
+  preferredSections    String[] @default([])
+  keywords             String[] @default([])
+  eventDate            DateTime?
+  venue                String?
+  category             String?
+  instantBuyEnabled    Boolean  @default(false)
+  notificationEnabled  Boolean  @default(true)
+  isActive             Boolean  @default(true)
+  lastMatchRun         DateTime?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  // Relationships
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event                Event?   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@map("buyer_preferences")
 }
 
 // Enums
@@ -394,12 +463,26 @@ enum SyncType {
 
 enum NotificationType {
   OFFER_ACCEPTED
+  OFFER_REJECTED
   OFFER_EXPIRED
+  OFFER_COUNTER
   PAYMENT_RECEIVED
+  PAYMENT_FAILED
   TICKET_DELIVERED
+  TICKET_SOLD
+  LISTING_EXPIRED
+  LISTING_FEATURED
+  AUTOMATCH_FOUND
+  PRICE_ALERT
+  EVENT_REMINDER
   SYSTEM_ALERT
   INVENTORY_LOW
   INVENTORY_OUT_OF_STOCK
+  ACCOUNT_VERIFIED
+  SECURITY_ALERT
+  PROMOTION
+  WEEKLY_REPORT
+  MONTHLY_REPORT
 }
 
 enum TicketStatus {
