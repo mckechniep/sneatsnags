@@ -440,6 +440,7 @@ enum UserRole {
   BUYER
   SELLER
   ADMIN
+  BROKER
 }
 
 enum EventType {
