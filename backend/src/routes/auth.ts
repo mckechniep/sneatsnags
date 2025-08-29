@@ -43,7 +43,7 @@ const router = Router();
  *                 type: string
  *               role:
  *                 type: string
- *                 enum: [BUYER, SELLER, BROKER]
+ *                 enum: [BUYER, SELLER]
  *     responses:
  *       201:
  *         description: User registered successfully

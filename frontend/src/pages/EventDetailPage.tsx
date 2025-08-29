@@ -165,236 +165,288 @@ export const EventDetailPage: React.FC = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* Header */}
-      <div className="mb-6">
-        <Button 
-          variant="ghost" 
-          onClick={() => navigate('/events')}
-          className="mb-4"
-        >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Events
-        </Button>
-      </div>
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Header */}
+        <div className="mb-8">
+          <Button 
+            variant="ghost" 
+            onClick={() => navigate('/events')}
+            className="mb-6 text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50 transition-colors"
+          >
+            <ArrowLeft className="h-5 w-5 mr-2" />
+            Back to Events
+          </Button>
+        </div>
 
-      <div className="grid lg:grid-cols-3 gap-8">
-        {/* Main Content */}
-        <div className="lg:col-span-2">
-          {/* Event Image */}
-          <div className="relative mb-6">
-            {event.imageUrl ? (
-              <img
-                src={event.imageUrl}
-                alt={event.name}
-                className="w-full h-96 object-cover rounded-lg shadow-md"
-              />
-            ) : (
-              <div className="w-full h-96 bg-gradient-to-br from-primary-400 to-primary-600 rounded-lg flex items-center justify-center">
-                <Calendar className="h-24 w-24 text-white" />
+        <div className="grid lg:grid-cols-3 gap-12">
+          {/* Main Content */}
+          <div className="lg:col-span-2 space-y-8">
+            {/* Event Hero Section */}
+            <div className="bg-white rounded-2xl shadow-lg overflow-hidden border">
+              <div className="relative">
+                {event.imageUrl ? (
+                  <img
+                    src={event.imageUrl}
+                    alt={event.name}
+                    className="w-full h-96 object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-96 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center">
+                    <Calendar className="h-24 w-24 text-white opacity-80" />
+                  </div>
+                )}
+                
+                {/* Category Badge */}
+                <div className="absolute top-6 right-6">
+                  <span className="bg-black/70 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg">
+                    {event.category}
+                  </span>
+                </div>
+                
+                {/* Gradient Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent"></div>
               </div>
-            )}
-            
-            {/* Category Badge */}
-            <div className="absolute top-4 right-4">
-              <span className="bg-primary-600 text-white px-3 py-1 rounded-full text-sm font-medium">
-                {event.category}
-              </span>
-            </div>
-          </div>
-
-          {/* Event Details */}
-          <div className="space-y-6">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">{event.name}</h1>
-              <p className="text-lg text-gray-600">{event.description}</p>
+              
+              <div className="p-8">
+                <h1 className="text-4xl font-bold text-gray-900 mb-4">{event.name}</h1>
+                <p className="text-lg text-gray-600 leading-relaxed">{event.description}</p>
+              </div>
             </div>
 
-            {/* Event Info */}
-            <div className="grid md:grid-cols-2 gap-6">
-              <Card className="p-6">
-                <h3 className="text-lg font-semibold mb-4">Event Information</h3>
-                <div className="space-y-3">
-                  <div className="flex items-center text-gray-600">
-                    <Calendar className="h-5 w-5 mr-3" />
-                    <span>{formatDate(event.date)}</span>
+            {/* Event Details Cards */}
+            <div className="grid md:grid-cols-2 gap-8">
+              <div className="bg-white rounded-2xl shadow-lg p-8 border">
+                <div className="flex items-center mb-6">
+                  <div className="bg-indigo-100 p-3 rounded-xl">
+                    <Calendar className="h-6 w-6 text-indigo-600" />
                   </div>
-                  <div className="flex items-center text-gray-600">
-                    <Clock className="h-5 w-5 mr-3" />
-                    <span>{formatTime(event.time || event.date)}</span>
+                  <h3 className="text-xl font-semibold ml-4 text-gray-900">Event Information</h3>
+                </div>
+                <div className="space-y-6">
+                  <div className="flex items-start">
+                    <Calendar className="h-5 w-5 text-indigo-500 mr-4 mt-1" />
+                    <div>
+                      <div className="font-semibold text-gray-900">{formatDate(event.eventDate)}</div>
+                      <div className="text-sm text-gray-600">Event Date</div>
+                    </div>
                   </div>
-                  <div className="flex items-center text-gray-600">
-                    <MapPin className="h-5 w-5 mr-3" />
-                    <span>{event.venue}, {event.city}, {event.state}</span>
+                  <div className="flex items-start">
+                    <Clock className="h-5 w-5 text-indigo-500 mr-4 mt-1" />
+                    <div>
+                      <div className="font-semibold text-gray-900">{formatTime(event.eventDate)}</div>
+                      <div className="text-sm text-gray-600">Start Time</div>
+                    </div>
                   </div>
-                  <div className="flex items-center text-gray-600">
-                    <Users className="h-5 w-5 mr-3" />
-                    <span>{event.totalCapacity.toLocaleString()} total capacity</span>
+                  <div className="flex items-start">
+                    <MapPin className="h-5 w-5 text-indigo-500 mr-4 mt-1" />
+                    <div>
+                      <div className="font-semibold text-gray-900">{event.venue}</div>
+                      <div className="text-sm text-gray-600">{event.city}, {event.state}</div>
+                    </div>
+                  </div>
+                  <div className="flex items-start">
+                    <Users className="h-5 w-5 text-indigo-500 mr-4 mt-1" />
+                    <div>
+                      <div className="font-semibold text-gray-900">{event.totalSeats?.toLocaleString() || 'N/A'}</div>
+                      <div className="text-sm text-gray-600">Total Capacity</div>
+                    </div>
                   </div>
                 </div>
-              </Card>
+              </div>
 
-              <Card className="p-6">
-                <h3 className="text-lg font-semibold mb-4">Pricing</h3>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-600">Price Range:</span>
-                    <span className="font-semibold">
-                      {formatPrice(event.minPrice)} - {formatPrice(event.maxPrice)}
-                    </span>
+              <div className="bg-white rounded-2xl shadow-lg p-8 border">
+                <div className="flex items-center mb-6">
+                  <div className="bg-green-100 p-3 rounded-xl">
+                    <Plus className="h-6 w-6 text-green-600" />
                   </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-600">Tickets Available:</span>
-                    <span className="font-semibold text-green-600">
-                      {event.ticketsAvailable.toLocaleString()}
-                    </span>
+                  <h3 className="text-xl font-semibold ml-4 text-gray-900">Pricing & Availability</h3>
+                </div>
+                <div className="space-y-6">
+                  <div className="bg-gradient-to-r from-indigo-50 to-purple-50 p-6 rounded-xl">
+                    <div className="text-center">
+                      <div className="text-sm text-gray-600 mb-1">Price Range</div>
+                      <div className="text-2xl font-bold text-indigo-600">
+                        {formatPrice(event.minPrice || 0)} - {formatPrice(event.maxPrice || 0)}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between py-4 px-6 bg-green-50 rounded-xl">
+                    <div>
+                      <div className="font-semibold text-gray-900">Available Tickets</div>
+                      <div className="text-sm text-gray-600">Ready for offers</div>
+                    </div>
+                    <div className="text-2xl font-bold text-green-600">
+                      {event.availableSeats?.toLocaleString() || 'N/A'}
+                    </div>
                   </div>
                 </div>
-              </Card>
+              </div>
             </div>
 
-            {/* Sections */}
+            {/* Available Sections */}
             {sections.length > 0 && (
-              <Card className="p-6">
-                <h3 className="text-lg font-semibold mb-4">Available Sections</h3>
-                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="bg-white rounded-2xl shadow-lg p-8 border">
+                <div className="flex items-center mb-6">
+                  <div className="bg-purple-100 p-3 rounded-xl">
+                    <Users className="h-6 w-6 text-purple-600" />
+                  </div>
+                  <h3 className="text-xl font-semibold ml-4 text-gray-900">Available Sections</h3>
+                </div>
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
                   {sections.map((section) => (
                     <div
                       key={section.id}
-                      className="border border-gray-200 rounded-lg p-4 hover:border-primary-300 transition-colors"
+                      className="group border-2 border-gray-200 rounded-xl p-6 hover:border-indigo-300 hover:shadow-lg transition-all duration-200 bg-gradient-to-br from-white to-gray-50"
                     >
-                      <h4 className="font-medium text-gray-900 mb-1">{section.name}</h4>
+                      <h4 className="font-bold text-gray-900 mb-2 text-lg group-hover:text-indigo-600 transition-colors">{section.name}</h4>
                       {section.description && (
-                        <p className="text-sm text-gray-600 mb-2">{section.description}</p>
+                        <p className="text-sm text-gray-600 mb-4 leading-relaxed">{section.description}</p>
                       )}
-                      <div className="text-sm">
-                        <div className="flex justify-between">
-                          <span className="text-gray-500">Capacity:</span>
-                          <span>{section.capacity.toLocaleString()}</span>
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm font-medium text-gray-500">Capacity</span>
+                          <span className="font-semibold text-gray-900">{section.seatCount?.toLocaleString() || 'N/A'}</span>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-500">Price:</span>
-                          <span className="font-medium">
-                            {formatPrice(section.minPrice)} - {formatPrice(section.maxPrice)}
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm font-medium text-gray-500">Price Range</span>
+                          <span className="font-bold text-indigo-600">
+                            ${section.priceLevel || 'N/A'}
                           </span>
                         </div>
                       </div>
                     </div>
                   ))}
                 </div>
-              </Card>
+              </div>
             )}
           </div>
-        </div>
 
-        {/* Sidebar */}
-        <div className="space-y-6">
-          {/* Action Card */}
-          <Card className="p-6">
-            <div className="space-y-4">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-primary-600 mb-1">
-                  From {formatPrice(event.minPrice)}
+          {/* Sidebar */}
+          <div className="space-y-8">
+            {/* Main Action Card */}
+            <div className="bg-white rounded-2xl shadow-xl p-8 border-2 border-indigo-100">
+              <div className="space-y-6">
+                {/* Price Display */}
+                <div className="text-center bg-gradient-to-r from-indigo-50 to-purple-50 p-6 rounded-xl">
+                  <div className="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-2">Starting From</div>
+                  <div className="text-4xl font-bold text-indigo-600 mb-2">
+                    {formatPrice(event.minPrice || 0)}
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    {event.availableSeats || 'N/A'} tickets available
+                  </div>
                 </div>
-                <div className="text-sm text-gray-500">
-                  {event.ticketsAvailable} tickets available
+
+                {/* Action Buttons */}
+                {user && user.role === UserRole.BUYER && (
+                  <Button 
+                    onClick={handleMakeOffer} 
+                    className="w-full py-4 text-lg font-semibold bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+                    size="lg"
+                  >
+                    <Plus className="h-6 w-6 mr-3" />
+                    Make an Offer
+                  </Button>
+                )}
+
+                {!user && (
+                  <div className="space-y-4">
+                    <Link to="/login" className="block">
+                      <Button className="w-full py-4 text-lg font-semibold bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 rounded-xl" size="lg">
+                        Sign In to Make Offer
+                      </Button>
+                    </Link>
+                    <Link to="/register" className="block">
+                      <Button variant="outline" className="w-full py-4 text-lg font-semibold border-2 border-indigo-200 text-indigo-600 hover:bg-indigo-50 rounded-xl">
+                        Create Account
+                      </Button>
+                    </Link>
+                  </div>
+                )}
+
+                {/* Secondary Actions */}
+                <div className="flex space-x-4 pt-4 border-t border-gray-200">
+                  <Button
+                    variant="outline"
+                    onClick={handleToggleFavorite}
+                    className="flex-1 py-3 font-semibold border-2 hover:shadow-md transition-all duration-200"
+                  >
+                    <Heart 
+                      className={`h-5 w-5 mr-2 ${isFavorite ? 'fill-current text-red-500' : ''}`} 
+                    />
+                    {isFavorite ? 'Saved' : 'Save'}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={handleShare}
+                    className="flex-1 py-3 font-semibold border-2 hover:shadow-md transition-all duration-200"
+                  >
+                    <Share2 className="h-5 w-5 mr-2" />
+                    Share
+                  </Button>
                 </div>
               </div>
+            </div>
 
-              {user && user.role === UserRole.BUYER && (
-                <Button 
-                  onClick={handleMakeOffer} 
-                  className="w-full"
-                  size="lg"
-                >
-                  <Plus className="h-5 w-5 mr-2" />
-                  Make an Offer
-                </Button>
-              )}
-
-              {!user && (
-                <div className="space-y-2">
-                  <Link to="/login" className="block">
-                    <Button className="w-full" size="lg">
-                      Sign In to Make Offer
-                    </Button>
-                  </Link>
-                  <Link to="/register" className="block">
-                    <Button variant="outline" className="w-full">
-                      Create Account
-                    </Button>
-                  </Link>
+            {/* Venue Information */}
+            <div className="bg-white rounded-2xl shadow-lg p-8 border">
+              <div className="flex items-center mb-6">
+                <div className="bg-blue-100 p-3 rounded-xl">
+                  <MapPin className="h-6 w-6 text-blue-600" />
                 </div>
-              )}
-
-              <div className="flex space-x-2">
+                <h3 className="text-xl font-semibold ml-4 text-gray-900">Venue Details</h3>
+              </div>
+              <div className="space-y-6">
+                <div>
+                  <h4 className="font-bold text-lg text-gray-900 mb-2">{event.venue}</h4>
+                  <p className="text-gray-600 leading-relaxed">
+                    {event.address}<br />
+                    {event.city}, {event.state} {event.zipCode}
+                  </p>
+                </div>
                 <Button
                   variant="outline"
-                  onClick={handleToggleFavorite}
-                  className="flex-1"
+                  className="w-full py-3 font-semibold border-2 border-blue-200 text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-200"
+                  onClick={() => {
+                    const query = encodeURIComponent(`${event.venue} ${event.address} ${event.city} ${event.state}`);
+                    window.open(`https://maps.google.com/?q=${query}`, '_blank');
+                  }}
                 >
-                  <Heart 
-                    className={`h-4 w-4 mr-2 ${isFavorite ? 'fill-current text-red-500' : ''}`} 
-                  />
-                  {isFavorite ? 'Saved' : 'Save'}
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={handleShare}
-                  className="flex-1"
-                >
-                  <Share2 className="h-4 w-4 mr-2" />
-                  Share
+                  <ExternalLink className="h-5 w-5 mr-2" />
+                  View on Maps
                 </Button>
               </div>
             </div>
-          </Card>
 
-          {/* Venue Info */}
-          <Card className="p-6">
-            <h3 className="text-lg font-semibold mb-4">Venue Details</h3>
-            <div className="space-y-3">
-              <div>
-                <h4 className="font-medium text-gray-900">{event.venue}</h4>
-                <p className="text-sm text-gray-600">
-                  {event.address}<br />
-                  {event.city}, {event.state}
-                </p>
+            {/* Event Status */}
+            <div className="bg-white rounded-2xl shadow-lg p-8 border">
+              <div className="flex items-center mb-6">
+                <div className="bg-yellow-100 p-3 rounded-xl">
+                  <Clock className="h-6 w-6 text-yellow-600" />
+                </div>
+                <h3 className="text-xl font-semibold ml-4 text-gray-900">Event Status</h3>
               </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  const query = encodeURIComponent(`${event.venue} ${event.address} ${event.city} ${event.state}`);
-                  window.open(`https://maps.google.com/?q=${query}`, '_blank');
-                }}
-              >
-                <ExternalLink className="h-4 w-4 mr-2" />
-                View on Maps
-              </Button>
-            </div>
-          </Card>
-
-          {/* Additional Info */}
-          <Card className="p-6">
-            <h3 className="text-lg font-semibold mb-4">Additional Information</h3>
-            <div className="space-y-2 text-sm text-gray-600">
-              <div className="flex justify-between">
-                <span>Event Status:</span>
-                <span className={`font-medium ${event.isActive ? 'text-green-600' : 'text-red-600'}`}>
-                  {event.isActive ? 'Active' : 'Inactive'}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span>Listed:</span>
-                <span>{new Date(event.createdAt).toLocaleDateString()}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Last Updated:</span>
-                <span>{new Date(event.updatedAt).toLocaleDateString()}</span>
+              <div className="space-y-4">
+                <div className="flex justify-between items-center py-3 px-4 bg-gray-50 rounded-xl">
+                  <span className="font-medium text-gray-700">Status</span>
+                  <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                    event.status === 'ACTIVE' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                  }`}>
+                    {event.status || 'Active'}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center py-3 px-4 bg-gray-50 rounded-xl">
+                  <span className="font-medium text-gray-700">Listed</span>
+                  <span className="text-gray-900">{new Date(event.createdAt).toLocaleDateString()}</span>
+                </div>
+                <div className="flex justify-between items-center py-3 px-4 bg-gray-50 rounded-xl">
+                  <span className="font-medium text-gray-700">Updated</span>
+                  <span className="text-gray-900">{new Date(event.updatedAt).toLocaleDateString()}</span>
+                </div>
               </div>
             </div>
-          </Card>
+          </div>
         </div>
       </div>
     </div>

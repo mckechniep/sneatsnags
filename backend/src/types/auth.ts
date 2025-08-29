@@ -6,7 +6,7 @@ export interface RegisterRequest {
   firstName: string;
   lastName: string;
   phone?: string;
-  role?: "BUYER" | "SELLER" | "BROKER" | "ADMIN";
+  role?: "BUYER" | "SELLER" | "ADMIN";
 }
 
 export interface LoginRequest {

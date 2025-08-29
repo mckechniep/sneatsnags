@@ -35,7 +35,7 @@ const router = Router();
  *           type: string
  *         role:
  *           type: string
- *           enum: [BUYER, SELLER, BROKER, ADMIN]
+ *           enum: [BUYER, SELLER, ADMIN]
  *         isEmailVerified:
  *           type: boolean
  *         profileImage:

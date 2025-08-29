@@ -8,7 +8,6 @@ export interface AdminDashboardStats {
     total: number;
     buyers: number;
     sellers: number;
-    brokers: number;
     activeThisMonth: number;
   };
   events: {

@@ -14,7 +14,6 @@ import { eventRoutes } from "./routes/event";
 import { offerRoutes } from "./routes/offer";
 import { listingRoutes } from "./routes/listing";
 import { transactionRoutes } from "./routes/transaction";
-import { brokerRoutes } from "./routes/broker";
 import { adminRoutes } from "./routes/admin";
 import webhookRoutes from "./routes/webhook";
 import testimonialRoutes from "./routes/testimonial";
@@ -73,7 +72,6 @@ app.use("/api/events", eventRoutes);
 app.use("/api/offers", offerRoutes);
 app.use("/api/listings", listingRoutes);
 app.use("/api/transactions", transactionRoutes);
-app.use("/api/brokers", brokerRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/testimonials", testimonialRoutes);
 

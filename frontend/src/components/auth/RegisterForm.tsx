@@ -34,7 +34,7 @@ const registerSchema = z.object({
   email: z.string().email('Invalid email address'),
   password: z.string().min(8, 'Password must be at least 8 characters'),
   confirmPassword: z.string(),
-  role: z.enum(['BUYER', 'SELLER', 'BROKER']),
+  role: z.enum(['BUYER', 'SELLER']),
   agreeToTerms: z.boolean().refine(val => val, 'You must agree to the terms'),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
@@ -105,7 +105,6 @@ export const RegisterForm: React.FC = () => {
   const roleOptions = [
     { value: UserRole.BUYER, label: 'Buyer', desc: 'I want to buy tickets', icon: '🎫' },
     { value: UserRole.SELLER, label: 'Seller', desc: 'I want to sell tickets', icon: '💰' },
-    { value: UserRole.BROKER, label: 'Broker', desc: 'I\'m a ticket broker', icon: '🤝' },
   ];
 
   return (

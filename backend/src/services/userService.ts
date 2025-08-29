@@ -135,7 +135,6 @@ export class UserService {
 
     if (
       user.role === "SELLER" ||
-      user.role === "BROKER" ||
       user.role === "ADMIN"
     ) {
       stats.seller = {
@@ -155,7 +154,7 @@ export class UserService {
       };
     }
 
-    if (user.role === "BROKER" || user.role === "ADMIN") {
+    if (user.role === "SELLER" || user.role === "ADMIN") {
       stats.broker = {
         integrations: await prisma.brokerIntegration.count({
           where: { userId, isActive: true },

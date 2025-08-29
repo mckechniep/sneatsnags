@@ -45,7 +45,7 @@ router.get("/dashboard", adminController.getDashboard);
  *         name: role
  *         schema:
  *           type: string
- *           enum: [BUYER, SELLER, BROKER, ADMIN]
+ *           enum: [BUYER, SELLER, ADMIN]
  *       - in: query
  *         name: isActive
  *         schema:

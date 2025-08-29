@@ -342,7 +342,7 @@ function App() {
                     <Route
                       path="/profile"
                       element={
-                        <ProtectedRoute requiredRoles={[UserRole.BUYER, UserRole.SELLER, UserRole.BROKER, UserRole.ADMIN]}>
+                        <ProtectedRoute requiredRoles={[UserRole.BUYER, UserRole.SELLER, UserRole.ADMIN]}>
                           <Profile />
                         </ProtectedRoute>
                       }

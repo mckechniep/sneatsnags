@@ -17,7 +17,6 @@ export interface User {
 export const UserRole = {
   BUYER: 'BUYER',
   SELLER: 'SELLER',
-  BROKER: 'BROKER',
   ADMIN: 'ADMIN'
 } as const;
 

@@ -6,7 +6,7 @@ export const registerSchema = z.object({
   firstName: z.string().min(1, "First name is required").transform((val: string) => val.trim()),
   lastName: z.string().min(1, "Last name is required").transform((val: string) => val.trim()),
   phone: z.string().optional().nullable().transform((val: string | null | undefined) => val?.trim() || undefined),
-  role: z.enum(["BUYER", "SELLER", "BROKER", "ADMIN"]).optional(),
+  role: z.enum(["BUYER", "SELLER", "ADMIN"]).optional(),
 });
 
 export const loginSchema = z.object({
@@ -40,7 +40,7 @@ export const updateProfileSchema = z.object({
 
 export const updateRoleSchema = z.object({
   userId: z.string(),
-  role: z.enum(["BUYER", "SELLER", "BROKER", "ADMIN"]),
+  role: z.enum(["BUYER", "SELLER", "ADMIN"]),
 });
 export const createOfferSchema = z.object({
   eventId: z.string(),

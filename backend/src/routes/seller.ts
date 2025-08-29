@@ -317,4 +317,19 @@ router.post("/transactions/:transactionId/deliver", sellerController.markTickets
  */
 router.get("/offers", sellerController.getAvailableOffers);
 
+// Broker Integration Routes
+router.get("/integrations", sellerController.getBrokerIntegrations);
+router.get("/integrations/:id", sellerController.getBrokerIntegrationById);
+router.post("/integrations", sellerController.createBrokerIntegration);
+router.put("/integrations/:id", sellerController.updateBrokerIntegration);
+router.delete("/integrations/:id", sellerController.deleteBrokerIntegration);
+router.post("/integrations/:id/test", sellerController.testBrokerConnection);
+router.post("/integrations/:id/sync", sellerController.triggerSync);
+router.get("/integrations/:id/logs", sellerController.getSyncLogs);
+router.get("/integrations/:id/stats", sellerController.getSyncStats);
+router.put("/integrations/:id/schedule", sellerController.updateSyncSchedule);
+router.put("/integrations/:id/toggle", sellerController.toggleIntegrationStatus);
+router.get("/integration-types", sellerController.getSupportedTypes);
+router.post("/validate-credentials", sellerController.validateCredentials);
+
 export { router as sellerRoutes };

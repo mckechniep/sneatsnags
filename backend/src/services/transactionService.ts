@@ -472,6 +472,7 @@ export class TransactionService {
           listingId: data.listingId,
           eventId: offer.eventId,
           amount: totalAmount,
+          buyerAmount: totalAmount,
           platformFee,
           sellerAmount,
           quantity: quantityToPurchase,

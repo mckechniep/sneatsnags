@@ -1,7 +1,6 @@
 import { useAuth } from '../../hooks/useAuth';
 import { BuyerProfile } from './BuyerProfile';
 import { SellerProfile } from './SellerProfile';
-import { BrokerProfile } from './BrokerProfile';
 import { AdminProfile } from './AdminProfile';
 import { UserRole } from '../../types/auth';
 
@@ -24,8 +23,6 @@ export const Profile = () => {
       return <BuyerProfile />;
     case UserRole.SELLER:
       return <SellerProfile />;
-    case UserRole.BROKER:
-      return <BrokerProfile />;
     case UserRole.ADMIN:
       return <AdminProfile />;
     default:

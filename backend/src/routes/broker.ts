@@ -45,11 +45,11 @@ router.get("/types", brokerController.getSupportedTypes);
  *       200:
  *         description: Credentials validated successfully
  */
-router.post("/validate-credentials", authenticate, validateRole([UserRole.BROKER, UserRole.SELLER, UserRole.ADMIN]), brokerController.validateCredentials);
+router.post("/validate-credentials", authenticate, validateRole([UserRole.SELLER, UserRole.ADMIN]), brokerController.validateCredentials);
 
 // All other broker routes require authentication and appropriate roles
 router.use(authenticate);
-router.use(validateRole([UserRole.BROKER, UserRole.SELLER, UserRole.ADMIN]));
+router.use(validateRole([UserRole.SELLER, UserRole.ADMIN]));
 
 /**
  * @swagger

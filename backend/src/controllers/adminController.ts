@@ -19,7 +19,6 @@ export const adminController = {
           prisma.user.count(),
           prisma.user.count({ where: { role: 'BUYER' } }),
           prisma.user.count({ where: { role: 'SELLER' } }),
-          prisma.user.count({ where: { role: 'BROKER' } }),
           prisma.user.count({
             where: {
               createdAt: {
@@ -68,8 +67,7 @@ export const adminController = {
           total: userStats[0],
           buyers: userStats[1],
           sellers: userStats[2],
-          brokers: userStats[3],
-          activeThisMonth: userStats[4],
+          activeThisMonth: userStats[3],
         },
         events: {
           total: eventStats[0],
