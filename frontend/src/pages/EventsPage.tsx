@@ -102,76 +102,278 @@ export const EventsPage: React.FC = () => {
 
   if (loading && events.length === 0) {
     return (
-      <div className="min-h-screen bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="animate-pulse">
-            {/* Header Skeleton */}
-            <div className="text-center mb-12">
-              <div className="h-12 bg-gray-200 rounded w-1/3 mx-auto mb-4"></div>
-              <div className="h-6 bg-gray-200 rounded w-1/2 mx-auto mb-8"></div>
-              <div className="bg-white rounded-2xl shadow-lg p-8 border">
-                <div className="h-16 bg-gray-200 rounded-xl"></div>
-              </div>
-            </div>
-            
-            {/* Events Grid Skeleton */}
-            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {[...Array(8)].map((_, i) => (
-                <div key={i} className="bg-white rounded-2xl shadow-md overflow-hidden">
-                  <div className="h-56 bg-gray-200"></div>
-                  <div className="p-6 space-y-4">
-                    <div className="h-6 bg-gray-200 rounded"></div>
-                    <div className="space-y-2">
-                      <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                      <div className="h-4 bg-gray-200 rounded w-2/3"></div>
-                    </div>
-                    <div className="h-12 bg-gray-200 rounded-xl"></div>
-                  </div>
-                </div>
-              ))}
+      <div style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+        padding: '32px 20px'
+      }}>
+        <div style={{
+          maxWidth: '1400px',
+          margin: '0 auto'
+        }}>
+          {/* Header Skeleton */}
+          <div style={{ 
+            textAlign: 'center', 
+            marginBottom: '48px' 
+          }}>
+            <div style={{
+              height: '48px',
+              background: 'linear-gradient(90deg, #f1f5f9, #e2e8f0, #f1f5f9)',
+              backgroundSize: '200% 100%',
+              animation: 'shimmer 2s infinite',
+              borderRadius: '12px',
+              width: '33%',
+              margin: '0 auto 16px',
+            }} />
+            <div style={{
+              height: '24px',
+              background: 'linear-gradient(90deg, #f1f5f9, #e2e8f0, #f1f5f9)',
+              backgroundSize: '200% 100%',
+              animation: 'shimmer 2s infinite',
+              borderRadius: '12px',
+              width: '50%',
+              margin: '0 auto 32px',
+            }} />
+            <div style={{
+              background: 'linear-gradient(135deg, #ffffff 0%, #fafbfc 100%)',
+              borderRadius: '20px',
+              padding: '32px',
+              boxShadow: '0 10px 25px rgba(0, 0, 0, 0.08)',
+              border: '1px solid rgba(255, 255, 255, 0.5)'
+            }}>
+              <div style={{
+                height: '64px',
+                background: 'linear-gradient(90deg, #f1f5f9, #e2e8f0, #f1f5f9)',
+                backgroundSize: '200% 100%',
+                animation: 'shimmer 2s infinite',
+                borderRadius: '16px'
+              }} />
             </div>
           </div>
+          
+          {/* Events Grid Skeleton */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+            gap: '24px'
+          }}>
+            {[...Array(8)].map((_, i) => (
+              <div key={i} style={{
+                background: 'linear-gradient(135deg, #ffffff 0%, #fafbfc 100%)',
+                borderRadius: '20px',
+                overflow: 'hidden',
+                boxShadow: '0 10px 25px rgba(0, 0, 0, 0.08)',
+                border: '1px solid rgba(255, 255, 255, 0.5)'
+              }}>
+                <div style={{
+                  height: '200px',
+                  background: 'linear-gradient(90deg, #f1f5f9, #e2e8f0, #f1f5f9)',
+                  backgroundSize: '200% 100%',
+                  animation: 'shimmer 2s infinite'
+                }} />
+                <div style={{ padding: '24px' }}>
+                  <div style={{
+                    height: '24px',
+                    background: 'linear-gradient(90deg, #f1f5f9, #e2e8f0, #f1f5f9)',
+                    backgroundSize: '200% 100%',
+                    animation: 'shimmer 2s infinite',
+                    borderRadius: '8px',
+                    marginBottom: '16px'
+                  }} />
+                  <div style={{
+                    height: '16px',
+                    background: 'linear-gradient(90deg, #f1f5f9, #e2e8f0, #f1f5f9)',
+                    backgroundSize: '200% 100%',
+                    animation: 'shimmer 2s infinite',
+                    borderRadius: '8px',
+                    width: '75%',
+                    marginBottom: '8px'
+                  }} />
+                  <div style={{
+                    height: '16px',
+                    background: 'linear-gradient(90deg, #f1f5f9, #e2e8f0, #f1f5f9)',
+                    backgroundSize: '200% 100%',
+                    animation: 'shimmer 2s infinite',
+                    borderRadius: '8px',
+                    width: '66%',
+                    marginBottom: '16px'
+                  }} />
+                  <div style={{
+                    height: '48px',
+                    background: 'linear-gradient(90deg, #f1f5f9, #e2e8f0, #f1f5f9)',
+                    backgroundSize: '200% 100%',
+                    animation: 'shimmer 2s infinite',
+                    borderRadius: '12px'
+                  }} />
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
+        <style>{`
+          @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+          }
+        `}</style>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div style={{
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+      padding: '32px 20px'
+    }}>
+      <div style={{
+        maxWidth: '1400px',
+        margin: '0 auto'
+      }}>
         {/* Header Section */}
-        <div className="mb-12">
-          <div className="text-center mb-8">
-            <h1 className="text-5xl font-bold text-gray-900 mb-4">Discover Events</h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Find and make offers on the hottest events in your area. From concerts to sports, theater to comedy shows.
-            </p>
+        <div style={{ marginBottom: '48px' }}>
+          <div style={{ 
+            textAlign: 'center', 
+            marginBottom: '40px',
+            position: 'relative'
+          }}>
+            {/* Background decorative elements */}
+            <div style={{
+              position: 'absolute',
+              top: '-40px',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              width: '300px',
+              height: '300px',
+              background: 'linear-gradient(135deg, #2563eb15, #7c3aed15, #dc262615)',
+              borderRadius: '50%',
+              filter: 'blur(80px)',
+              zIndex: 0
+            }} />
+            <div style={{ position: 'relative', zIndex: 1 }}>
+              <h1 style={{
+                fontSize: 'clamp(32px, 6vw, 56px)',
+                fontWeight: '800',
+                background: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 50%, #dc2626 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+                margin: '0 0 20px 0',
+                letterSpacing: '-0.03em',
+                lineHeight: '1.1'
+              }}>
+                Discover Events
+              </h1>
+              <p style={{
+                fontSize: 'clamp(16px, 2.5vw, 22px)',
+                color: '#475569',
+                margin: '0 auto',
+                fontWeight: '500',
+                maxWidth: '800px',
+                lineHeight: '1.6'
+              }}>
+                Find and make offers on the hottest events in your area. From concerts to sports, theater to comedy shows.
+              </p>
+            </div>
           </div>
           
           {/* Search and Filters */}
-          <div className="bg-white rounded-2xl shadow-lg p-8 border">
-            <form onSubmit={handleSearch} className="space-y-6">
-              <div className="flex flex-col lg:flex-row gap-4">
-                <div className="flex-1">
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Search Events</label>
-                  <div className="relative">
-                    <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+          <div style={{
+            background: 'linear-gradient(135deg, #ffffff 0%, #fafbfc 100%)',
+            borderRadius: '20px',
+            padding: '32px',
+            boxShadow: '0 10px 25px rgba(0, 0, 0, 0.08)',
+            border: '1px solid rgba(255, 255, 255, 0.5)'
+          }}>
+            <form onSubmit={handleSearch}>
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                gap: '24px',
+                alignItems: 'end'
+              }}>
+                <div style={{ gridColumn: 'span 2' }}>
+                  <label style={{
+                    display: 'block',
+                    fontSize: '14px',
+                    fontWeight: '700',
+                    color: '#374151',
+                    marginBottom: '12px',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.5px'
+                  }}>
+                    🔍 Search Events
+                  </label>
+                  <div style={{ position: 'relative' }}>
+                    <Search style={{
+                      position: 'absolute',
+                      left: '16px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      color: '#6b7280',
+                      width: '20px',
+                      height: '20px'
+                    }} />
                     <Input
                       type="text"
                       placeholder="Search events, venues, artists, or locations..."
                       value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-12 py-4 text-base border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:ring-0 transition-colors"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
+                      style={{
+                        paddingLeft: '52px',
+                        padding: '16px 16px 16px 52px',
+                        fontSize: '16px',
+                        border: '2px solid #e5e7eb',
+                        borderRadius: '12px',
+                        width: '100%',
+                        outline: 'none',
+                        transition: 'all 0.2s ease'
+                      }}
+                      onFocus={(e: React.FocusEvent<HTMLInputElement>) => {
+                        e.currentTarget.style.borderColor = '#2563eb';
+                        e.currentTarget.style.boxShadow = '0 0 0 3px rgba(37, 99, 235, 0.1)';
+                      }}
+                      onBlur={(e: React.FocusEvent<HTMLInputElement>) => {
+                        e.currentTarget.style.borderColor = '#e5e7eb';
+                        e.currentTarget.style.boxShadow = 'none';
+                      }}
                     />
                   </div>
                 </div>
                 
-                <div className="lg:w-64">
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Category</label>
+                <div>
+                  <label style={{
+                    display: 'block',
+                    fontSize: '14px',
+                    fontWeight: '700',
+                    color: '#374151',
+                    marginBottom: '12px',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.5px'
+                  }}>
+                    🎭 Category
+                  </label>
                   <select
                     value={selectedCategory}
-                    onChange={(e) => setSelectedCategory(e.target.value as EventType | '')}
-                    className="w-full px-4 py-4 text-base border-2 border-gray-200 rounded-xl focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSelectedCategory(e.target.value as EventType | '')}
+                    style={{
+                      width: '100%',
+                      padding: '16px',
+                      fontSize: '16px',
+                      border: '2px solid #e5e7eb',
+                      borderRadius: '12px',
+                      backgroundColor: '#ffffff',
+                      outline: 'none',
+                      transition: 'all 0.2s ease'
+                    }}
+                    onFocus={(e: React.FocusEvent<HTMLSelectElement>) => {
+                      e.currentTarget.style.borderColor = '#2563eb';
+                      e.currentTarget.style.boxShadow = '0 0 0 3px rgba(37, 99, 235, 0.1)';
+                    }}
+                    onBlur={(e: React.FocusEvent<HTMLSelectElement>) => {
+                      e.currentTarget.style.borderColor = '#e5e7eb';
+                      e.currentTarget.style.boxShadow = 'none';
+                    }}
                   >
                     <option value="">All Categories</option>
                     <option value="CONCERT">🎵 Concerts</option>
@@ -182,21 +384,60 @@ export const EventsPage: React.FC = () => {
                   </select>
                 </div>
                 
-                <div className="lg:w-40">
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">&nbsp;</label>
+                <div>
                   <Button 
                     type="submit" 
-                    className="w-full py-4 text-base font-semibold bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl"
+                    style={{
+                      width: '100%',
+                      padding: '16px 24px',
+                      fontSize: '16px',
+                      fontWeight: '700',
+                      background: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '12px',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
+                      boxShadow: '0 4px 16px rgba(37, 99, 235, 0.4)'
+                    }}
+                    onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => {
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                      e.currentTarget.style.boxShadow = '0 8px 25px rgba(37, 99, 235, 0.6)';
+                    }}
+                    onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = '0 4px 16px rgba(37, 99, 235, 0.4)';
+                    }}
                   >
-                    <Search className="h-5 w-5 mr-2" />
+                    <Search style={{ width: '20px', height: '20px' }} />
                     Search
                   </Button>
                 </div>
               </div>
               
               {/* Quick Category Filters */}
-              <div className="flex flex-wrap gap-3 pt-4 border-t border-gray-200">
-                <span className="text-sm font-semibold text-gray-700">Popular:</span>
+              <div style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: '12px',
+                paddingTop: '24px',
+                marginTop: '24px',
+                borderTop: '1px solid #e2e8f0',
+                alignItems: 'center'
+              }}>
+                <span style={{
+                  fontSize: '14px',
+                  fontWeight: '700',
+                  color: '#6b7280',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.5px'
+                }}>
+                  🔥 Popular:
+                </span>
                 {[
                   { label: 'This Weekend', value: 'weekend' },
                   { label: 'Concerts', value: 'CONCERT' },
@@ -207,7 +448,29 @@ export const EventsPage: React.FC = () => {
                     key={filter.value}
                     type="button"
                     onClick={() => setSelectedCategory(filter.value as EventType | '')}
-                    className="px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors"
+                    style={{
+                      padding: '8px 16px',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      color: '#6b7280',
+                      background: 'linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%)',
+                      border: '1px solid #cbd5e1',
+                      borderRadius: '20px',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease'
+                    }}
+                    onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => {
+                      e.currentTarget.style.background = 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)';
+                      e.currentTarget.style.color = 'white';
+                      e.currentTarget.style.transform = 'translateY(-1px)';
+                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(37, 99, 235, 0.3)';
+                    }}
+                    onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => {
+                      e.currentTarget.style.background = 'linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%)';
+                      e.currentTarget.style.color = '#6b7280';
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = 'none';
+                    }}
                   >
                     {filter.label}
                   </button>
@@ -218,67 +481,178 @@ export const EventsPage: React.FC = () => {
         </div>
 
         {/* Events Grid */}
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+          gap: '24px'
+        }}>
           {events && events.length > 0 && events.map((event) => (
             <div
               key={event.id}
-              className="group bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 overflow-hidden"
+              style={{
+                background: 'linear-gradient(135deg, #ffffff 0%, #fafbfc 100%)',
+                borderRadius: '20px',
+                boxShadow: '0 10px 25px rgba(0, 0, 0, 0.08)',
+                border: '1px solid rgba(255, 255, 255, 0.5)',
+                overflow: 'hidden',
+                transition: 'all 0.3s ease',
+                cursor: 'pointer'
+              }}
+              onMouseEnter={(e: React.MouseEvent<HTMLDivElement>) => {
+                e.currentTarget.style.transform = 'translateY(-8px)';
+                e.currentTarget.style.boxShadow = '0 20px 40px rgba(0, 0, 0, 0.12)';
+              }}
+              onMouseLeave={(e: React.MouseEvent<HTMLDivElement>) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 10px 25px rgba(0, 0, 0, 0.08)';
+              }}
             >
-              <Link to={`/events/${event.id}`} className="block">
-                <div className="relative overflow-hidden">
+              <Link to={`/events/${event.id}`} style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
+                <div style={{ position: 'relative', overflow: 'hidden' }}>
                   {event.imageUrl ? (
                     <img
                       src={event.imageUrl}
                       alt={event.name}
-                      className="w-full h-56 object-cover transition-transform duration-300 group-hover:scale-110"
+                      style={{
+                        width: '100%',
+                        height: '200px',
+                        objectFit: 'cover',
+                        transition: 'transform 0.3s ease'
+                      }}
+                      onMouseEnter={(e: React.MouseEvent<HTMLImageElement>) => {
+                        e.currentTarget.style.transform = 'scale(1.05)';
+                      }}
+                      onMouseLeave={(e: React.MouseEvent<HTMLImageElement>) => {
+                        e.currentTarget.style.transform = 'scale(1)';
+                      }}
                     />
                   ) : (
-                    <div className="w-full h-56 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center">
-                      <Calendar className="h-16 w-16 text-white opacity-80" />
+                    <div style={{
+                      width: '100%',
+                      height: '200px',
+                      background: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 50%, #dc2626 100%)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}>
+                      <Calendar style={{ width: '64px', height: '64px', color: 'white', opacity: 0.8 }} />
                     </div>
                   )}
                   
                   {/* Category Badge */}
-                  <div className="absolute top-4 right-4">
-                    <span className="bg-black/70 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-semibold">
+                  <div style={{
+                    position: 'absolute',
+                    top: '16px',
+                    right: '16px'
+                  }}>
+                    <span style={{
+                      background: 'rgba(0, 0, 0, 0.75)',
+                      backdropFilter: 'blur(8px)',
+                      color: 'white',
+                      padding: '6px 12px',
+                      borderRadius: '20px',
+                      fontSize: '13px',
+                      fontWeight: '700',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px'
+                    }}>
                       {event.category}
                     </span>
                   </div>
-                  
-                  {/* Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </div>
                 
-                <div className="p-6 space-y-4">
-                  <div>
-                    <h3 className="font-bold text-xl text-gray-900 mb-2 line-clamp-2 group-hover:text-indigo-600 transition-colors">
+                <div style={{ padding: '24px' }}>
+                  <div style={{ marginBottom: '20px' }}>
+                    <h3 style={{
+                      fontWeight: '700',
+                      fontSize: '20px',
+                      color: '#1f2937',
+                      margin: '0 0 16px 0',
+                      lineHeight: '1.3',
+                      display: '-webkit-box',
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden'
+                    }}>
                       {event.name}
                     </h3>
                     
-                    <div className="space-y-2">
-                      <div className="flex items-center text-gray-600">
-                        <Calendar className="h-4 w-4 mr-3 text-indigo-500" />
-                        <span className="text-sm font-medium">{formatDate(event.eventDate)}</span>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      <div style={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        color: '#6b7280',
+                        fontSize: '14px',
+                        fontWeight: '500'
+                      }}>
+                        <Calendar style={{ width: '16px', height: '16px', marginRight: '12px', color: '#2563eb' }} />
+                        <span>{formatDate(event.eventDate)}</span>
                       </div>
                       
-                      <div className="flex items-center text-gray-600">
-                        <MapPin className="h-4 w-4 mr-3 text-indigo-500" />
-                        <span className="text-sm truncate">{event.venue}, {event.city}</span>
+                      <div style={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        color: '#6b7280',
+                        fontSize: '14px',
+                        fontWeight: '500'
+                      }}>
+                        <MapPin style={{ width: '16px', height: '16px', marginRight: '12px', color: '#2563eb' }} />
+                        <span style={{ 
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap'
+                        }}>
+                          {event.venue}, {event.city}
+                        </span>
                       </div>
                     </div>
                   </div>
                   
                   {/* Price and Availability */}
-                  <div className="flex items-center justify-between py-3 px-4 bg-gray-50 rounded-xl">
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '16px 20px',
+                    background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
+                    borderRadius: '12px',
+                    border: '1px solid #e2e8f0'
+                  }}>
                     <div>
-                      <span className="text-xs text-gray-500 uppercase tracking-wide font-medium">From</span>
-                      <div className="text-lg font-bold text-indigo-600">
+                      <span style={{
+                        fontSize: '12px',
+                        color: '#6b7280',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px',
+                        fontWeight: '600',
+                        display: 'block',
+                        marginBottom: '4px'
+                      }}>
+                        From
+                      </span>
+                      <div style={{
+                        fontSize: '18px',
+                        fontWeight: '800',
+                        color: '#2563eb'
+                      }}>
                         {formatPrice(event.minPrice)}
                       </div>
                     </div>
-                    <div className="text-right">
-                      <div className="text-sm font-semibold text-gray-900">{event.availableSeats || 'N/A'}</div>
-                      <div className="text-xs text-gray-500">available</div>
+                    <div style={{ textAlign: 'right' }}>
+                      <div style={{
+                        fontSize: '14px',
+                        fontWeight: '700',
+                        color: '#1f2937'
+                      }}>
+                        {event.availableSeats || 'N/A'}
+                      </div>
+                      <div style={{
+                        fontSize: '12px',
+                        color: '#6b7280',
+                        fontWeight: '500'
+                      }}>
+                        available
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -286,14 +660,43 @@ export const EventsPage: React.FC = () => {
               
               {/* Make Offer Button */}
               {user && user.role === UserRole.BUYER && (
-                <div className="px-6 pb-6">
+                <div style={{ padding: '0 24px 24px' }}>
                   <Button
                     size="sm"
                     variant="outline"
-                    className="w-full py-3 font-semibold border-2 border-indigo-200 text-indigo-600 hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-all duration-200"
                     onClick={(e) => handleMakeOffer(e, event.id)}
+                    style={{
+                      width: '100%',
+                      padding: '12px 24px',
+                      fontWeight: '700',
+                      fontSize: '14px',
+                      border: '2px solid #2563eb',
+                      color: '#2563eb',
+                      background: 'transparent',
+                      borderRadius: '12px',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px'
+                    }}
+                    onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => {
+                      e.currentTarget.style.background = 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)';
+                      e.currentTarget.style.color = 'white';
+                      e.currentTarget.style.borderColor = '#2563eb';
+                      e.currentTarget.style.transform = 'translateY(-1px)';
+                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(37, 99, 235, 0.4)';
+                    }}
+                    onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => {
+                      e.currentTarget.style.background = 'transparent';
+                      e.currentTarget.style.color = '#2563eb';
+                      e.currentTarget.style.borderColor = '#2563eb';
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = 'none';
+                    }}
                   >
-                    <Plus className="h-4 w-4 mr-2" />
+                    <Plus style={{ width: '16px', height: '16px' }} />
                     Make Offer
                   </Button>
                 </div>
@@ -303,14 +706,47 @@ export const EventsPage: React.FC = () => {
         </div>
 
         {events.length === 0 && !loading && (
-          <div className="text-center py-20">
-            <div className="bg-white rounded-2xl shadow-lg p-12 max-w-md mx-auto">
-              <div className="bg-gray-100 rounded-full p-4 w-20 h-20 mx-auto mb-6">
-                <Calendar className="h-12 w-12 text-gray-400" />
+          <div style={{
+            textAlign: 'center',
+            padding: '80px 20px',
+            maxWidth: '600px',
+            margin: '0 auto'
+          }}>
+            <div style={{
+              background: 'linear-gradient(135deg, #ffffff 0%, #fafbfc 100%)',
+              borderRadius: '20px',
+              padding: '48px 32px',
+              boxShadow: '0 10px 25px rgba(0, 0, 0, 0.08)',
+              border: '1px solid rgba(255, 255, 255, 0.5)'
+            }}>
+              <div style={{
+                width: '100px',
+                height: '100px',
+                margin: '0 auto 32px',
+                borderRadius: '50%',
+                background: 'linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                <Calendar style={{ width: '48px', height: '48px', color: '#9ca3af' }} />
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">No events found</h3>
-              <p className="text-gray-600 mb-6">
-                We couldn't find any events matching your criteria. Try adjusting your search or filters.
+              <h3 style={{
+                fontSize: '28px',
+                fontWeight: '800',
+                color: '#1f2937',
+                margin: '0 0 16px 0'
+              }}>
+                No events found
+              </h3>
+              <p style={{
+                fontSize: '16px',
+                color: '#6b7280',
+                margin: '0 0 32px 0',
+                lineHeight: '1.6',
+                fontWeight: '500'
+              }}>
+                We couldn't find any events matching your criteria. Try adjusting your search or filters to discover amazing events!
               </p>
               <Button 
                 onClick={() => {
@@ -318,9 +754,28 @@ export const EventsPage: React.FC = () => {
                   setSelectedCategory('');
                   fetchEvents();
                 }}
-                className="bg-indigo-600 hover:bg-indigo-700"
+                style={{
+                  padding: '16px 32px',
+                  fontSize: '16px',
+                  fontWeight: '700',
+                  background: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '12px',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  boxShadow: '0 4px 16px rgba(37, 99, 235, 0.4)'
+                }}
+                onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = '0 8px 25px rgba(37, 99, 235, 0.6)';
+                }}
+                onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 4px 16px rgba(37, 99, 235, 0.4)';
+                }}
               >
-                View All Events
+                🎉 View All Events
               </Button>
             </div>
           </div>

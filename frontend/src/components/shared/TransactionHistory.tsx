@@ -224,56 +224,279 @@ export const TransactionHistory = ({ userType }: TransactionHistoryProps) => {
     }
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
-      case 'completed':
-        return 'bg-green-100 text-green-800';
-      case 'pending':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'cancelled':
-        return 'bg-red-100 text-red-800';
-      case 'refunded':
-        return 'bg-blue-100 text-blue-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
+  const getStatusConfig = (status: string) => {
+    const configs = {
+      completed: {
+        color: '#10b981',
+        backgroundColor: '#ecfdf5',
+        borderColor: '#a7f3d0',
+        icon: '✓',
+        label: 'Completed'
+      },
+      pending: {
+        color: '#f59e0b',
+        backgroundColor: '#fffbeb',
+        borderColor: '#fed7aa',
+        icon: '⏳',
+        label: 'Pending'
+      },
+      cancelled: {
+        color: '#ef4444',
+        backgroundColor: '#fef2f2',
+        borderColor: '#fca5a5',
+        icon: '✕',
+        label: 'Cancelled'
+      },
+      refunded: {
+        color: '#3b82f6',
+        backgroundColor: '#eff6ff',
+        borderColor: '#93c5fd',
+        icon: '↩',
+        label: 'Refunded'
+      }
+    };
+    return configs[status.toLowerCase() as keyof typeof configs] || {
+      color: '#6b7280',
+      backgroundColor: '#f9fafb',
+      borderColor: '#d1d5db',
+      icon: '•',
+      label: status
+    };
+  };
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 2
+    }).format(amount);
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Intl.DateTimeFormat('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    }).format(new Date(dateString));
   };
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '400px',
+        gap: '24px'
+      }}>
+        <div style={{
+          width: '60px',
+          height: '60px',
+          borderRadius: '50%',
+          background: 'linear-gradient(45deg, #3b82f6, #8b5cf6)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          animation: 'pulse 2s ease-in-out infinite'
+        }}>
+          <div style={{
+            width: '24px',
+            height: '24px',
+            border: '3px solid white',
+            borderTop: '3px solid transparent',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite'
+          }} />
+        </div>
+        <div style={{
+          textAlign: 'center'
+        }}>
+          <h3 style={{ 
+            margin: '0 0 8px 0', 
+            fontSize: '18px', 
+            fontWeight: '600',
+            color: '#1f2937'
+          }}>
+            Loading Transactions
+          </h3>
+          <p style={{ 
+            margin: 0, 
+            color: '#6b7280',
+            fontSize: '14px'
+          }}>
+            Please wait while we fetch your transaction history...
+          </p>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="text-center text-red-600 p-8">
-        <p>Error loading transactions. Please try again.</p>
-      </div>
+      <Card variant="bordered" style={{ textAlign: 'center', padding: '48px 24px' }}>
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '16px'
+        }}>
+          <div style={{
+            width: '60px',
+            height: '60px',
+            borderRadius: '50%',
+            backgroundColor: '#fee2e2',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '24px',
+            color: '#dc2626'
+          }}>
+            ⚠️
+          </div>
+          <div>
+            <h3 style={{ 
+              margin: '0 0 8px 0', 
+              fontSize: '18px', 
+              fontWeight: '600',
+              color: '#dc2626'
+            }}>
+              Error Loading Transactions
+            </h3>
+            <p style={{ 
+              margin: '0 0 24px 0', 
+              color: '#6b7280',
+              fontSize: '14px'
+            }}>
+              We encountered an error while loading your transactions. Please try again.
+            </p>
+            <Button variant="outline" onClick={() => refetch()}>
+              Try Again
+            </Button>
+          </div>
+        </div>
+      </Card>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-gray-900">Transaction History</h2>
+    <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+      {/* Header */}
+      <div style={{ 
+        marginBottom: '32px',
+        textAlign: 'center'
+      }}>
+        <h1 style={{
+          fontSize: '32px',
+          fontWeight: '800',
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          backgroundClip: 'text',
+          margin: '0 0 12px 0',
+          letterSpacing: '-0.02em'
+        }}>
+          Transaction History
+        </h1>
+        <p style={{
+          fontSize: '16px',
+          color: '#6b7280',
+          margin: 0,
+          fontWeight: '500'
+        }}>
+          {userType === 'buyer' 
+            ? 'Track your ticket purchases and payment status'
+            : 'Monitor your sales and earnings'
+          }
+        </p>
       </div>
 
+      {/* Stats Cards */}
+      {data?.pagination && (
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+          gap: '20px',
+          marginBottom: '32px'
+        }}>
+          <Card variant="gradient" hover style={{ padding: '24px', textAlign: 'center' }}>
+            <div style={{ fontSize: '28px', fontWeight: '700', color: '#1f2937', marginBottom: '4px' }}>
+              {data.pagination.total}
+            </div>
+            <div style={{ fontSize: '14px', color: '#6b7280', fontWeight: '500' }}>
+              Total Transactions
+            </div>
+          </Card>
+          
+          {data.data.length > 0 && (
+            <>
+              <Card variant="gradient" hover style={{ padding: '24px', textAlign: 'center' }}>
+                <div style={{ fontSize: '28px', fontWeight: '700', color: '#10b981', marginBottom: '4px' }}>
+                  {data.data.filter(t => t.status.toLowerCase() === 'completed').length}
+                </div>
+                <div style={{ fontSize: '14px', color: '#6b7280', fontWeight: '500' }}>
+                  Completed
+                </div>
+              </Card>
+              
+              <Card variant="gradient" hover style={{ padding: '24px', textAlign: 'center' }}>
+                <div style={{ fontSize: '28px', fontWeight: '700', color: '#3b82f6', marginBottom: '4px' }}>
+                  {formatCurrency(data.data.reduce((sum, t) => sum + (userType === 'seller' ? (t.sellerAmount || 0) : t.amount), 0))}
+                </div>
+                <div style={{ fontSize: '14px', color: '#6b7280', fontWeight: '500' }}>
+                  Total {userType === 'seller' ? 'Earned' : 'Spent'}
+                </div>
+              </Card>
+            </>
+          )}
+        </div>
+      )}
+
       {/* Filters */}
-      <Card>
-        <div className="p-6">
-          <h3 className="text-lg font-semibold mb-4">Filter Transactions</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <Card variant="elevated" style={{ marginBottom: '32px' }}>
+        <div style={{ padding: '24px' }}>
+          <h3 style={{ 
+            fontSize: '18px', 
+            fontWeight: '600', 
+            color: '#1f2937',
+            margin: '0 0 20px 0' 
+          }}>
+            Filter & Sort
+          </h3>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+            gap: '16px'
+          }}>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label style={{
+                display: 'block',
+                fontSize: '14px',
+                fontWeight: '500',
+                color: '#374151',
+                marginBottom: '6px'
+              }}>
                 Status
               </label>
               <select
                 value={filters.status}
                 onChange={(e) => handleFilterChange('status', e.target.value)}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                style={{
+                  width: '100%',
+                  padding: '10px 12px',
+                  border: '2px solid #e5e7eb',
+                  borderRadius: '12px',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  backgroundColor: 'white',
+                  color: '#374151',
+                  transition: 'all 0.2s ease',
+                  outline: 'none'
+                }}
+                onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
+                onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
               >
                 <option value="">All Statuses</option>
                 <option value="PENDING">Pending</option>
@@ -284,13 +507,32 @@ export const TransactionHistory = ({ userType }: TransactionHistoryProps) => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label style={{
+                display: 'block',
+                fontSize: '14px',
+                fontWeight: '500',
+                color: '#374151',
+                marginBottom: '6px'
+              }}>
                 Items per page
               </label>
               <select
                 value={filters.limit}
                 onChange={(e) => handleFilterChange('limit', parseInt(e.target.value))}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                style={{
+                  width: '100%',
+                  padding: '10px 12px',
+                  border: '2px solid #e5e7eb',
+                  borderRadius: '12px',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  backgroundColor: 'white',
+                  color: '#374151',
+                  transition: 'all 0.2s ease',
+                  outline: 'none'
+                }}
+                onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
+                onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
               >
                 <option value={10}>10</option>
                 <option value={20}>20</option>
@@ -303,191 +545,496 @@ export const TransactionHistory = ({ userType }: TransactionHistoryProps) => {
 
       {/* Transactions List */}
       {data?.data && data.data.length > 0 ? (
-        <div className="space-y-4">
-          {data.data.map((transaction: BaseTransaction) => (
-            <Card key={transaction.id}>
-              <div className="p-6">
-                <div className="flex justify-between items-start">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-3">
-                      <h3 className="text-lg font-semibold text-gray-900">
-                        {transaction.offer?.event?.name || 'Event Name Not Available'}
-                      </h3>
-                      <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(transaction.status)}`}>
-                        {transaction.status}
-                      </span>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600">
-                      <div>
-                        <p><strong>Amount:</strong> ${Number(transaction.amount).toFixed(2)}</p>
-                        <p><strong>Platform Fee:</strong> ${Number(transaction.platformFee).toFixed(2)}</p>
-                        {userType === 'seller' && transaction.sellerAmount && (
-                          <p><strong>Your Amount:</strong> ${Number(transaction.sellerAmount).toFixed(2)}</p>
-                        )}
-                        <p><strong>Quantity:</strong> {transaction.offer?.quantity || 'N/A'}</p>
-                        <p><strong>Seats:</strong> {transaction.listing?.seats?.join(', ') || 'N/A'}</p>
-                      </div>
-                      <div>
-                        <p><strong>Event Date:</strong> {transaction.offer?.event?.eventDate ? new Date(transaction.offer.event.eventDate).toLocaleDateString() : 'N/A'}</p>
-                        <p><strong>Venue:</strong> {transaction.offer?.event?.venue || 'N/A'}</p>
-                        <p><strong>Location:</strong> {transaction.offer?.event?.city || 'N/A'}, {transaction.offer?.event?.state || 'N/A'}</p>
-                        <p><strong>Transaction Date:</strong> {new Date(transaction.createdAt).toLocaleDateString()}</p>
-                        {transaction.paidAt && (
-                          <p><strong>Paid At:</strong> {new Date(transaction.paidAt).toLocaleDateString()}</p>
-                        )}
-                      </div>
-                    </div>
-
-                    {transaction.listing?.row && (
-                      <div className="mt-3">
-                        <p className="text-sm text-gray-700">
-                          <strong>Row:</strong> {transaction.listing.row}
-                        </p>
-                      </div>
-                    )}
-
-                    {userType === 'buyer' && transaction.listing?.seller && (
-                      <div className="mt-3">
-                        <p className="text-sm text-gray-700">
-                          <strong>Seller:</strong> {formatName(transaction.listing.seller.firstName, transaction.listing.seller.lastName)}
-                        </p>
-                      </div>
-                    )}
-
-                    {userType === 'seller' && transaction.buyer && (
-                      <div className="mt-3">
-                        <p className="text-sm text-gray-700">
-                          <strong>Buyer:</strong> {formatName(transaction.buyer.firstName, transaction.buyer.lastName)}
-                        </p>
-                      </div>
-                    )}
-
-                    {transaction.offer?.message && (
-                      <div className="mt-3">
-                        <p className="text-sm text-gray-700">
-                          <strong>Buyer Message:</strong> {transaction.offer.message}
-                        </p>
-                      </div>
-                    )}
-
-                    {/* Delivery Status */}
-                    <div className="mt-4 space-y-2">
-                      <div className="flex items-center gap-2">
-                        <div className={`w-3 h-3 rounded-full ${
-                          transaction.ticketsDelivered ? 'bg-green-500' : 'bg-gray-300'
-                        }`}></div>
-                        <span className="text-sm text-gray-700">
-                          Tickets {transaction.ticketsDelivered ? 'Delivered' : 'Pending Delivery'}
-                        </span>
-                        {transaction.ticketsDeliveredAt && (
-                          <span className="text-xs text-gray-500">
-                            ({new Date(transaction.ticketsDeliveredAt).toLocaleDateString()})
-                          </span>
-                        )}
-                      </div>
-
-                      {userType === 'seller' && (
-                        <div className="flex items-center gap-2">
-                          <div className={`w-3 h-3 rounded-full ${
-                            transaction.sellerPaidOut ? 'bg-green-500' : 'bg-gray-300'
-                          }`}></div>
-                          <span className="text-sm text-gray-700">
-                            Payment {transaction.sellerPaidOut ? 'Received' : 'Pending'}
-                          </span>
-                          {transaction.sellerPaidOutAt && (
-                            <span className="text-xs text-gray-500">
-                              ({new Date(transaction.sellerPaidOutAt).toLocaleDateString()})
-                            </span>
-                          )}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          {data.data.map((transaction: BaseTransaction) => {
+            const statusConfig = getStatusConfig(transaction.status);
+            
+            return (
+              <Card key={transaction.id} variant="elevated" hover>
+                <div style={{ padding: '28px' }}>
+                  {/* Header */}
+                  <div style={{ 
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    alignItems: 'flex-start',
+                    marginBottom: '24px',
+                    flexWrap: 'wrap',
+                    gap: '16px'
+                  }}>
+                    <div style={{ flex: 1, minWidth: '300px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+                        <h3 style={{
+                          fontSize: '20px',
+                          fontWeight: '700',
+                          color: '#1f2937',
+                          margin: 0,
+                          lineHeight: '1.2'
+                        }}>
+                          {transaction.offer?.event?.name || 'Event Name Not Available'}
+                        </h3>
+                        <div style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          padding: '6px 12px',
+                          borderRadius: '20px',
+                          fontSize: '12px',
+                          fontWeight: '600',
+                          color: statusConfig.color,
+                          backgroundColor: statusConfig.backgroundColor,
+                          border: `1px solid ${statusConfig.borderColor}`,
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.5px'
+                        }}>
+                          <span>{statusConfig.icon}</span>
+                          {statusConfig.label}
                         </div>
+                      </div>
+                      <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '16px',
+                        fontSize: '14px',
+                        color: '#6b7280',
+                        fontWeight: '500'
+                      }}>
+                        <span>📅 {formatDate(transaction.offer?.event?.eventDate || transaction.createdAt)}</span>
+                        <span>📍 {transaction.offer?.event?.venue}</span>
+                        <span>{transaction.offer?.event?.city}, {transaction.offer?.event?.state}</span>
+                      </div>
+                    </div>
+                    
+                    <div style={{ 
+                      display: 'flex', 
+                      flexDirection: 'column', 
+                      gap: '8px',
+                      alignItems: 'flex-end'
+                    }}>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleViewDetails(transaction)}
+                        style={{ minWidth: '120px' }}
+                      >
+                        View Details
+                      </Button>
+
+                      {userType === 'buyer' && 
+                       transaction.ticketsDelivered && 
+                       !transaction.buyerConfirmed && 
+                       transaction.status !== 'COMPLETED' && (
+                        <Button
+                          variant="primary"
+                          size="sm"
+                          onClick={() => handleQuickConfirmReceipt(transaction)}
+                          style={{ minWidth: '120px' }}
+                        >
+                          Release Payment
+                        </Button>
+                      )}
+
+                      {userType === 'seller' && 
+                       !transaction.sellerPaidOut && 
+                       transaction.status === 'COMPLETED' && (
+                        <Button
+                          variant="primary"
+                          size="sm"
+                          onClick={() => handleDeliverTickets(transaction)}
+                          style={{ minWidth: '120px' }}
+                        >
+                          Deliver Tickets
+                        </Button>
+                      )}
+
+                      {transaction.status === 'PENDING' && (
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => handleQuickCancel(transaction)}
+                          style={{ minWidth: '120px' }}
+                        >
+                          Cancel
+                        </Button>
                       )}
                     </div>
                   </div>
 
-                  <div className="flex flex-col gap-2 ml-4">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleViewDetails(transaction)}
-                    >
-                      View Details
-                    </Button>
+                  {/* Transaction Details Grid */}
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                    gap: '24px',
+                    marginBottom: '20px'
+                  }}>
+                    {/* Financial Details */}
+                    <div style={{
+                      padding: '20px',
+                      backgroundColor: '#f8fafc',
+                      borderRadius: '12px',
+                      border: '1px solid #e2e8f0'
+                    }}>
+                      <h4 style={{
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        color: '#374151',
+                        margin: '0 0 12px 0',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px'
+                      }}>
+                        💰 Financial Details
+                      </h4>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <span style={{ fontSize: '14px', color: '#6b7280' }}>Total Amount:</span>
+                          <span style={{ fontSize: '16px', fontWeight: '600', color: '#1f2937' }}>
+                            {formatCurrency(transaction.amount)}
+                          </span>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <span style={{ fontSize: '14px', color: '#6b7280' }}>Platform Fee:</span>
+                          <span style={{ fontSize: '14px', color: '#6b7280' }}>
+                            {formatCurrency(transaction.platformFee)}
+                          </span>
+                        </div>
+                        {userType === 'seller' && transaction.sellerAmount && (
+                          <div style={{ 
+                            display: 'flex', 
+                            justifyContent: 'space-between', 
+                            alignItems: 'center',
+                            paddingTop: '8px',
+                            borderTop: '1px solid #e2e8f0'
+                          }}>
+                            <span style={{ fontSize: '14px', fontWeight: '600', color: '#10b981' }}>Your Earnings:</span>
+                            <span style={{ fontSize: '16px', fontWeight: '700', color: '#10b981' }}>
+                              {formatCurrency(transaction.sellerAmount)}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
 
-                    {userType === 'buyer' && 
-                     transaction.ticketsDelivered && 
-                     !transaction.buyerConfirmed && 
-                     transaction.status !== 'COMPLETED' && (
-                      <Button
-                        size="sm"
-                        onClick={() => handleQuickConfirmReceipt(transaction)}
-                        className="bg-green-600 hover:bg-green-700"
-                      >
-                        Release Payment
-                      </Button>
-                    )}
-
-                    {userType === 'seller' && 
-                     !transaction.sellerPaidOut && 
-                     transaction.status === 'COMPLETED' && (
-                      <Button
-                        size="sm"
-                        onClick={() => handleDeliverTickets(transaction)}
-                        className="bg-blue-600 hover:bg-blue-700"
-                      >
-                        Deliver Tickets
-                      </Button>
-                    )}
-
-                    {transaction.status === 'PENDING' && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="text-red-600 border-red-600 hover:bg-red-50"
-                        onClick={() => handleQuickCancel(transaction)}
-                      >
-                        Cancel
-                      </Button>
-                    )}
+                    {/* Ticket Details */}
+                    <div style={{
+                      padding: '20px',
+                      backgroundColor: '#f8fafc',
+                      borderRadius: '12px',
+                      border: '1px solid #e2e8f0'
+                    }}>
+                      <h4 style={{
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        color: '#374151',
+                        margin: '0 0 12px 0',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px'
+                      }}>
+                        🎫 Ticket Details
+                      </h4>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <span style={{ fontSize: '14px', color: '#6b7280' }}>Quantity:</span>
+                          <span style={{ fontSize: '14px', fontWeight: '600', color: '#1f2937' }}>
+                            {transaction.offer?.quantity || 'N/A'}
+                          </span>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                          <span style={{ fontSize: '14px', color: '#6b7280' }}>Seats:</span>
+                          <div style={{ textAlign: 'right' }}>
+                            {transaction.listing?.seats?.map((seat, index) => (
+                              <div key={index} style={{ 
+                                display: 'inline-block',
+                                fontSize: '12px',
+                                fontWeight: '600',
+                                color: '#3b82f6',
+                                backgroundColor: '#eff6ff',
+                                padding: '2px 8px',
+                                borderRadius: '12px',
+                                margin: '2px'
+                              }}>
+                                {seat}
+                              </div>
+                            )) || <span style={{ fontSize: '14px', color: '#6b7280' }}>N/A</span>}
+                          </div>
+                        </div>
+                        {transaction.listing?.row && (
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <span style={{ fontSize: '14px', color: '#6b7280' }}>Row:</span>
+                            <span style={{ fontSize: '14px', fontWeight: '600', color: '#1f2937' }}>
+                              {transaction.listing.row}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </div>
+
+                  {/* Progress Indicators */}
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '20px',
+                    backgroundColor: '#f9fafb',
+                    borderRadius: '12px',
+                    marginBottom: '16px'
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', flex: 1 }}>
+                      {/* Payment */}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <div style={{
+                          width: '32px',
+                          height: '32px',
+                          borderRadius: '50%',
+                          backgroundColor: transaction.paidAt ? '#10b981' : '#d1d5db',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          color: 'white',
+                          fontSize: '14px',
+                          fontWeight: '600'
+                        }}>
+                          💳
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '12px', fontWeight: '600', color: '#1f2937' }}>
+                            Payment
+                          </div>
+                          <div style={{ fontSize: '11px', color: '#6b7280' }}>
+                            {transaction.paidAt ? formatDate(transaction.paidAt) : 'Pending'}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Progress Line */}
+                      <div style={{
+                        flex: 1,
+                        height: '2px',
+                        margin: '0 16px',
+                        backgroundColor: '#e5e7eb',
+                        position: 'relative'
+                      }}>
+                        <div style={{
+                          height: '100%',
+                          backgroundColor: transaction.ticketsDelivered ? '#10b981' : '#d1d5db',
+                          width: transaction.paidAt ? '100%' : '0%',
+                          transition: 'width 0.3s ease'
+                        }} />
+                      </div>
+
+                      {/* Delivery */}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <div style={{
+                          width: '32px',
+                          height: '32px',
+                          borderRadius: '50%',
+                          backgroundColor: transaction.ticketsDelivered ? '#10b981' : '#d1d5db',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          color: 'white',
+                          fontSize: '14px',
+                          fontWeight: '600'
+                        }}>
+                          🚚
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '12px', fontWeight: '600', color: '#1f2937' }}>
+                            Delivery
+                          </div>
+                          <div style={{ fontSize: '11px', color: '#6b7280' }}>
+                            {transaction.ticketsDeliveredAt 
+                              ? formatDate(transaction.ticketsDeliveredAt) 
+                              : 'Pending'
+                            }
+                          </div>
+                        </div>
+                      </div>
+
+                      {userType === 'seller' && (
+                        <>
+                          {/* Progress Line */}
+                          <div style={{
+                            flex: 1,
+                            height: '2px',
+                            margin: '0 16px',
+                            backgroundColor: '#e5e7eb',
+                            position: 'relative'
+                          }}>
+                            <div style={{
+                              height: '100%',
+                              backgroundColor: transaction.sellerPaidOut ? '#10b981' : '#d1d5db',
+                              width: transaction.ticketsDelivered ? '100%' : '0%',
+                              transition: 'width 0.3s ease'
+                            }} />
+                          </div>
+
+                          {/* Payout */}
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <div style={{
+                              width: '32px',
+                              height: '32px',
+                              borderRadius: '50%',
+                              backgroundColor: transaction.sellerPaidOut ? '#10b981' : '#d1d5db',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              color: 'white',
+                              fontSize: '14px',
+                              fontWeight: '600'
+                            }}>
+                              💰
+                            </div>
+                            <div>
+                              <div style={{ fontSize: '12px', fontWeight: '600', color: '#1f2937' }}>
+                                Payout
+                              </div>
+                              <div style={{ fontSize: '11px', color: '#6b7280' }}>
+                                {transaction.sellerPaidOutAt 
+                                  ? formatDate(transaction.sellerPaidOutAt) 
+                                  : 'Pending'
+                                }
+                              </div>
+                            </div>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Additional Info */}
+                  {(transaction.offer?.message || 
+                    (userType === 'buyer' && transaction.listing?.seller) ||
+                    (userType === 'seller' && transaction.buyer)) && (
+                    <div style={{
+                      padding: '16px',
+                      backgroundColor: '#fafafa',
+                      borderRadius: '8px',
+                      border: '1px solid #e5e7eb'
+                    }}>
+                      {transaction.offer?.message && (
+                        <div style={{ marginBottom: '12px' }}>
+                          <span style={{ fontSize: '12px', fontWeight: '600', color: '#374151', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                            💬 Message:
+                          </span>
+                          <p style={{ margin: '6px 0 0 0', fontSize: '14px', color: '#6b7280', fontStyle: 'italic' }}>
+                            "{transaction.offer.message}"
+                          </p>
+                        </div>
+                      )}
+                      
+                      {userType === 'buyer' && transaction.listing?.seller && (
+                        <div>
+                          <span style={{ fontSize: '12px', fontWeight: '600', color: '#374151', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                            👤 Seller:
+                          </span>
+                          <span style={{ fontSize: '14px', color: '#1f2937', marginLeft: '8px', fontWeight: '500' }}>
+                            {formatName(transaction.listing.seller.firstName, transaction.listing.seller.lastName)}
+                          </span>
+                        </div>
+                      )}
+
+                      {userType === 'seller' && transaction.buyer && (
+                        <div>
+                          <span style={{ fontSize: '12px', fontWeight: '600', color: '#374151', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                            👤 Buyer:
+                          </span>
+                          <span style={{ fontSize: '14px', color: '#1f2937', marginLeft: '8px', fontWeight: '500' }}>
+                            {formatName(transaction.buyer.firstName, transaction.buyer.lastName)}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
-              </div>
-            </Card>
-          ))}
+              </Card>
+            );
+          })}
 
           {/* Pagination */}
           {data.pagination && data.pagination.totalPages > 1 && (
-            <div className="flex justify-center items-center gap-4 mt-6">
-              <Button
-                variant="outline"
-                disabled={filters.page <= 1}
-                onClick={() => handleFilterChange('page', filters.page - 1)}
-              >
-                Previous
-              </Button>
-              <span className="text-sm text-gray-600">
-                Page {data.pagination.page} of {data.pagination.totalPages}
-              </span>
-              <Button
-                variant="outline"
-                disabled={filters.page >= data.pagination.totalPages}
-                onClick={() => handleFilterChange('page', filters.page + 1)}
-              >
-                Next
-              </Button>
-            </div>
+            <Card variant="elevated">
+              <div style={{ 
+                padding: '24px',
+                display: 'flex', 
+                justifyContent: 'center', 
+                alignItems: 'center', 
+                gap: '16px' 
+              }}>
+                <Button
+                  variant="outline"
+                  disabled={filters.page <= 1}
+                  onClick={() => handleFilterChange('page', filters.page - 1)}
+                >
+                  ← Previous
+                </Button>
+                <div style={{
+                  padding: '8px 16px',
+                  backgroundColor: '#f3f4f6',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  color: '#374151'
+                }}>
+                  Page {data.pagination.page} of {data.pagination.totalPages}
+                </div>
+                <Button
+                  variant="outline"
+                  disabled={filters.page >= data.pagination.totalPages}
+                  onClick={() => handleFilterChange('page', filters.page + 1)}
+                >
+                  Next →
+                </Button>
+              </div>
+            </Card>
           )}
         </div>
       ) : (
-        <Card>
-          <div className="p-12 text-center text-gray-500">
-            <p className="text-lg mb-4">No transactions found</p>
-            <p>
-              {userType === 'buyer' 
-                ? 'Your accepted offers will appear here as transactions.'
-                : 'Your sold tickets will appear here as transactions.'
-              }
-            </p>
+        <Card variant="elevated" style={{ textAlign: 'center', padding: '64px 32px' }}>
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '24px',
+            maxWidth: '400px',
+            margin: '0 auto'
+          }}>
+            <div style={{
+              width: '80px',
+              height: '80px',
+              borderRadius: '50%',
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '32px',
+              boxShadow: '0 8px 32px rgba(102, 126, 234, 0.3)'
+            }}>
+              🎫
+            </div>
+            <div>
+              <h3 style={{
+                fontSize: '24px',
+                fontWeight: '700',
+                color: '#1f2937',
+                margin: '0 0 12px 0'
+              }}>
+                No Transactions Yet
+              </h3>
+              <p style={{
+                fontSize: '16px',
+                color: '#6b7280',
+                margin: '0 0 24px 0',
+                lineHeight: '1.5'
+              }}>
+                {userType === 'buyer' 
+                  ? 'Your ticket purchases and accepted offers will appear here. Start browsing events to make your first transaction!'
+                  : 'Your ticket sales will appear here once buyers accept your offers. List your first tickets to get started!'
+                }
+              </p>
+              <Button variant="gradient" size="lg">
+                {userType === 'buyer' ? 'Browse Events' : 'List Tickets'}
+              </Button>
+            </div>
           </div>
         </Card>
       )}
@@ -513,6 +1060,17 @@ export const TransactionHistory = ({ userType }: TransactionHistoryProps) => {
           onDeliveryComplete={handleDeliveryComplete}
         />
       )}
+
+      <style>{`
+        @keyframes pulse {
+          0%, 100% { transform: scale(1); opacity: 1; }
+          50% { transform: scale(1.05); opacity: 0.7; }
+        }
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}</style>
     </div>
   );
 };

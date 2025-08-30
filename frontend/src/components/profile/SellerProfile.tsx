@@ -77,108 +77,371 @@ export const SellerProfile = () => {
   };
 
   const tabs = [
-    { id: 'overview' as TabType, label: 'Overview', icon: User },
-    { id: 'stats' as TabType, label: 'Statistics', icon: Activity },
-    { id: 'settings' as TabType, label: 'Settings', icon: Settings },
-    { id: 'notifications' as TabType, label: 'Notifications', icon: Bell },
+    { id: 'overview' as TabType, label: 'Overview', icon: User, gradient: 'from-green-500 to-green-600' },
+    { id: 'stats' as TabType, label: 'Statistics', icon: Activity, gradient: 'from-purple-500 to-purple-600' },
+    { id: 'settings' as TabType, label: 'Settings', icon: Settings, gradient: 'from-blue-500 to-blue-600' },
+    { id: 'notifications' as TabType, label: 'Notifications', icon: Bell, gradient: 'from-orange-500 to-orange-600' },
   ];
 
   if (profileLoading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '400px',
+        gap: '24px'
+      }}>
+        <div style={{
+          width: '80px',
+          height: '80px',
+          borderRadius: '50%',
+          background: 'linear-gradient(45deg, #10b981, #059669)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          animation: 'pulse 2s ease-in-out infinite'
+        }}>
+          <div style={{
+            width: '32px',
+            height: '32px',
+            border: '4px solid white',
+            borderTop: '4px solid transparent',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite'
+          }} />
+        </div>
+        <div style={{ textAlign: 'center' }}>
+          <h3 style={{ 
+            margin: '0 0 8px 0', 
+            fontSize: '20px', 
+            fontWeight: '600',
+            color: '#1f2937'
+          }}>
+            Loading Profile
+          </h3>
+          <p style={{ 
+            margin: 0, 
+            color: '#6b7280',
+            fontSize: '16px'
+          }}>
+            Please wait while we fetch your seller profile information...
+          </p>
+        </div>
+        <style>{`
+          @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.7; }
+          }
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `}</style>
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">My Profile</h1>
-        <p className="text-gray-600 mt-2">Manage your seller account and track your performance</p>
+    <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '32px 20px' }}>
+      {/* Header Section */}
+      <div style={{ 
+        marginBottom: '40px',
+        textAlign: 'center'
+      }}>
+        <h1 style={{
+          fontSize: '36px',
+          fontWeight: '800',
+          background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          backgroundClip: 'text',
+          margin: '0 0 12px 0',
+          letterSpacing: '-0.02em'
+        }}>
+          Seller Dashboard
+        </h1>
+        <p style={{
+          fontSize: '18px',
+          color: '#6b7280',
+          margin: 0,
+          fontWeight: '500',
+          maxWidth: '600px',
+          marginLeft: 'auto',
+          marginRight: 'auto'
+        }}>
+          Manage your seller account, track your performance, and monitor your ticket sales
+        </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: '320px 1fr',
+        gap: '32px',
+        alignItems: 'flex-start'
+      }}>
         {/* Sidebar */}
-        <div className="lg:col-span-1">
+        <div style={{ position: 'sticky', top: '32px' }}>
           {/* Profile Card */}
-          <Card className="mb-6">
-            <div className="p-6 text-center">
-              <div className="relative inline-block">
-                <div className="w-24 h-24 mx-auto bg-gradient-to-br from-green-500 to-blue-600 rounded-full flex items-center justify-center text-white text-2xl font-bold shadow-lg">
-                  {profile?.profileImage ? (
-                    <img
-                      src={profile.profileImage}
-                      alt="Profile"
-                      className="w-full h-full rounded-full object-cover"
-                    />
-                  ) : (
-                    getInitials(profile?.firstName, profile?.lastName)
-                  )}
+          <Card variant="elevated" style={{ marginBottom: '24px', overflow: 'visible' }}>
+            <div style={{ 
+              padding: '32px',
+              textAlign: 'center',
+              position: 'relative'
+            }}>
+              {/* Background Pattern */}
+              <div style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                height: '120px',
+                background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                borderRadius: '16px 16px 0 0',
+                opacity: 0.1
+              }} />
+              
+              {/* Profile Image */}
+              <div style={{ position: 'relative', display: 'inline-block', marginBottom: '20px' }}>
+                <div style={{
+                  width: '120px',
+                  height: '120px',
+                  margin: '0 auto',
+                  background: profile?.profileImage 
+                    ? `url(${profile.profileImage})` 
+                    : 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '32px',
+                  fontWeight: '700',
+                  color: 'white',
+                  border: '4px solid white',
+                  boxShadow: '0 8px 32px rgba(16, 185, 129, 0.3)',
+                  position: 'relative',
+                  zIndex: 2
+                }}>
+                  {!profile?.profileImage && getInitials(profile?.firstName, profile?.lastName)}
                 </div>
+                
                 <button
                   onClick={() => setShowImageUpload(!showImageUpload)}
-                  className="absolute bottom-0 right-0 bg-white rounded-full p-2 shadow-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+                  style={{
+                    position: 'absolute',
+                    bottom: '8px',
+                    right: '8px',
+                    width: '36px',
+                    height: '36px',
+                    backgroundColor: 'white',
+                    borderRadius: '50%',
+                    border: '2px solid #e5e7eb',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+                    transition: 'all 0.2s ease',
+                    zIndex: 3
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = '#f9fafb';
+                    e.currentTarget.style.transform = 'scale(1.1)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'white';
+                    e.currentTarget.style.transform = 'scale(1)';
+                  }}
                 >
-                  <Camera className="h-4 w-4 text-gray-600" />
+                  <Camera style={{ width: '16px', height: '16px', color: '#6b7280' }} />
                 </button>
+                
                 {showImageUpload && (
-                  <div className="absolute top-full mt-2 right-0 bg-white rounded-lg shadow-lg border border-gray-200 p-2 z-10">
+                  <div style={{
+                    position: 'absolute',
+                    top: '100%',
+                    right: 0,
+                    marginTop: '12px',
+                    backgroundColor: 'white',
+                    borderRadius: '12px',
+                    boxShadow: '0 10px 25px rgba(0, 0, 0, 0.15)',
+                    border: '1px solid #e5e7eb',
+                    padding: '16px',
+                    zIndex: 10,
+                    minWidth: '200px'
+                  }}>
+                    <label style={{
+                      display: 'block',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      color: '#374151',
+                      marginBottom: '8px'
+                    }}>
+                      Upload Profile Image
+                    </label>
                     <input
                       type="file"
                       accept="image/*"
                       onChange={handleImageUpload}
-                      className="text-xs"
+                      style={{
+                        width: '100%',
+                        fontSize: '12px',
+                        padding: '8px',
+                        border: '1px solid #d1d5db',
+                        borderRadius: '8px'
+                      }}
                     />
                   </div>
                 )}
               </div>
               
-              <h3 className="text-xl font-semibold text-gray-900 mt-4">
+              <h3 style={{
+                fontSize: '24px',
+                fontWeight: '700',
+                color: '#1f2937',
+                margin: '0 0 8px 0'
+              }}>
                 {profile?.firstName} {profile?.lastName}
               </h3>
-              <p className="text-gray-500 capitalize">{profile?.role.toLowerCase()}</p>
               
-              <div className="flex items-center justify-center mt-3">
+              <div style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '6px 12px',
+                backgroundColor: '#ecfdf5',
+                borderRadius: '20px',
+                fontSize: '14px',
+                fontWeight: '600',
+                color: '#065f46',
+                marginBottom: '16px'
+              }}>
+                <Package style={{ width: '14px', height: '14px' }} />
+                {profile?.role.toLowerCase()}
+              </div>
+              
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                marginBottom: '20px'
+              }}>
                 {profile?.isEmailVerified ? (
-                  <div className="flex items-center text-green-600 text-sm">
-                    <Shield className="h-4 w-4 mr-1" />
-                    Verified Seller
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '6px 12px',
+                    backgroundColor: '#ecfdf5',
+                    borderRadius: '20px',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    color: '#065f46'
+                  }}>
+                    <Shield style={{ width: '14px', height: '14px' }} />
+                    Verified Account
                   </div>
                 ) : (
-                  <div className="flex items-center text-orange-600 text-sm">
-                    <Shield className="h-4 w-4 mr-1" />
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '6px 12px',
+                    backgroundColor: '#fffbeb',
+                    borderRadius: '20px',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    color: '#92400e'
+                  }}>
+                    <Shield style={{ width: '14px', height: '14px' }} />
                     Unverified
                   </div>
                 )}
               </div>
 
-              <div className="mt-4 text-sm text-gray-500">
-                <p>Member since {profile?.createdAt ? formatDate(profile.createdAt) : 'N/A'}</p>
+              <div style={{
+                padding: '16px',
+                backgroundColor: '#f8fafc',
+                borderRadius: '12px',
+                textAlign: 'left'
+              }}>
+                <div style={{ marginBottom: '8px' }}>
+                  <div style={{ fontSize: '12px', fontWeight: '600', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    Member Since
+                  </div>
+                  <div style={{ fontSize: '14px', fontWeight: '600', color: '#1f2937' }}>
+                    {profile?.createdAt ? formatDate(profile.createdAt) : 'N/A'}
+                  </div>
+                </div>
                 {profile?.lastLoginAt && (
-                  <p>Last active {formatDate(profile.lastLoginAt)}</p>
+                  <div>
+                    <div style={{ fontSize: '12px', fontWeight: '600', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      Last Active
+                    </div>
+                    <div style={{ fontSize: '14px', fontWeight: '600', color: '#1f2937' }}>
+                      {formatDate(profile.lastLoginAt)}
+                    </div>
+                  </div>
                 )}
               </div>
             </div>
           </Card>
 
           {/* Navigation */}
-          <Card>
-            <div className="p-2">
-              <nav className="space-y-1">
+          <Card variant="elevated">
+            <div style={{ padding: '8px' }}>
+              <nav style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                 {tabs.map((tab) => {
                   const Icon = tab.icon;
+                  const isActive = activeTab === tab.id;
                   return (
                     <button
                       key={tab.id}
                       onClick={() => setActiveTab(tab.id)}
-                      className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
-                        activeTab === tab.id
-                          ? 'bg-green-50 text-green-700 border-r-2 border-green-700'
-                          : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                      }`}
+                      style={{
+                        width: '100%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px',
+                        padding: '16px',
+                        fontSize: '15px',
+                        fontWeight: '600',
+                        borderRadius: '12px',
+                        border: 'none',
+                        background: isActive 
+                          ? `linear-gradient(135deg, ${tab.gradient.includes('green') ? '#10b981' : tab.gradient.includes('purple') ? '#8b5cf6' : tab.gradient.includes('blue') ? '#3b82f6' : '#f59e0b'}, ${tab.gradient.includes('green') ? '#059669' : tab.gradient.includes('purple') ? '#7c3aed' : tab.gradient.includes('blue') ? '#2563eb' : '#d97706'})`
+                          : 'transparent',
+                        color: isActive ? 'white' : '#6b7280',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease',
+                        textAlign: 'left'
+                      }}
+                      onMouseEnter={(e) => {
+                        if (!isActive) {
+                          e.currentTarget.style.backgroundColor = '#f9fafb';
+                          e.currentTarget.style.color = '#1f2937';
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (!isActive) {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                          e.currentTarget.style.color = '#6b7280';
+                        }
+                      }}
                     >
-                      <Icon className="h-5 w-5 mr-3" />
+                      <div style={{
+                        width: '20px',
+                        height: '20px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}>
+                        <Icon style={{ width: '18px', height: '18px' }} />
+                      </div>
                       {tab.label}
                     </button>
                   );
@@ -189,125 +452,304 @@ export const SellerProfile = () => {
         </div>
 
         {/* Main Content */}
-        <div className="lg:col-span-3">
+        <div>
           {activeTab === 'overview' && (
-            <div className="space-y-6">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
               {/* Basic Information */}
-              <Card>
-                <div className="p-6">
-                  <h2 className="text-xl font-semibold text-gray-900 mb-6">Basic Information</h2>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="flex items-center space-x-3">
-                      <User className="h-5 w-5 text-gray-400" />
+              <Card variant="elevated">
+                <div style={{ padding: '32px' }}>
+                  <div style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    marginBottom: '24px',
+                    paddingBottom: '20px',
+                    borderBottom: '2px solid #f1f5f9'
+                  }}>
+                    <div style={{
+                      width: '48px',
+                      height: '48px',
+                      borderRadius: '12px',
+                      background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      marginRight: '16px',
+                      boxShadow: '0 8px 32px rgba(16, 185, 129, 0.3)'
+                    }}>
+                      <User style={{ color: 'white', width: '24px', height: '24px' }} />
+                    </div>
+                    <h2 style={{
+                      fontSize: '24px',
+                      fontWeight: '700',
+                      color: '#1f2937',
+                      margin: 0
+                    }}>
+                      Basic Information
+                    </h2>
+                  </div>
+
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                    gap: '24px'
+                  }}>
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '16px',
+                      padding: '20px',
+                      backgroundColor: '#f8fafc',
+                      borderRadius: '12px',
+                      border: '1px solid #e2e8f0'
+                    }}>
+                      <User style={{ color: '#10b981', width: '24px', height: '24px' }} />
                       <div>
-                        <p className="text-sm font-medium text-gray-900">Full Name</p>
-                        <p className="text-sm text-gray-500">
+                        <div style={{ fontSize: '14px', fontWeight: '600', color: '#6b7280', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                          Full Name
+                        </div>
+                        <div style={{ fontSize: '16px', fontWeight: '600', color: '#1f2937' }}>
                           {profile?.firstName} {profile?.lastName}
-                        </p>
+                        </div>
                       </div>
                     </div>
 
-                    <div className="flex items-center space-x-3">
-                      <Mail className="h-5 w-5 text-gray-400" />
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '16px',
+                      padding: '20px',
+                      backgroundColor: '#f8fafc',
+                      borderRadius: '12px',
+                      border: '1px solid #e2e8f0'
+                    }}>
+                      <Mail style={{ color: '#3b82f6', width: '24px', height: '24px' }} />
                       <div>
-                        <p className="text-sm font-medium text-gray-900">Email Address</p>
-                        <p className="text-sm text-gray-500">{profile?.email}</p>
+                        <div style={{ fontSize: '14px', fontWeight: '600', color: '#6b7280', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                          Email Address
+                        </div>
+                        <div style={{ fontSize: '16px', fontWeight: '600', color: '#1f2937' }}>
+                          {profile?.email}
+                        </div>
                       </div>
                     </div>
 
-                    <div className="flex items-center space-x-3">
-                      <Phone className="h-5 w-5 text-gray-400" />
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '16px',
+                      padding: '20px',
+                      backgroundColor: '#f8fafc',
+                      borderRadius: '12px',
+                      border: '1px solid #e2e8f0'
+                    }}>
+                      <Phone style={{ color: '#8b5cf6', width: '24px', height: '24px' }} />
                       <div>
-                        <p className="text-sm font-medium text-gray-900">Phone Number</p>
-                        <p className="text-sm text-gray-500">
+                        <div style={{ fontSize: '14px', fontWeight: '600', color: '#6b7280', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                          Phone Number
+                        </div>
+                        <div style={{ fontSize: '16px', fontWeight: '600', color: '#1f2937' }}>
                           {profile?.phone || 'Not provided'}
-                        </p>
+                        </div>
                       </div>
                     </div>
 
-                    <div className="flex items-center space-x-3">
-                      <Calendar className="h-5 w-5 text-gray-400" />
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '16px',
+                      padding: '20px',
+                      backgroundColor: '#f8fafc',
+                      borderRadius: '12px',
+                      border: '1px solid #e2e8f0'
+                    }}>
+                      <Calendar style={{ color: '#f59e0b', width: '24px', height: '24px' }} />
                       <div>
-                        <p className="text-sm font-medium text-gray-900">Member Since</p>
-                        <p className="text-sm text-gray-500">
+                        <div style={{ fontSize: '14px', fontWeight: '600', color: '#6b7280', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                          Member Since
+                        </div>
+                        <div style={{ fontSize: '16px', fontWeight: '600', color: '#1f2937' }}>
                           {profile?.createdAt ? formatDate(profile.createdAt) : 'N/A'}
-                        </p>
+                        </div>
                       </div>
                     </div>
                   </div>
 
-                  <div className="mt-6 pt-6 border-t border-gray-200">
+                  <div style={{ 
+                    marginTop: '32px', 
+                    paddingTop: '24px', 
+                    borderTop: '2px solid #f1f5f9',
+                    textAlign: 'center'
+                  }}>
                     <Button
+                      variant="gradient"
+                      size="lg"
                       onClick={() => setActiveTab('settings')}
-                      className="w-full sm:w-auto"
+                      style={{ minWidth: '200px' }}
                     >
+                      <Settings style={{ marginRight: '8px', width: '20px', height: '20px' }} />
                       Edit Profile
                     </Button>
                   </div>
                 </div>
               </Card>
 
-              {/* Seller Stats */}
+              {/* Seller Performance Stats */}
               {!sellerStatsLoading && sellerStats && (
-                <Card>
-                  <div className="p-6">
-                    <h2 className="text-xl font-semibold text-gray-900 mb-6">Seller Performance</h2>
+                <Card variant="elevated">
+                  <div style={{ padding: '32px' }}>
+                    <div style={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      marginBottom: '24px',
+                      paddingBottom: '20px',
+                      borderBottom: '2px solid #f1f5f9'
+                    }}>
+                      <div style={{
+                        width: '48px',
+                        height: '48px',
+                        borderRadius: '12px',
+                        background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        marginRight: '16px',
+                        boxShadow: '0 8px 32px rgba(59, 130, 246, 0.3)'
+                      }}>
+                        <TrendingUp style={{ color: 'white', width: '24px', height: '24px' }} />
+                      </div>
+                      <h2 style={{
+                        fontSize: '24px',
+                        fontWeight: '700',
+                        color: '#1f2937',
+                        margin: 0
+                      }}>
+                        Seller Performance
+                      </h2>
+                    </div>
                     
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                      <div className="text-center">
-                        <div className="text-2xl font-bold text-blue-600">
+                    <div style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                      gap: '24px'
+                    }}>
+                      <div style={{
+                        padding: '24px',
+                        textAlign: 'center',
+                        background: 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)',
+                        borderRadius: '16px',
+                        border: '2px solid #93c5fd'
+                      }}>
+                        <div style={{ 
+                          fontSize: '32px', 
+                          fontWeight: '800', 
+                          color: '#2563eb',
+                          marginBottom: '8px'
+                        }}>
                           {sellerStats.totalListings}
                         </div>
-                        <div className="text-sm text-gray-500">Total Listings</div>
+                        <div style={{ 
+                          fontSize: '14px', 
+                          color: '#1e40af', 
+                          fontWeight: '600',
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.5px'
+                        }}>
+                          Total Listings
+                        </div>
                       </div>
 
-                      <div className="text-center">
-                        <div className="text-2xl font-bold text-green-600">
+                      <div style={{
+                        padding: '24px',
+                        textAlign: 'center',
+                        background: 'linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)',
+                        borderRadius: '16px',
+                        border: '2px solid #a7f3d0'
+                      }}>
+                        <div style={{ 
+                          fontSize: '32px', 
+                          fontWeight: '800', 
+                          color: '#059669',
+                          marginBottom: '8px'
+                        }}>
                           {sellerStats.activeListings}
                         </div>
-                        <div className="text-sm text-gray-500">Active Listings</div>
+                        <div style={{ 
+                          fontSize: '14px', 
+                          color: '#065f46', 
+                          fontWeight: '600',
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.5px'
+                        }}>
+                          Active Listings
+                        </div>
                       </div>
 
-                      <div className="text-center">
-                        <div className="text-2xl font-bold text-purple-600">
+                      <div style={{
+                        padding: '24px',
+                        textAlign: 'center',
+                        background: 'linear-gradient(135deg, #faf5ff 0%, #ede9fe 100%)',
+                        borderRadius: '16px',
+                        border: '2px solid #c4b5fd'
+                      }}>
+                        <div style={{ 
+                          fontSize: '32px', 
+                          fontWeight: '800', 
+                          color: '#7c3aed',
+                          marginBottom: '8px'
+                        }}>
                           {sellerStats.soldListings}
                         </div>
-                        <div className="text-sm text-gray-500">Sold</div>
+                        <div style={{ 
+                          fontSize: '14px', 
+                          color: '#6b21a8', 
+                          fontWeight: '600',
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.5px'
+                        }}>
+                          Sold Listings
+                        </div>
                       </div>
 
-                      <div className="text-center">
-                        <div className="text-2xl font-bold text-emerald-600">
+                      <div style={{
+                        padding: '24px',
+                        textAlign: 'center',
+                        background: 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)',
+                        borderRadius: '16px',
+                        border: '2px solid #86efac'
+                      }}>
+                        <div style={{ 
+                          fontSize: '32px', 
+                          fontWeight: '800', 
+                          color: '#16a34a',
+                          marginBottom: '8px'
+                        }}>
                           {formatPrice(sellerStats.totalRevenue)}
                         </div>
-                        <div className="text-sm text-gray-500">Total Revenue</div>
-                      </div>
-                    </div>
-
-                    <div className="mt-6 pt-6 border-t border-gray-200">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                          <div className="text-lg font-semibold text-gray-900">
-                            {formatPrice(sellerStats.averagePrice)}
-                          </div>
-                          <div className="text-sm text-gray-500">Average Listing Price</div>
-                        </div>
-                        <div>
-                          <div className="text-lg font-semibold text-gray-900">
-                            {sellerStats.soldListings > 0 ? 
-                              Math.round((sellerStats.soldListings / sellerStats.totalListings) * 100) : 0}%
-                          </div>
-                          <div className="text-sm text-gray-500">Success Rate</div>
+                        <div style={{ 
+                          fontSize: '14px', 
+                          color: '#15803d', 
+                          fontWeight: '600',
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.5px'
+                        }}>
+                          Total Revenue
                         </div>
                       </div>
                     </div>
 
-                    <div className="mt-6 pt-6 border-t border-gray-200">
+                    <div style={{ 
+                      marginTop: '32px', 
+                      paddingTop: '24px', 
+                      borderTop: '2px solid #f1f5f9',
+                      textAlign: 'center'
+                    }}>
                       <Button
                         variant="outline"
+                        size="lg"
                         onClick={() => setActiveTab('stats')}
-                        className="w-full sm:w-auto"
+                        style={{ minWidth: '240px' }}
                       >
+                        <Activity style={{ marginRight: '8px', width: '20px', height: '20px' }} />
                         View Detailed Statistics
                       </Button>
                     </div>
@@ -317,35 +759,97 @@ export const SellerProfile = () => {
 
               {/* Recent Listings */}
               {sellerStats?.recentListings && sellerStats.recentListings.length > 0 && (
-                <Card>
-                  <div className="p-6">
-                    <h2 className="text-xl font-semibold text-gray-900 mb-6">Recent Listings</h2>
+                <Card variant="elevated">
+                  <div style={{ padding: '32px' }}>
+                    <div style={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      marginBottom: '24px',
+                      paddingBottom: '20px',
+                      borderBottom: '2px solid #f1f5f9'
+                    }}>
+                      <div style={{
+                        width: '48px',
+                        height: '48px',
+                        borderRadius: '12px',
+                        background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        marginRight: '16px',
+                        boxShadow: '0 8px 32px rgba(245, 158, 11, 0.3)'
+                      }}>
+                        <Package style={{ color: 'white', width: '24px', height: '24px' }} />
+                      </div>
+                      <h2 style={{
+                        fontSize: '24px',
+                        fontWeight: '700',
+                        color: '#1f2937',
+                        margin: 0
+                      }}>
+                        Recent Listings
+                      </h2>
+                    </div>
                     
-                    <div className="space-y-4">
-                      {sellerStats.recentListings.map((listing: any) => (
-                        <div key={listing.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                          <div className="flex items-center space-x-4">
-                            <div className="flex-shrink-0">
-                              <Package className="h-5 w-5 text-gray-400" />
-                            </div>
-                            <div className="flex-1">
-                              <p className="text-sm font-medium text-gray-900">
-                                {listing.event.name}
-                              </p>
-                              <p className="text-xs text-gray-500">
-                                {listing.section?.name} • {listing.quantity} tickets
-                              </p>
-                            </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                      {sellerStats.recentListings.slice(0, 5).map((listing: any) => (
+                        <div 
+                          key={listing.id} 
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '16px',
+                            padding: '20px',
+                            backgroundColor: '#f8fafc',
+                            borderRadius: '12px',
+                            border: '1px solid #e2e8f0',
+                            transition: 'all 0.2s ease'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.backgroundColor = '#f1f5f9';
+                            e.currentTarget.style.borderColor = '#d1d5db';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.backgroundColor = '#f8fafc';
+                            e.currentTarget.style.borderColor = '#e2e8f0';
+                          }}
+                        >
+                          <div style={{
+                            width: '48px',
+                            height: '48px',
+                            borderRadius: '12px',
+                            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            flexShrink: 0
+                          }}>
+                            <Package style={{ color: 'white', width: '20px', height: '20px' }} />
                           </div>
-                          <div className="flex items-center space-x-4">
-                            <div className="text-right">
-                              <p className="text-sm font-medium text-gray-900">
-                                {formatPrice(listing.price)}
-                              </p>
-                              <p className="text-xs text-gray-500">
-                                {listing.status}
-                              </p>
-                            </div>
+                          <div style={{ flex: 1 }}>
+                            <p style={{
+                              fontSize: '16px',
+                              fontWeight: '600',
+                              color: '#1f2937',
+                              margin: '0 0 4px 0'
+                            }}>
+                              {listing.event?.name || 'Unknown Event'}
+                            </p>
+                            <p style={{
+                              fontSize: '14px',
+                              color: '#6b7280',
+                              margin: 0
+                            }}>
+                              Qty: {listing.quantity} • {listing.status}
+                            </p>
+                          </div>
+                          <div style={{
+                            fontSize: '18px',
+                            fontWeight: '700',
+                            color: '#10b981',
+                            flexShrink: 0
+                          }}>
+                            {formatPrice(listing.price)}
                           </div>
                         </div>
                       ))}
@@ -365,56 +869,9 @@ export const SellerProfile = () => {
           )}
 
           {activeTab === 'stats' && (
-            <Card>
-              <div className="p-6">
-                <h2 className="text-xl font-semibold text-gray-900 mb-6">Detailed Statistics</h2>
-                
-                {sellerStatsLoading ? (
-                  <div className="flex justify-center items-center h-32">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <div className="bg-blue-50 p-4 rounded-lg">
-                      <div className="flex items-center">
-                        <Package className="h-8 w-8 text-blue-600 mr-3" />
-                        <div>
-                          <p className="text-sm font-medium text-gray-900">Total Listings</p>
-                          <p className="text-2xl font-bold text-blue-600">
-                            {sellerStats?.totalListings || 0}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="bg-green-50 p-4 rounded-lg">
-                      <div className="flex items-center">
-                        <DollarSign className="h-8 w-8 text-green-600 mr-3" />
-                        <div>
-                          <p className="text-sm font-medium text-gray-900">Total Revenue</p>
-                          <p className="text-2xl font-bold text-green-600">
-                            {formatPrice(sellerStats?.totalRevenue || 0)}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="bg-purple-50 p-4 rounded-lg">
-                      <div className="flex items-center">
-                        <TrendingUp className="h-8 w-8 text-purple-600 mr-3" />
-                        <div>
-                          <p className="text-sm font-medium text-gray-900">Success Rate</p>
-                          <p className="text-2xl font-bold text-purple-600">
-                            {sellerStats && sellerStats.totalListings > 0 ? 
-                              Math.round((sellerStats.soldListings / sellerStats.totalListings) * 100) : 0}%
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </Card>
+            <div>
+              {/* Render detailed stats component */}
+            </div>
           )}
         </div>
       </div>

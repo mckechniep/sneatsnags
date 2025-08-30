@@ -278,27 +278,35 @@ p {
   font-size: clamp(0.875rem, 1.5vw, 1rem);
 }
 
-/* Improved link styles with better contrast */
-a {
-  color: #1d4ed8; /* Improved contrast ratio */
-  text-decoration: underline;
-  text-decoration-thickness: 2px;
-  text-underline-offset: 3px;
+/* Professional link styles without underlines */
+a:not(.MuiCard-root a):not([role="button"]):not(.no-link-style) {
+  color: #2563eb;
+  text-decoration: none;
   transition: all 0.2s ease;
+  font-weight: 500;
 }
 
-a:hover {
-  color: #1e40af; /* Darker on hover for better contrast */
-  text-decoration-thickness: 3px;
+a:not(.MuiCard-root a):not([role="button"]):not(.no-link-style):hover {
+  color: #1d4ed8;
+  opacity: 0.8;
 }
 
-a:focus {
-  background-color: rgba(59, 130, 246, 0.15);
+a:not(.MuiCard-root a):not([role="button"]):not(.no-link-style):focus {
+  background-color: rgba(37, 99, 235, 0.1);
   border-radius: 4px;
   padding: 2px 4px;
   margin: -2px -4px;
-  outline: 2px solid #3b82f6;
+  outline: 2px solid #2563eb;
   outline-offset: 2px;
+}
+
+/* Reset link styles for cards and buttons */
+.MuiCard-root a,
+.MuiCard-root,
+[role="button"],
+.no-link-style {
+  color: inherit !important;
+  text-decoration: none !important;
 }
 
 /* Custom scrollbar */

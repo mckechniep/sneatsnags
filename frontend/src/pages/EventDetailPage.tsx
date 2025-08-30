@@ -24,7 +24,9 @@ export const EventDetailPage: React.FC = () => {
   const { user } = useAuth();
   const [event, setEvent] = useState<Event | null>(null);
   const [sections, setSections] = useState<EventSection[]>([]);
+  const [relatedEvents, setRelatedEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
+  const [relatedLoading, setRelatedLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isFavorite, setIsFavorite] = useState(false);
 
@@ -33,6 +35,12 @@ export const EventDetailPage: React.FC = () => {
       fetchEventDetails();
     }
   }, [id]);
+
+  useEffect(() => {
+    if (event) {
+      fetchRelatedEvents();
+    }
+  }, [event]);
 
   const fetchEventDetails = async () => {
     try {
@@ -55,6 +63,34 @@ export const EventDetailPage: React.FC = () => {
       setError('Failed to load event details. Please try again.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchRelatedEvents = async () => {
+    if (!event || !id) return;
+    
+    try {
+      setRelatedLoading(true);
+      
+      // Get related events based on category, city, or general popularity
+      const relatedEventsData = await eventService.getEvents({
+        category: event.category,
+        city: event.city,
+        state: event.state,
+        limit: 10, // Request more to have enough after filtering
+        page: 1
+      });
+
+      // Filter out the current event if it appears in results
+      const filteredEvents = relatedEventsData.data?.filter((relatedEvent: Event) => relatedEvent.id !== id) || [];
+      
+      setRelatedEvents(filteredEvents.slice(0, 6)); // Limit to 6 events
+    } catch (err) {
+      console.error('Failed to fetch related events:', err);
+      // Don't show error for related events, just show empty state
+      setRelatedEvents([]);
+    } finally {
+      setRelatedLoading(false);
     }
   };
 
@@ -318,6 +354,255 @@ export const EventDetailPage: React.FC = () => {
                     </div>
                   ))}
                 </div>
+              </div>
+            )}
+
+            {/* Related Events Section */}
+            {(relatedEvents.length > 0 || relatedLoading) && (
+              <div style={{
+                background: 'linear-gradient(135deg, #ffffff 0%, #fafbfc 100%)',
+                borderRadius: '20px',
+                padding: '32px',
+                boxShadow: '0 10px 25px rgba(0, 0, 0, 0.08)',
+                border: '1px solid rgba(255, 255, 255, 0.5)'
+              }}>
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  marginBottom: '32px'
+                }}>
+                  <div style={{
+                    width: '48px',
+                    height: '48px',
+                    borderRadius: '12px',
+                    background: 'linear-gradient(135deg, #2563eb, #7c3aed)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginRight: '16px'
+                  }}>
+                    <Calendar style={{ width: '24px', height: '24px', color: 'white' }} />
+                  </div>
+                  <div>
+                    <h3 style={{
+                      fontSize: '24px',
+                      fontWeight: '800',
+                      color: '#1f2937',
+                      margin: '0 0 4px 0'
+                    }}>
+                      Related Events
+                    </h3>
+                    <p style={{
+                      fontSize: '16px',
+                      color: '#6b7280',
+                      margin: 0,
+                      fontWeight: '500'
+                    }}>
+                      Discover similar events you might enjoy
+                    </p>
+                  </div>
+                </div>
+
+                {relatedLoading ? (
+                  // Loading skeleton for related events
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+                    gap: '20px'
+                  }}>
+                    {[...Array(4)].map((_, i) => (
+                      <div key={i} style={{
+                        background: 'linear-gradient(90deg, #f1f5f9, #e2e8f0, #f1f5f9)',
+                        backgroundSize: '200% 100%',
+                        animation: 'shimmer 2s infinite',
+                        borderRadius: '16px',
+                        height: '320px'
+                      }} />
+                    ))}
+                  </div>
+                ) : (
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+                    gap: '20px'
+                  }}>
+                    {relatedEvents.map((relatedEvent) => (
+                      <Link 
+                        key={relatedEvent.id} 
+                        to={`/events/${relatedEvent.id}`}
+                        style={{ textDecoration: 'none', color: 'inherit' }}
+                      >
+                        <div
+                          style={{
+                            background: 'linear-gradient(135deg, #ffffff 0%, #fafbfc 100%)',
+                            borderRadius: '16px',
+                            overflow: 'hidden',
+                            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
+                            border: '1px solid #e2e8f0',
+                            transition: 'all 0.3s ease',
+                            cursor: 'pointer',
+                            height: '100%'
+                          }}
+                          onMouseEnter={(e: React.MouseEvent<HTMLDivElement>) => {
+                            e.currentTarget.style.transform = 'translateY(-4px)';
+                            e.currentTarget.style.boxShadow = '0 12px 25px rgba(0, 0, 0, 0.1)';
+                          }}
+                          onMouseLeave={(e: React.MouseEvent<HTMLDivElement>) => {
+                            e.currentTarget.style.transform = 'translateY(0)';
+                            e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.05)';
+                          }}
+                        >
+                          <div style={{ position: 'relative' }}>
+                            {relatedEvent.imageUrl ? (
+                              <img
+                                src={relatedEvent.imageUrl}
+                                alt={relatedEvent.name}
+                                style={{
+                                  width: '100%',
+                                  height: '160px',
+                                  objectFit: 'cover'
+                                }}
+                              />
+                            ) : (
+                              <div style={{
+                                width: '100%',
+                                height: '160px',
+                                background: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 50%, #dc2626 100%)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                              }}>
+                                <Calendar style={{ width: '32px', height: '32px', color: 'white', opacity: 0.8 }} />
+                              </div>
+                            )}
+                            
+                            {/* Category Badge */}
+                            <div style={{
+                              position: 'absolute',
+                              top: '12px',
+                              right: '12px'
+                            }}>
+                              <span style={{
+                                background: 'rgba(0, 0, 0, 0.75)',
+                                backdropFilter: 'blur(8px)',
+                                color: 'white',
+                                padding: '4px 8px',
+                                borderRadius: '12px',
+                                fontSize: '11px',
+                                fontWeight: '700',
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.5px'
+                              }}>
+                                {relatedEvent.category}
+                              </span>
+                            </div>
+                          </div>
+                          
+                          <div style={{ padding: '16px' }}>
+                            <h4 style={{
+                              fontSize: '16px',
+                              fontWeight: '700',
+                              color: '#1f2937',
+                              margin: '0 0 8px 0',
+                              lineHeight: '1.3',
+                              display: '-webkit-box',
+                              WebkitLineClamp: 2,
+                              WebkitBoxOrient: 'vertical',
+                              overflow: 'hidden'
+                            }}>
+                              {relatedEvent.name}
+                            </h4>
+                            
+                            <div style={{ 
+                              display: 'flex', 
+                              alignItems: 'center', 
+                              color: '#6b7280',
+                              fontSize: '13px',
+                              fontWeight: '500',
+                              marginBottom: '8px'
+                            }}>
+                              <MapPin style={{ width: '14px', height: '14px', marginRight: '6px', color: '#2563eb' }} />
+                              <span style={{ 
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap'
+                              }}>
+                                {relatedEvent.city}, {relatedEvent.state}
+                              </span>
+                            </div>
+                            
+                            <div style={{ 
+                              display: 'flex', 
+                              alignItems: 'center', 
+                              color: '#6b7280',
+                              fontSize: '13px',
+                              fontWeight: '500',
+                              marginBottom: '12px'
+                            }}>
+                              <Calendar style={{ width: '14px', height: '14px', marginRight: '6px', color: '#2563eb' }} />
+                              <span>{new Date(relatedEvent.eventDate).toLocaleDateString()}</span>
+                            </div>
+                            
+                            {/* Price */}
+                            <div style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              padding: '12px',
+                              background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
+                              borderRadius: '8px',
+                              border: '1px solid #e2e8f0'
+                            }}>
+                              <div>
+                                <span style={{
+                                  fontSize: '10px',
+                                  color: '#6b7280',
+                                  textTransform: 'uppercase',
+                                  letterSpacing: '0.5px',
+                                  fontWeight: '600',
+                                  display: 'block',
+                                  marginBottom: '2px'
+                                }}>
+                                  From
+                                </span>
+                                <div style={{
+                                  fontSize: '16px',
+                                  fontWeight: '800',
+                                  color: '#2563eb'
+                                }}>
+                                  {formatPrice(relatedEvent.minPrice || 0)}
+                                </div>
+                              </div>
+                              <div style={{ textAlign: 'right' }}>
+                                <div style={{
+                                  fontSize: '12px',
+                                  fontWeight: '600',
+                                  color: '#1f2937'
+                                }}>
+                                  {relatedEvent.availableSeats || 'N/A'}
+                                </div>
+                                <div style={{
+                                  fontSize: '10px',
+                                  color: '#6b7280',
+                                  fontWeight: '500'
+                                }}>
+                                  available
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                )}
+
+                <style>{`
+                  @keyframes shimmer {
+                    0% { background-position: -200% 0; }
+                    100% { background-position: 200% 0; }
+                  }
+                `}</style>
               </div>
             )}
           </div>

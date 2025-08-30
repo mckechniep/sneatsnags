@@ -2,8 +2,11 @@ import { BuyerOffersList } from '../components/buyer/BuyerOffersList';
 
 export const BuyerOffersPage = () => {
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-6">My Offers</h1>
+    <div style={{
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+      padding: '0'
+    }}>
       <BuyerOffersList showUserOffersOnly={true} />
     </div>
   );

@@ -1,11 +1,9 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo } from "react";
 import {
   Box,
   Card,
   CardContent,
-  CardMedia,
   Typography,
-  Grid,
   Chip,
   Button,
   IconButton,
@@ -25,10 +23,9 @@ import {
   DialogContent,
   DialogActions,
   Divider,
-  Avatar,
   ListItemIcon,
   ListItemText,
-} from '@mui/material';
+} from "@mui/material";
 import {
   Search as SearchIcon,
   FilterList as FilterIcon,
@@ -44,22 +41,20 @@ import {
   People as PeopleIcon,
   Clear as ClearIcon,
   Refresh as RefreshIcon,
-} from '@mui/icons-material';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { format, parseISO, differenceInDays } from 'date-fns';
+} from "@mui/icons-material";
+import { format, parseISO, differenceInDays } from "date-fns";
 import {
-  EventFilters,
-  EventListProps,
-  EventCardProps,
   EVENT_TYPES,
   EVENT_STATUSES,
   SORT_OPTIONS,
   DEFAULT_FILTERS,
-} from '../../types/events';
-import { useEvents, useEventAdmin } from '../../contexts/EventContext';
-import { LoadingButton } from '@mui/lab';
+} from "../../types/events";
+import type {
+  EventFilters,
+  EventListProps,
+  EventCardProps,
+} from "../../types/events";
+import { useEvents, useEventAdmin } from "../../contexts/EventContext";
 
 // Event Card Component
 const EventCard: React.FC<EventCardProps> = ({
@@ -88,7 +83,7 @@ const EventCard: React.FC<EventCardProps> = ({
       await onDelete(event.id);
       setDeleteDialogOpen(false);
     } catch (error) {
-      console.error('Failed to delete event:', error);
+      console.error("Failed to delete event:", error);
     } finally {
       setDeleting(false);
     }
@@ -96,177 +91,235 @@ const EventCard: React.FC<EventCardProps> = ({
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'ACTIVE':
-        return 'success';
-      case 'CANCELLED':
-        return 'error';
-      case 'POSTPONED':
-        return 'warning';
-      case 'COMPLETED':
-        return 'info';
+      case "ACTIVE":
+        return "success";
+      case "CANCELLED":
+        return "error";
+      case "POSTPONED":
+        return "warning";
+      case "COMPLETED":
+        return "info";
       default:
-        return 'default';
+        return "default";
     }
   };
 
-  const getEventTypeIcon = (type: string) => {
-    const eventType = EVENT_TYPES.find(t => t.value === type);
-    return eventType?.icon || '🎪';
-  };
-
-  const isUpcoming = differenceInDays(parseISO(event.eventDate), new Date()) >= 0;
+  const isUpcoming =
+    differenceInDays(parseISO(event.eventDate), new Date()) >= 0;
   const daysUntil = differenceInDays(parseISO(event.eventDate), new Date());
 
   return (
     <>
       <Card
         sx={{
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          cursor: 'pointer',
-          transition: 'all 0.2s ease-in-out',
-          '&:hover': {
-            transform: 'translateY(-2px)',
-            boxShadow: 4,
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          cursor: "pointer",
+          transition: "all 0.2s ease",
+          textDecoration: "none !important",
+          borderRadius: 2,
+          overflow: "hidden",
+          border: "none",
+          bgcolor: "background.paper",
+          boxShadow:
+            "0 1px 2px 0 rgba(60,64,67,.3), 0 1px 3px 1px rgba(60,64,67,.15)",
+          "&:hover": {
+            boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+            transform: "translateY(-2px)",
+            "& .event-image": {
+              transform: "scale(1.02)",
+            },
+          },
+          "& *": {
+            textDecoration: "none !important",
+            color: "inherit !important",
+          },
+          "& a": {
+            textDecoration: "none !important",
+            color: "inherit !important",
+          },
+          "& a:hover": {
+            textDecoration: "none !important",
+            color: "inherit !important",
+          },
+          "& a:focus": {
+            textDecoration: "none !important",
+            color: "inherit !important",
+          },
+          "& a:visited": {
+            textDecoration: "none !important",
+            color: "inherit !important",
           },
         }}
         onClick={() => onSelect(event)}
       >
-        <CardMedia
+        <Box
+          className="event-image"
           sx={{
-            height: 200,
+            height: 160,
             background: event.imageUrl
               ? `url(${event.imageUrl})`
-              : 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            position: 'relative',
+              : "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            position: "relative",
+            transition: "transform 0.3s ease",
+            overflow: "hidden",
           }}
         >
-          <Box
-            sx={{
-              position: 'absolute',
-              top: 8,
-              left: 8,
-              display: 'flex',
-              gap: 1,
-            }}
-          >
-            <Chip
-              label={event.status}
-              size="small"
-              color={getStatusColor(event.status) as 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning'}
-              sx={{ fontWeight: 600 }}
-            />
-            {isUpcoming && daysUntil <= 7 && (
-              <Chip
-                label={daysUntil === 0 ? 'Today' : `${daysUntil} days`}
-                size="small"
-                color="secondary"
-                sx={{ fontWeight: 600 }}
-              />
-            )}
-          </Box>
-          
+          {event.status === "CANCELLED" && (
+            <Box
+              sx={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                bgcolor: "rgba(0,0,0,0.6)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Typography
+                sx={{
+                  color: "white",
+                  fontSize: "1.5rem",
+                  fontWeight: 700,
+                  textTransform: "uppercase",
+                  transform: "rotate(-15deg)",
+                  padding: "8px 24px",
+                  border: "3px solid white",
+                }}
+              >
+                Cancelled
+              </Typography>
+            </Box>
+          )}
+
+          {isUpcoming && daysUntil <= 7 && event.status !== "CANCELLED" && (
+            <Box
+              sx={{
+                position: "absolute",
+                top: 12,
+                left: 12,
+                bgcolor: "#f8f8f8",
+                borderRadius: "4px",
+                px: 1,
+                py: 0.5,
+              }}
+            >
+              <Typography
+                sx={{
+                  fontSize: "0.75rem",
+                  fontWeight: 600,
+                  color: "#39364f",
+                }}
+              >
+                {daysUntil === 0 ? "Today" : `${daysUntil} days left`}
+              </Typography>
+            </Box>
+          )}
+
           {showActions && (
             <Box
               sx={{
-                position: 'absolute',
+                position: "absolute",
                 top: 8,
                 right: 8,
               }}
             >
               <IconButton
                 sx={{
-                  bgcolor: 'rgba(255, 255, 255, 0.9)',
-                  '&:hover': { bgcolor: 'rgba(255, 255, 255, 1)' },
+                  bgcolor: "rgba(255, 255, 255, 0.9)",
+                  boxShadow: "0 2px 4px rgba(0,0,0,0.15)",
+                  "&:hover": {
+                    bgcolor: "rgba(255, 255, 255, 1)",
+                  },
+                  transition: "all 0.2s ease",
+                  width: 32,
+                  height: 32,
                 }}
                 onClick={handleMenuClick}
               >
-                <MoreVertIcon />
+                <MoreVertIcon sx={{ color: "text.primary", fontSize: 18 }} />
               </IconButton>
             </Box>
           )}
+        </Box>
 
-          <Box
+        <CardContent sx={{ flexGrow: 1, p: 2, pb: 2 }}>
+          <Typography
+            variant="body2"
             sx={{
-              position: 'absolute',
-              bottom: 8,
-              left: 8,
-              bgcolor: 'rgba(0, 0, 0, 0.7)',
-              borderRadius: 1,
-              px: 1,
-              py: 0.5,
+              color: "#d1410c",
+              fontWeight: 600,
+              fontSize: "0.875rem",
+              mb: 0.5,
             }}
           >
-            <Typography variant="caption" color="white" fontWeight={600}>
-              {getEventTypeIcon(event.eventType)} {event.eventType}
-            </Typography>
-          </Box>
-        </CardMedia>
+            {format(parseISO(event.eventDate), "EEE, MMM d • h:mm a")}
+          </Typography>
 
-        <CardContent sx={{ flexGrow: 1, p: 2 }}>
-          <Typography variant="h6" component="h3" gutterBottom noWrap>
+          <Typography
+            variant="h6"
+            component="h3"
+            sx={{
+              fontWeight: 600,
+              fontSize: "1rem",
+              color: "#39364f",
+              mb: 0.5,
+              lineHeight: 1.3,
+              display: "-webkit-box",
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: "vertical",
+              overflow: "hidden",
+            }}
+          >
             {event.name}
           </Typography>
 
-          <Box display="flex" alignItems="center" gap={1} mb={1}>
-            <LocationIcon fontSize="small" color="action" />
-            <Typography variant="body2" color="text.secondary" noWrap>
-              {event.venue}, {event.city}, {event.state}
-            </Typography>
-          </Box>
-
-          <Box display="flex" alignItems="center" gap={1} mb={1}>
-            <ScheduleIcon fontSize="small" color="action" />
-            <Typography variant="body2" color="text.secondary">
-              {format(parseISO(event.eventDate), 'MMM dd, yyyy • h:mm a')}
-            </Typography>
-          </Box>
+          <Typography
+            variant="body2"
+            sx={{
+              color: "#6f7287",
+              fontSize: "0.875rem",
+              mb: 1,
+            }}
+          >
+            {event.venue} • {event.city}
+          </Typography>
 
           {(event.minPrice > 0 || event.maxPrice > 0) && (
-            <Box display="flex" alignItems="center" gap={1} mb={1}>
-              <MoneyIcon fontSize="small" color="action" />
-              <Typography variant="body2" color="text.secondary">
-                {event.minPrice === event.maxPrice
-                  ? `$${event.minPrice}`
-                  : `$${event.minPrice} - $${event.maxPrice}`}
-              </Typography>
-            </Box>
-          )}
-
-          {event.totalSeats > 0 && (
-            <Box display="flex" alignItems="center" gap={1} mb={2}>
-              <PeopleIcon fontSize="small" color="action" />
-              <Typography variant="body2" color="text.secondary">
-                {event.availableSeats} / {event.totalSeats} available
-              </Typography>
-            </Box>
-          )}
-
-          {event.description && (
             <Typography
               variant="body2"
-              color="text.secondary"
               sx={{
-                display: '-webkit-box',
-                WebkitLineClamp: 2,
-                WebkitBoxOrient: 'vertical',
-                overflow: 'hidden',
-                mb: 2,
+                color: "#39364f",
+                fontWeight: 600,
+                fontSize: "0.875rem",
+                mb: 1,
               }}
             >
-              {event.description}
+              {event.minPrice === 0
+                ? "Free"
+                : event.minPrice === event.maxPrice
+                ? `From $${event.minPrice}`
+                : `From $${event.minPrice}`}
             </Typography>
           )}
 
-          <Box display="flex" gap={1} flexWrap="wrap">
+          <Box sx={{ mt: "auto", display: "flex", gap: 1, flexWrap: "wrap" }}>
             {event.category && (
-              <Chip label={event.category} size="small" variant="outlined" />
-            )}
-            {event.subcategory && (
-              <Chip label={event.subcategory} size="small" variant="outlined" />
+              <Typography
+                variant="caption"
+                sx={{
+                  color: "#6f7287",
+                  fontSize: "0.75rem",
+                }}
+              >
+                {event.category}
+              </Typography>
             )}
           </Box>
         </CardContent>
@@ -279,20 +332,39 @@ const EventCard: React.FC<EventCardProps> = ({
         onClose={handleMenuClose}
         onClick={(e) => e.stopPropagation()}
       >
-        <MenuItem onClick={() => { onSelect(event); handleMenuClose(); }}>
-          <ListItemIcon><ViewIcon /></ListItemIcon>
+        <MenuItem
+          onClick={() => {
+            onSelect(event);
+            handleMenuClose();
+          }}
+        >
+          <ListItemIcon>
+            <ViewIcon />
+          </ListItemIcon>
           <ListItemText>View Details</ListItemText>
         </MenuItem>
-        <MenuItem onClick={() => { onEdit(event); handleMenuClose(); }}>
-          <ListItemIcon><EditIcon /></ListItemIcon>
+        <MenuItem
+          onClick={() => {
+            onEdit(event);
+            handleMenuClose();
+          }}
+        >
+          <ListItemIcon>
+            <EditIcon />
+          </ListItemIcon>
           <ListItemText>Edit Event</ListItemText>
         </MenuItem>
         <Divider />
         <MenuItem
-          onClick={() => { setDeleteDialogOpen(true); handleMenuClose(); }}
-          sx={{ color: 'error.main' }}
+          onClick={() => {
+            setDeleteDialogOpen(true);
+            handleMenuClose();
+          }}
+          sx={{ color: "error.main" }}
         >
-          <ListItemIcon><DeleteIcon color="error" /></ListItemIcon>
+          <ListItemIcon>
+            <DeleteIcon color="error" />
+          </ListItemIcon>
           <ListItemText>Delete Event</ListItemText>
         </MenuItem>
       </Menu>
@@ -306,19 +378,20 @@ const EventCard: React.FC<EventCardProps> = ({
         <DialogTitle>Delete Event</DialogTitle>
         <DialogContent>
           <Typography>
-            Are you sure you want to delete "{event.name}"? This action cannot be undone.
+            Are you sure you want to delete "{event.name}"? This action cannot
+            be undone.
           </Typography>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
-          <LoadingButton
+          <Button
             onClick={handleDelete}
-            loading={deleting}
+            disabled={deleting}
             color="error"
             variant="contained"
           >
-            Delete
-          </LoadingButton>
+            {deleting ? "Deleting..." : "Delete"}
+          </Button>
         </DialogActions>
       </Dialog>
     </>
@@ -335,157 +408,272 @@ const EventFilters: React.FC<{
 
   const hasActiveFilters = useMemo(() => {
     return Object.entries(filters).some(([key, value]) => {
-      if (key === 'search') return false; // Search is handled separately
-      return value !== '' && value !== null && value !== undefined;
+      if (key === "search") return false; // Search is handled separately
+      return value !== "" && value !== null && value !== undefined;
     });
   }, [filters]);
 
   return (
-    <LocalizationProvider dateAdapter={AdapterDateFns}>
-      <Card sx={{ mb: 3 }}>
-        <CardContent>
-          <Box display="flex" gap={2} alignItems="center" mb={filtersOpen ? 2 : 0}>
-            <TextField
-              placeholder="Search events..."
-              value={filters.search}
-              onChange={(e) => onFiltersChange({ search: e.target.value })}
-              InputProps={{
+    <Card
+      sx={{
+        mb: 4,
+        boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
+        borderRadius: 3,
+        border: "1px solid",
+        borderColor: "divider",
+        bgcolor: "background.paper",
+      }}
+    >
+      <CardContent>
+        <Box
+          display="flex"
+          gap={2}
+          alignItems="center"
+          mb={filtersOpen ? 2 : 0}
+        >
+          <TextField
+            placeholder="Search events, venues, or locations..."
+            value={filters.search}
+            onChange={(e) => onFiltersChange({ search: e.target.value })}
+            slotProps={{
+              input: {
                 startAdornment: (
                   <InputAdornment position="start">
-                    <SearchIcon />
+                    <SearchIcon sx={{ color: "primary.main" }} />
                   </InputAdornment>
                 ),
-              }}
-              sx={{ flexGrow: 1 }}
-            />
-            
-            <Button
-              variant={hasActiveFilters ? 'contained' : 'outlined'}
-              startIcon={<FilterIcon />}
-              onClick={() => setFiltersOpen(!filtersOpen)}
-            >
-              Filters {hasActiveFilters && `(${Object.values(filters).filter(v => v !== '' && v !== null).length - 1})`}
-            </Button>
-            
-            {hasActiveFilters && (
-              <Button
-                variant="outlined"
-                startIcon={<ClearIcon />}
-                onClick={onReset}
-              >
-                Clear
-              </Button>
-            )}
-          </Box>
+              },
+            }}
+            sx={{
+              flexGrow: 1,
+              "& .MuiOutlinedInput-root": {
+                borderRadius: 2,
+                bgcolor: "background.paper",
+                "&:hover .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "primary.main",
+                },
+                "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "primary.main",
+                  borderWidth: 2,
+                },
+              },
+            }}
+          />
 
-          {filtersOpen && (
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6} md={3}>
-                <TextField
-                  fullWidth
-                  label="City"
-                  value={filters.city}
-                  onChange={(e) => onFiltersChange({ city: e.target.value })}
-                />
-              </Grid>
-              
-              <Grid item xs={12} sm={6} md={3}>
-                <TextField
-                  fullWidth
-                  label="State"
-                  value={filters.state}
-                  onChange={(e) => onFiltersChange({ state: e.target.value })}
-                />
-              </Grid>
-              
-              <Grid item xs={12} sm={6} md={3}>
-                <FormControl fullWidth>
-                  <InputLabel>Event Type</InputLabel>
-                  <Select
-                    value={filters.eventType}
-                    onChange={(e) => onFiltersChange({ eventType: e.target.value as EventFilters['eventType'] })}
-                    label="Event Type"
-                  >
-                    <MenuItem value="">All Types</MenuItem>
-                    {EVENT_TYPES.map(type => (
-                      <MenuItem key={type.value} value={type.value}>
-                        {type.icon} {type.label}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
-              
-              <Grid item xs={12} sm={6} md={3}>
-                <FormControl fullWidth>
-                  <InputLabel>Status</InputLabel>
-                  <Select
-                    value={filters.status}
-                    onChange={(e) => onFiltersChange({ status: e.target.value as EventFilters['status'] })}
-                    label="Status"
-                  >
-                    <MenuItem value="">All Statuses</MenuItem>
-                    {EVENT_STATUSES.map(status => (
-                      <MenuItem key={status.value} value={status.value}>
-                        <Chip
-                          label={status.label}
-                          size="small"
-                          sx={{ bgcolor: `${status.color}.main`, color: 'white' }}
-                        />
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
-              
-              <Grid item xs={12} sm={6} md={3}>
-                <DatePicker
-                  label="From Date"
-                  value={filters.dateFrom ? new Date(filters.dateFrom) : null}
-                  onChange={(date) => onFiltersChange({ dateFrom: date?.toISOString().split('T')[0] || '' })}
-                  renderInput={(params) => <TextField {...params} fullWidth />}
-                />
-              </Grid>
-              
-              <Grid item xs={12} sm={6} md={3}>
-                <DatePicker
-                  label="To Date"
-                  value={filters.dateTo ? new Date(filters.dateTo) : null}
-                  onChange={(date) => onFiltersChange({ dateTo: date?.toISOString().split('T')[0] || '' })}
-                  renderInput={(params) => <TextField {...params} fullWidth />}
-                />
-              </Grid>
-              
-              <Grid item xs={12} sm={6} md={3}>
-                <TextField
-                  fullWidth
-                  label="Min Price"
-                  type="number"
-                  value={filters.minPrice}
-                  onChange={(e) => onFiltersChange({ minPrice: parseFloat(e.target.value) || '' })}
-                  InputProps={{
-                    startAdornment: <InputAdornment position="start">$</InputAdornment>,
-                  }}
-                />
-              </Grid>
-              
-              <Grid item xs={12} sm={6} md={3}>
-                <TextField
-                  fullWidth
-                  label="Max Price"
-                  type="number"
-                  value={filters.maxPrice}
-                  onChange={(e) => onFiltersChange({ maxPrice: parseFloat(e.target.value) || '' })}
-                  InputProps={{
-                    startAdornment: <InputAdornment position="start">$</InputAdornment>,
-                  }}
-                />
-              </Grid>
-            </Grid>
+          <Button
+            variant={hasActiveFilters ? "contained" : "outlined"}
+            startIcon={<FilterIcon />}
+            onClick={() => setFiltersOpen(!filtersOpen)}
+            sx={{
+              borderRadius: 2,
+              textTransform: "none",
+              fontWeight: 600,
+              px: 3,
+              py: 1.2,
+              ...(hasActiveFilters
+                ? {
+                    background:
+                      "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                    boxShadow: "0 4px 16px rgba(102, 126, 234, 0.4)",
+                    "&:hover": {
+                      background:
+                        "linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)",
+                      boxShadow: "0 6px 24px rgba(102, 126, 234, 0.6)",
+                    },
+                  }
+                : {
+                    borderColor: "primary.main",
+                    color: "primary.main",
+                    "&:hover": {
+                      bgcolor: "primary.50",
+                      borderColor: "primary.main",
+                    },
+                  }),
+              transition: "all 0.2s ease",
+            }}
+          >
+            Filters{" "}
+            {hasActiveFilters &&
+              `(${
+                Object.values(filters).filter((v) => v !== "" && v !== null)
+                  .length - 1
+              })`}
+          </Button>
+
+          {hasActiveFilters && (
+            <Button
+              variant="outlined"
+              startIcon={<ClearIcon />}
+              onClick={onReset}
+              sx={{
+                borderRadius: 2,
+                textTransform: "none",
+                fontWeight: 600,
+                px: 2.5,
+                py: 1.2,
+                borderColor: "error.main",
+                color: "error.main",
+                "&:hover": {
+                  bgcolor: "error.50",
+                  borderColor: "error.main",
+                },
+                transition: "all 0.2s ease",
+              }}
+            >
+              Clear
+            </Button>
           )}
-        </CardContent>
-      </Card>
-    </LocalizationProvider>
+        </Box>
+
+        {filtersOpen && (
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: {
+                xs: "1fr",
+                sm: "repeat(2, 1fr)",
+                md: "repeat(4, 1fr)",
+              },
+              gap: 2,
+            }}
+          >
+            <Box>
+              <TextField
+                fullWidth
+                label="City"
+                value={filters.city}
+                onChange={(e) => onFiltersChange({ city: e.target.value })}
+              />
+            </Box>
+
+            <Box>
+              <TextField
+                fullWidth
+                label="State"
+                value={filters.state}
+                onChange={(e) => onFiltersChange({ state: e.target.value })}
+              />
+            </Box>
+
+            <Box>
+              <FormControl fullWidth>
+                <InputLabel>Event Type</InputLabel>
+                <Select
+                  value={filters.eventType}
+                  onChange={(e) =>
+                    onFiltersChange({
+                      eventType: e.target.value as EventFilters["eventType"],
+                    })
+                  }
+                  label="Event Type"
+                >
+                  <MenuItem value="">All Types</MenuItem>
+                  {EVENT_TYPES.map((type) => (
+                    <MenuItem key={type.value} value={type.value}>
+                      {type.icon} {type.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Box>
+
+            <Box>
+              <FormControl fullWidth>
+                <InputLabel>Status</InputLabel>
+                <Select
+                  value={filters.status}
+                  onChange={(e) =>
+                    onFiltersChange({
+                      status: e.target.value as EventFilters["status"],
+                    })
+                  }
+                  label="Status"
+                >
+                  <MenuItem value="">All Statuses</MenuItem>
+                  {EVENT_STATUSES.map((status) => (
+                    <MenuItem key={status.value} value={status.value}>
+                      <Chip
+                        label={status.label}
+                        size="small"
+                        sx={{ bgcolor: `${status.color}.main`, color: "white" }}
+                      />
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Box>
+
+            <Box>
+              <TextField
+                fullWidth
+                label="From Date"
+                type="date"
+                value={filters.dateFrom || ""}
+                onChange={(e) => onFiltersChange({ dateFrom: e.target.value })}
+                slotProps={{
+                  inputLabel: { shrink: true },
+                }}
+              />
+            </Box>
+
+            <Box>
+              <TextField
+                fullWidth
+                label="To Date"
+                type="date"
+                value={filters.dateTo || ""}
+                onChange={(e) => onFiltersChange({ dateTo: e.target.value })}
+                slotProps={{
+                  inputLabel: { shrink: true },
+                }}
+              />
+            </Box>
+
+            <Box>
+              <TextField
+                fullWidth
+                label="Min Price"
+                type="number"
+                value={filters.minPrice}
+                onChange={(e) =>
+                  onFiltersChange({
+                    minPrice: parseFloat(e.target.value) || "",
+                  })
+                }
+                slotProps={{
+                  input: {
+                    startAdornment: (
+                      <InputAdornment position="start">$</InputAdornment>
+                    ),
+                  },
+                }}
+              />
+            </Box>
+
+            <Box>
+              <TextField
+                fullWidth
+                label="Max Price"
+                type="number"
+                value={filters.maxPrice}
+                onChange={(e) =>
+                  onFiltersChange({
+                    maxPrice: parseFloat(e.target.value) || "",
+                  })
+                }
+                slotProps={{
+                  input: {
+                    startAdornment: (
+                      <InputAdornment position="start">$</InputAdornment>
+                    ),
+                  },
+                }}
+              />
+            </Box>
+          </Box>
+        )}
+      </CardContent>
+    </Card>
   );
 };
 
@@ -502,7 +690,9 @@ const EventList: React.FC<EventListProps> = ({
 }) => {
   const { state, actions } = useEvents();
   const { isAdmin } = useEventAdmin();
-  const [sortMenuAnchor, setSortMenuAnchor] = useState<null | HTMLElement>(null);
+  const [sortMenuAnchor, setSortMenuAnchor] = useState<null | HTMLElement>(
+    null
+  );
 
   const handleSortMenuClick = (event: React.MouseEvent<HTMLElement>) => {
     setSortMenuAnchor(event.currentTarget);
@@ -512,12 +702,24 @@ const EventList: React.FC<EventListProps> = ({
     setSortMenuAnchor(null);
   };
 
-  const handleSortChange = (sortBy: string, sortOrder: 'asc' | 'desc') => {
-    actions.setSorting(sortBy, sortOrder);
+  const handleSortChange = (sortBy: string, sortOrder: "asc" | "desc") => {
+    actions.setSorting(
+      sortBy as
+        | "name"
+        | "minPrice"
+        | "maxPrice"
+        | "eventDate"
+        | "createdAt"
+        | "popularity",
+      sortOrder
+    );
     handleSortMenuClose();
   };
 
-  const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
+  const handlePageChange = (
+    _event: React.ChangeEvent<unknown>,
+    page: number
+  ) => {
     actions.loadEvents({ page });
   };
 
@@ -534,9 +736,23 @@ const EventList: React.FC<EventListProps> = ({
           onFiltersChange={actions.setFilters}
           onReset={() => actions.setFilters(DEFAULT_FILTERS)}
         />
-        <Grid container spacing={3}>
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: {
+              xs: "1fr",
+              sm: "repeat(2, 1fr)",
+              md: "repeat(2, 1fr)",
+              lg: "repeat(3, 1fr)",
+            },
+            gap: 3,
+            px: { xs: 1, sm: 2, md: 0 },
+            maxWidth: "1400px",
+            margin: "0 auto",
+          }}
+        >
           {Array.from({ length: 8 }).map((_, index) => (
-            <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+            <Box key={index}>
               <Card>
                 <Skeleton variant="rectangular" height={200} />
                 <CardContent>
@@ -549,15 +765,25 @@ const EventList: React.FC<EventListProps> = ({
                   </Box>
                 </CardContent>
               </Card>
-            </Grid>
+            </Box>
           ))}
-        </Grid>
+        </Box>
       </Box>
     );
   }
 
   return (
-    <Box>
+    <Box
+      sx={{
+        minHeight: "100vh",
+        bgcolor: "#fafafa",
+        backgroundImage: {
+          xs: "none",
+          md: "radial-gradient(circle at 20% 80%, rgba(102, 126, 234, 0.05) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(118, 75, 162, 0.05) 0%, transparent 50%)",
+        },
+        pb: 6,
+      }}
+    >
       {/* Filters */}
       <EventFilters
         filters={state.filters}
@@ -566,33 +792,108 @@ const EventList: React.FC<EventListProps> = ({
       />
 
       {/* Header */}
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={4}
+        sx={{
+          p: 3,
+          borderRadius: 3,
+          bgcolor: "background.paper",
+          boxShadow: "0 2px 12px rgba(0,0,0,0.06)",
+          border: "1px solid",
+          borderColor: "divider",
+        }}
+      >
         <Box>
-          <Typography variant="h4" component="h1" gutterBottom>
-            Events
+          <Typography
+            variant="h3"
+            component="h1"
+            gutterBottom
+            sx={{
+              fontWeight: 800,
+              background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+              backgroundClip: "text",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              fontSize: { xs: "1.75rem", sm: "2.125rem", md: "2.5rem" },
+              letterSpacing: "-0.02em",
+            }}
+          >
+            Discover Events
           </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {state.pagination.total > 0 
-              ? `Showing ${((state.pagination.page - 1) * state.pagination.limit) + 1}-${Math.min(state.pagination.page * state.pagination.limit, state.pagination.total)} of ${state.pagination.total} events`
-              : 'No events found'
-            }
+          <Typography
+            variant="body1"
+            color="text.secondary"
+            sx={{
+              fontSize: "1rem",
+              fontWeight: 500,
+              mb: 1,
+            }}
+          >
+            {state.pagination.total > 0
+              ? `Showing ${
+                  (state.pagination.page - 1) * state.pagination.limit + 1
+                }-${Math.min(
+                  state.pagination.page * state.pagination.limit,
+                  state.pagination.total
+                )} of ${state.pagination.total} events`
+              : "No events found"}
           </Typography>
         </Box>
-        
-        <Box display="flex" gap={1}>
-          <Tooltip title="Refresh">
-            <IconButton onClick={handleRefresh} disabled={loading}>
-              <RefreshIcon />
+
+        <Box display="flex" gap={2} alignItems="center">
+          <Tooltip title="Refresh events" arrow>
+            <IconButton
+              onClick={handleRefresh}
+              disabled={loading}
+              sx={{
+                bgcolor: "background.paper",
+                border: "2px solid",
+                borderColor: "divider",
+                boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+                "&:hover": {
+                  bgcolor: "primary.50",
+                  borderColor: "primary.main",
+                  transform: "scale(1.05)",
+                },
+                "&:disabled": {
+                  bgcolor: "grey.100",
+                },
+                transition: "all 0.2s ease",
+              }}
+            >
+              <RefreshIcon
+                sx={{ color: loading ? "grey.400" : "primary.main" }}
+              />
             </IconButton>
           </Tooltip>
-          
+
           <Button
-            variant="outlined"
+            variant="contained"
             startIcon={<SortIcon />}
             onClick={handleSortMenuClick}
+            sx={{
+              background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+              boxShadow: "0 4px 16px rgba(102, 126, 234, 0.4)",
+              textTransform: "none",
+              fontWeight: 600,
+              borderRadius: 2,
+              px: 3,
+              py: 1,
+              "&:hover": {
+                background: "linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)",
+                boxShadow: "0 6px 24px rgba(102, 126, 234, 0.6)",
+                transform: "translateY(-1px)",
+              },
+              transition: "all 0.2s ease",
+            }}
           >
-            Sort: {SORT_OPTIONS.find(opt => opt.value === state.sortBy)?.label}
-            {state.sortOrder === 'desc' ? ' ↓' : ' ↑'}
+            Sort:{" "}
+            {SORT_OPTIONS.find((opt) => opt.value === state.sortBy)?.label ||
+              "Name"}
+            {state.sortOrder === "desc" ? " ↓" : " ↑"}
           </Button>
         </Box>
       </Box>
@@ -603,12 +904,16 @@ const EventList: React.FC<EventListProps> = ({
         open={Boolean(sortMenuAnchor)}
         onClose={handleSortMenuClose}
       >
-        {SORT_OPTIONS.map(option => (
+        {SORT_OPTIONS.map((option) => (
           <React.Fragment key={option.value}>
-            <MenuItem onClick={() => handleSortChange(option.value, 'asc')}>
+            <MenuItem
+              onClick={() => handleSortChange(option.value as string, "asc")}
+            >
               {option.label} (A-Z / Low-High)
             </MenuItem>
-            <MenuItem onClick={() => handleSortChange(option.value, 'desc')}>
+            <MenuItem
+              onClick={() => handleSortChange(option.value as string, "desc")}
+            >
               {option.label} (Z-A / High-Low)
             </MenuItem>
           </React.Fragment>
@@ -625,9 +930,21 @@ const EventList: React.FC<EventListProps> = ({
       {/* Events Grid */}
       {events.length > 0 ? (
         <>
-          <Grid container spacing={3}>
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: {
+                xs: "1fr",
+                sm: "repeat(2, 1fr)",
+                md: "repeat(3, 1fr)",
+                lg: "repeat(4, 1fr)",
+              },
+              gap: 2,
+              px: { xs: 1, sm: 2, md: 0 },
+            }}
+          >
             {events.map((event) => (
-              <Grid item xs={12} sm={6} md={4} lg={3} key={event.id}>
+              <Box key={event.id}>
                 <EventCard
                   event={event}
                   onSelect={onEventSelect}
@@ -635,9 +952,9 @@ const EventList: React.FC<EventListProps> = ({
                   onDelete={onEventDelete}
                   showActions={isAdmin}
                 />
-              </Grid>
+              </Box>
             ))}
-          </Grid>
+          </Box>
 
           {/* Pagination */}
           {state.pagination.totalPages > 1 && (
@@ -657,46 +974,103 @@ const EventList: React.FC<EventListProps> = ({
           {/* Load More Button (alternative to pagination) */}
           {onLoadMore && hasMore && (
             <Box display="flex" justifyContent="center" mt={4}>
-              <LoadingButton
-                loading={loading}
+              <Button
+                disabled={loading}
                 onClick={onLoadMore}
                 variant="outlined"
                 size="large"
               >
-                Load More Events
-              </LoadingButton>
+                {loading ? "Loading..." : "Load More Events"}
+              </Button>
             </Box>
           )}
         </>
-      ) : !loading && (
-        <Box
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
-          justifyContent="center"
-          py={8}
-        >
-          <Avatar sx={{ width: 64, height: 64, bgcolor: 'grey.200', mb: 2 }}>
-            <EventIcon sx={{ fontSize: 32, color: 'grey.500' }} />
-          </Avatar>
-          <Typography variant="h6" color="text.secondary" gutterBottom>
-            No events found
-          </Typography>
-          <Typography variant="body2" color="text.secondary" textAlign="center" mb={3}>
-            {Object.values(state.filters).some(v => v !== '' && v !== null)
-              ? 'Try adjusting your filters to find more events.'
-              : 'There are no events available at the moment.'
-            }
-          </Typography>
-          {Object.values(state.filters).some(v => v !== '' && v !== null) && (
-            <Button
-              variant="outlined"
-              onClick={() => actions.setFilters(DEFAULT_FILTERS)}
+      ) : (
+        !loading && (
+          <Box
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            justifyContent="center"
+            py={12}
+            sx={{
+              background: "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",
+              borderRadius: 4,
+              mx: { xs: 1, sm: 2, md: 0 },
+            }}
+          >
+            <Box
+              sx={{
+                width: 120,
+                height: 120,
+                borderRadius: "50%",
+                background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                mb: 3,
+                boxShadow: "0 8px 32px rgba(102, 126, 234, 0.3)",
+              }}
             >
-              Clear Filters
-            </Button>
-          )}
-        </Box>
+              <EventIcon sx={{ fontSize: 48, color: "white" }} />
+            </Box>
+            <Typography
+              variant="h4"
+              color="text.primary"
+              gutterBottom
+              sx={{
+                fontWeight: 700,
+                textAlign: "center",
+                mb: 2,
+              }}
+            >
+              No events found
+            </Typography>
+            <Typography
+              variant="body1"
+              color="text.secondary"
+              textAlign="center"
+              mb={4}
+              sx={{
+                maxWidth: 400,
+                fontSize: "1.125rem",
+                lineHeight: 1.6,
+              }}
+            >
+              {Object.values(state.filters).some((v) => v !== "" && v !== null)
+                ? "Try adjusting your filters to discover amazing events in your area."
+                : "Check back soon for exciting upcoming events!"}
+            </Typography>
+            {Object.values(state.filters).some(
+              (v) => v !== "" && v !== null
+            ) && (
+              <Button
+                variant="contained"
+                onClick={() => actions.setFilters(DEFAULT_FILTERS)}
+                size="large"
+                sx={{
+                  background:
+                    "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                  boxShadow: "0 4px 16px rgba(102, 126, 234, 0.4)",
+                  textTransform: "none",
+                  fontWeight: 600,
+                  borderRadius: 2,
+                  px: 4,
+                  py: 1.5,
+                  "&:hover": {
+                    background:
+                      "linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)",
+                    boxShadow: "0 6px 24px rgba(102, 126, 234, 0.6)",
+                    transform: "translateY(-2px)",
+                  },
+                  transition: "all 0.2s ease",
+                }}
+              >
+                Clear All Filters
+              </Button>
+            )}
+          </Box>
+        )
       )}
 
       {/* Loading overlay for subsequent loads */}
