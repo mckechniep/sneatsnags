@@ -162,23 +162,76 @@ export const EventDetailPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="animate-pulse">
-          <div className="h-8 bg-gray-200 rounded w-1/4 mb-6"></div>
-          <div className="grid lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2">
-              <div className="h-96 bg-gray-200 rounded-lg mb-6"></div>
-              <div className="h-6 bg-gray-200 rounded w-3/4 mb-4"></div>
-              <div className="h-4 bg-gray-200 rounded w-full mb-2"></div>
-              <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+      <div style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+        padding: '40px 20px'
+      }}>
+        <div style={{
+          maxWidth: '1400px',
+          margin: '0 auto'
+        }}>
+          {/* Professional Loading State */}
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            minHeight: '60vh',
+            textAlign: 'center'
+          }}>
+            <div style={{
+              width: '120px',
+              height: '120px',
+              borderRadius: '50%',
+              background: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginBottom: '32px',
+              position: 'relative',
+              animation: 'pulse 2s ease-in-out infinite'
+            }}>
+              <div style={{
+                width: '60px',
+                height: '60px',
+                border: '6px solid white',
+                borderTop: '6px solid transparent',
+                borderRadius: '50%',
+                animation: 'spin 1s linear infinite'
+              }} />
             </div>
-            <div>
-              <div className="bg-white rounded-lg p-6">
-                <div className="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
-                <div className="h-4 bg-gray-200 rounded w-full mb-2"></div>
-                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-              </div>
-            </div>
+            
+            <h3 style={{
+              fontSize: '28px',
+              fontWeight: '800',
+              background: 'linear-gradient(135deg, #1f2937 0%, #374151 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+              marginBottom: '16px'
+            }}>
+              Loading Event Details
+            </h3>
+            
+            <p style={{
+              fontSize: '18px',
+              color: '#6b7280',
+              fontWeight: '500'
+            }}>
+              Please wait while we fetch the event information...
+            </p>
+            
+            <style>{`
+              @keyframes pulse {
+                0%, 100% { transform: scale(1); opacity: 1; }
+                50% { transform: scale(1.1); opacity: 0.7; }
+              }
+              @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+              }
+            `}</style>
           </div>
         </div>
       </div>
@@ -187,132 +240,442 @@ export const EventDetailPage: React.FC = () => {
 
   if (error || !event) {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-red-600 mb-4">Event Not Found</h1>
-          <p className="text-gray-600 mb-6">{error || 'The event you\'re looking for doesn\'t exist.'}</p>
-          <Button onClick={() => navigate('/events')}>
-            <ArrowLeft className="h-4 w-4 mr-2" />
+      <div style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '40px 20px'
+      }}>
+        <div style={{
+          textAlign: 'center',
+          background: 'linear-gradient(135deg, #ffffff 0%, #fafbfc 100%)',
+          borderRadius: '24px',
+          padding: '48px 32px',
+          boxShadow: '0 20px 40px rgba(0, 0, 0, 0.12)',
+          border: '1px solid rgba(255, 255, 255, 0.7)',
+          maxWidth: '600px',
+          width: '100%'
+        }}>
+          <div style={{
+            width: '120px',
+            height: '120px',
+            borderRadius: '50%',
+            background: 'linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            margin: '0 auto 32px',
+            fontSize: '56px'
+          }}>
+            ⚠️
+          </div>
+          <h1 style={{
+            fontSize: '32px',
+            fontWeight: '800',
+            background: 'linear-gradient(135deg, #dc2626 0%, #ef4444 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
+            margin: '0 0 16px 0',
+            letterSpacing: '-0.02em'
+          }}>
+            Event Not Found
+          </h1>
+          <p style={{
+            fontSize: '18px',
+            color: '#6b7280',
+            margin: '0 0 40px 0',
+            lineHeight: '1.6',
+            fontWeight: '500'
+          }}>
+            {error || 'The event you\'re looking for doesn\'t exist or may have been removed.'}
+          </p>
+          <button
+            onClick={() => navigate('/events')}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              padding: '16px 32px',
+              fontSize: '16px',
+              fontWeight: '700',
+              background: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)',
+              color: 'white',
+              border: 'none',
+              borderRadius: '16px',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              boxShadow: '0 8px 20px rgba(37, 99, 235, 0.4)'
+            }}
+            onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => {
+              e.currentTarget.style.transform = 'translateY(-3px)';
+              e.currentTarget.style.boxShadow = '0 12px 30px rgba(37, 99, 235, 0.6)';
+            }}
+            onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = '0 8px 20px rgba(37, 99, 235, 0.4)';
+            }}
+          >
+            <ArrowLeft style={{ width: '20px', height: '20px', marginRight: '12px' }} />
             Back to Events
-          </Button>
+          </button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div style={{
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+      position: 'relative'
+    }}>
+      {/* Background decorative elements */}
+      <div style={{
+        position: 'absolute',
+        top: '0',
+        left: '10%',
+        width: '300px',
+        height: '300px',
+        background: 'linear-gradient(135deg, #2563eb15, #7c3aed15)',
+        borderRadius: '50%',
+        filter: 'blur(80px)',
+        zIndex: 0
+      }} />
+      <div style={{
+        position: 'absolute',
+        bottom: '0',
+        right: '10%',
+        width: '250px',
+        height: '250px',
+        background: 'linear-gradient(135deg, #dc262615, #7c3aed15)',
+        borderRadius: '50%',
+        filter: 'blur(70px)',
+        zIndex: 0
+      }} />
+      
+      <div style={{
+        maxWidth: '1400px',
+        margin: '0 auto',
+        padding: '40px 20px',
+        position: 'relative',
+        zIndex: 1
+      }}>
         {/* Header */}
-        <div className="mb-8">
-          <Button 
-            variant="ghost" 
+        <div style={{ marginBottom: '40px' }}>
+          <button
             onClick={() => navigate('/events')}
-            className="mb-6 text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50 transition-colors"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              color: '#2563eb',
+              fontSize: '16px',
+              fontWeight: '700',
+              marginBottom: '32px',
+              padding: '16px 24px',
+              background: 'rgba(37, 99, 235, 0.1)',
+              backdropFilter: 'blur(8px)',
+              border: 'none',
+              borderRadius: '16px',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              boxShadow: '0 4px 16px rgba(37, 99, 235, 0.2)'
+            }}
+            onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => {
+              e.currentTarget.style.background = 'rgba(37, 99, 235, 0.2)';
+              e.currentTarget.style.transform = 'translateX(-4px)';
+              e.currentTarget.style.boxShadow = '0 8px 25px rgba(37, 99, 235, 0.3)';
+            }}
+            onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => {
+              e.currentTarget.style.background = 'rgba(37, 99, 235, 0.1)';
+              e.currentTarget.style.transform = 'translateX(0)';
+              e.currentTarget.style.boxShadow = '0 4px 16px rgba(37, 99, 235, 0.2)';
+            }}
           >
-            <ArrowLeft className="h-5 w-5 mr-2" />
-            Back to Events
-          </Button>
+            <ArrowLeft style={{ width: '20px', height: '20px', marginRight: '12px' }} />
+            ← Back to Events
+          </button>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-12">
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: '2fr 1fr',
+          gap: '48px',
+          '@media (max-width: 1024px)': {
+            gridTemplateColumns: '1fr',
+            gap: '32px'
+          }
+        }}>
           {/* Main Content */}
-          <div className="lg:col-span-2 space-y-8">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
             {/* Event Hero Section */}
-            <div className="bg-white rounded-2xl shadow-lg overflow-hidden border">
-              <div className="relative">
+            <div style={{
+              background: 'linear-gradient(135deg, #ffffff 0%, #fafbfc 100%)',
+              borderRadius: '24px',
+              overflow: 'hidden',
+              boxShadow: '0 20px 40px rgba(0, 0, 0, 0.12)',
+              border: '1px solid rgba(255, 255, 255, 0.7)'
+            }}>
+              <div style={{ position: 'relative' }}>
                 {event.imageUrl ? (
                   <img
                     src={event.imageUrl}
                     alt={event.name}
-                    className="w-full h-96 object-cover"
+                    style={{
+                      width: '100%',
+                      height: '400px',
+                      objectFit: 'cover'
+                    }}
                   />
                 ) : (
-                  <div className="w-full h-96 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center">
-                    <Calendar className="h-24 w-24 text-white opacity-80" />
+                  <div style={{
+                    width: '100%',
+                    height: '400px',
+                    background: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 50%, #dc2626 100%)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}>
+                    <Calendar style={{ width: '96px', height: '96px', color: 'white', opacity: 0.8 }} />
                   </div>
                 )}
                 
                 {/* Category Badge */}
-                <div className="absolute top-6 right-6">
-                  <span className="bg-black/70 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg">
+                <div style={{
+                  position: 'absolute',
+                  top: '24px',
+                  right: '24px'
+                }}>
+                  <span style={{
+                    background: 'rgba(0, 0, 0, 0.8)',
+                    backdropFilter: 'blur(12px)',
+                    color: 'white',
+                    padding: '12px 20px',
+                    borderRadius: '20px',
+                    fontSize: '14px',
+                    fontWeight: '700',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.8px',
+                    boxShadow: '0 8px 20px rgba(0, 0, 0, 0.3)'
+                  }}>
                     {event.category}
                   </span>
                 </div>
                 
                 {/* Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent"></div>
+                <div style={{
+                  position: 'absolute',
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  height: '50%',
+                  background: 'linear-gradient(to top, rgba(0, 0, 0, 0.4), transparent)'
+                }} />
               </div>
               
-              <div className="p-8">
-                <h1 className="text-4xl font-bold text-gray-900 mb-4">{event.name}</h1>
-                <p className="text-lg text-gray-600 leading-relaxed">{event.description}</p>
+              <div style={{ padding: '40px' }}>
+                <h1 style={{
+                  fontSize: 'clamp(32px, 4vw, 48px)',
+                  fontWeight: '900',
+                  background: 'linear-gradient(135deg, #1f2937 0%, #374151 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                  marginBottom: '16px',
+                  letterSpacing: '-0.02em',
+                  lineHeight: '1.1'
+                }}>
+                  {event.name}
+                </h1>
+                <p style={{
+                  fontSize: '18px',
+                  color: '#4b5563',
+                  lineHeight: '1.8',
+                  fontWeight: '500'
+                }}>
+                  {event.description}
+                </p>
               </div>
             </div>
 
             {/* Event Details Cards */}
-            <div className="grid md:grid-cols-2 gap-8">
-              <div className="bg-white rounded-2xl shadow-lg p-8 border">
-                <div className="flex items-center mb-6">
-                  <div className="bg-indigo-100 p-3 rounded-xl">
-                    <Calendar className="h-6 w-6 text-indigo-600" />
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+              gap: '32px'
+            }}>
+              <div style={{
+                background: 'linear-gradient(135deg, #ffffff 0%, #fafbfc 100%)',
+                borderRadius: '20px',
+                padding: '32px',
+                boxShadow: '0 12px 25px rgba(0, 0, 0, 0.08)',
+                border: '1px solid rgba(255, 255, 255, 0.7)'
+              }}>
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  marginBottom: '32px'
+                }}>
+                  <div style={{
+                    width: '52px',
+                    height: '52px',
+                    borderRadius: '16px',
+                    background: 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}>
+                    <Calendar style={{ width: '24px', height: '24px', color: 'white' }} />
                   </div>
-                  <h3 className="text-xl font-semibold ml-4 text-gray-900">Event Information</h3>
+                  <h3 style={{
+                    fontSize: '20px',
+                    fontWeight: '800',
+                    color: '#1f2937',
+                    marginLeft: '16px'
+                  }}>
+                    Event Information
+                  </h3>
                 </div>
-                <div className="space-y-6">
-                  <div className="flex items-start">
-                    <Calendar className="h-5 w-5 text-indigo-500 mr-4 mt-1" />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    padding: '16px',
+                    background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
+                    borderRadius: '12px',
+                    border: '1px solid #e2e8f0'
+                  }}>
+                    <Calendar style={{ width: '20px', height: '20px', color: '#2563eb', marginRight: '16px', marginTop: '2px' }} />
                     <div>
-                      <div className="font-semibold text-gray-900">{formatDate(event.eventDate)}</div>
-                      <div className="text-sm text-gray-600">Event Date</div>
+                      <div style={{ fontWeight: '700', color: '#1f2937', marginBottom: '4px' }}>{formatDate(event.eventDate)}</div>
+                      <div style={{ fontSize: '14px', color: '#6b7280', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Event Date</div>
                     </div>
                   </div>
-                  <div className="flex items-start">
-                    <Clock className="h-5 w-5 text-indigo-500 mr-4 mt-1" />
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    padding: '16px',
+                    background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
+                    borderRadius: '12px',
+                    border: '1px solid #e2e8f0'
+                  }}>
+                    <Clock style={{ width: '20px', height: '20px', color: '#2563eb', marginRight: '16px', marginTop: '2px' }} />
                     <div>
-                      <div className="font-semibold text-gray-900">{formatTime(event.eventDate)}</div>
-                      <div className="text-sm text-gray-600">Start Time</div>
+                      <div style={{ fontWeight: '700', color: '#1f2937', marginBottom: '4px' }}>{formatTime(event.eventDate)}</div>
+                      <div style={{ fontSize: '14px', color: '#6b7280', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Start Time</div>
                     </div>
                   </div>
-                  <div className="flex items-start">
-                    <MapPin className="h-5 w-5 text-indigo-500 mr-4 mt-1" />
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    padding: '16px',
+                    background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
+                    borderRadius: '12px',
+                    border: '1px solid #e2e8f0'
+                  }}>
+                    <MapPin style={{ width: '20px', height: '20px', color: '#2563eb', marginRight: '16px', marginTop: '2px' }} />
                     <div>
-                      <div className="font-semibold text-gray-900">{event.venue}</div>
-                      <div className="text-sm text-gray-600">{event.city}, {event.state}</div>
+                      <div style={{ fontWeight: '700', color: '#1f2937', marginBottom: '4px' }}>{event.venue}</div>
+                      <div style={{ fontSize: '14px', color: '#6b7280', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{event.city}, {event.state}</div>
                     </div>
                   </div>
-                  <div className="flex items-start">
-                    <Users className="h-5 w-5 text-indigo-500 mr-4 mt-1" />
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    padding: '16px',
+                    background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
+                    borderRadius: '12px',
+                    border: '1px solid #e2e8f0'
+                  }}>
+                    <Users style={{ width: '20px', height: '20px', color: '#2563eb', marginRight: '16px', marginTop: '2px' }} />
                     <div>
-                      <div className="font-semibold text-gray-900">{event.totalSeats?.toLocaleString() || 'N/A'}</div>
-                      <div className="text-sm text-gray-600">Total Capacity</div>
+                      <div style={{ fontWeight: '700', color: '#1f2937', marginBottom: '4px' }}>{event.totalSeats?.toLocaleString() || 'N/A'}</div>
+                      <div style={{ fontSize: '14px', color: '#6b7280', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Total Capacity</div>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white rounded-2xl shadow-lg p-8 border">
-                <div className="flex items-center mb-6">
-                  <div className="bg-green-100 p-3 rounded-xl">
-                    <Plus className="h-6 w-6 text-green-600" />
+              <div style={{
+                background: 'linear-gradient(135deg, #ffffff 0%, #fafbfc 100%)',
+                borderRadius: '20px',
+                padding: '32px',
+                boxShadow: '0 12px 25px rgba(0, 0, 0, 0.08)',
+                border: '1px solid rgba(255, 255, 255, 0.7)'
+              }}>
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  marginBottom: '32px'
+                }}>
+                  <div style={{
+                    width: '52px',
+                    height: '52px',
+                    borderRadius: '16px',
+                    background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}>
+                    <Plus style={{ width: '24px', height: '24px', color: 'white' }} />
                   </div>
-                  <h3 className="text-xl font-semibold ml-4 text-gray-900">Pricing & Availability</h3>
+                  <h3 style={{
+                    fontSize: '20px',
+                    fontWeight: '800',
+                    color: '#1f2937',
+                    marginLeft: '16px'
+                  }}>
+                    Pricing & Availability
+                  </h3>
                 </div>
-                <div className="space-y-6">
-                  <div className="bg-gradient-to-r from-indigo-50 to-purple-50 p-6 rounded-xl">
-                    <div className="text-center">
-                      <div className="text-sm text-gray-600 mb-1">Price Range</div>
-                      <div className="text-2xl font-bold text-indigo-600">
-                        {formatPrice(event.minPrice || 0)} - {formatPrice(event.maxPrice || 0)}
-                      </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                  <div style={{
+                    background: 'linear-gradient(135deg, #2563eb10 0%, #7c3aed10 100%)',
+                    padding: '32px',
+                    borderRadius: '16px',
+                    border: '1px solid #e5e7eb',
+                    textAlign: 'center'
+                  }}>
+                    <div style={{
+                      fontSize: '14px',
+                      color: '#6b7280',
+                      fontWeight: '600',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.8px',
+                      marginBottom: '8px'
+                    }}>
+                      Price Range
+                    </div>
+                    <div style={{
+                      fontSize: '28px',
+                      fontWeight: '900',
+                      background: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      backgroundClip: 'text'
+                    }}>
+                      {formatPrice(event.minPrice || 0)} - {formatPrice(event.maxPrice || 0)}
                     </div>
                   </div>
-                  <div className="flex items-center justify-between py-4 px-6 bg-green-50 rounded-xl">
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '20px 24px',
+                    background: 'linear-gradient(135deg, #10b98110 0%, #05966910 100%)',
+                    borderRadius: '12px',
+                    border: '1px solid #10b981'
+                  }}>
                     <div>
-                      <div className="font-semibold text-gray-900">Available Tickets</div>
-                      <div className="text-sm text-gray-600">Ready for offers</div>
+                      <div style={{ fontWeight: '700', color: '#1f2937', marginBottom: '4px' }}>Available Tickets</div>
+                      <div style={{ fontSize: '14px', color: '#6b7280', fontWeight: '600' }}>Ready for offers</div>
                     </div>
-                    <div className="text-2xl font-bold text-green-600">
+                    <div style={{
+                      fontSize: '32px',
+                      fontWeight: '900',
+                      color: '#10b981'
+                    }}>
                       {event.availableSeats?.toLocaleString() || 'N/A'}
                     </div>
                   </div>
@@ -322,31 +685,138 @@ export const EventDetailPage: React.FC = () => {
 
             {/* Available Sections */}
             {sections.length > 0 && (
-              <div className="bg-white rounded-2xl shadow-lg p-8 border">
-                <div className="flex items-center mb-6">
-                  <div className="bg-purple-100 p-3 rounded-xl">
-                    <Users className="h-6 w-6 text-purple-600" />
+              <div style={{
+                background: 'linear-gradient(135deg, #ffffff 0%, #fafbfc 100%)',
+                borderRadius: '20px',
+                padding: '32px',
+                boxShadow: '0 12px 25px rgba(0, 0, 0, 0.08)',
+                border: '1px solid rgba(255, 255, 255, 0.7)'
+              }}>
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  marginBottom: '32px'
+                }}>
+                  <div style={{
+                    width: '52px',
+                    height: '52px',
+                    borderRadius: '16px',
+                    background: 'linear-gradient(135deg, #7c3aed 0%, #a855f7 100%)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}>
+                    <Users style={{ width: '24px', height: '24px', color: 'white' }} />
                   </div>
-                  <h3 className="text-xl font-semibold ml-4 text-gray-900">Available Sections</h3>
+                  <h3 style={{
+                    fontSize: '24px',
+                    fontWeight: '800',
+                    color: '#1f2937',
+                    marginLeft: '16px'
+                  }}>
+                    Available Sections
+                  </h3>
                 </div>
-                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                  gap: '20px'
+                }}>
                   {sections.map((section) => (
                     <div
                       key={section.id}
-                      className="group border-2 border-gray-200 rounded-xl p-6 hover:border-indigo-300 hover:shadow-lg transition-all duration-200 bg-gradient-to-br from-white to-gray-50"
+                      style={{
+                        background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
+                        border: '2px solid #e5e7eb',
+                        borderRadius: '16px',
+                        padding: '24px',
+                        transition: 'all 0.3s ease',
+                        cursor: 'pointer',
+                        position: 'relative',
+                        overflow: 'hidden'
+                      }}
+                      onMouseEnter={(e: React.MouseEvent<HTMLDivElement>) => {
+                        e.currentTarget.style.borderColor = '#2563eb';
+                        e.currentTarget.style.transform = 'translateY(-2px)';
+                        e.currentTarget.style.boxShadow = '0 12px 25px rgba(37, 99, 235, 0.15)';
+                      }}
+                      onMouseLeave={(e: React.MouseEvent<HTMLDivElement>) => {
+                        e.currentTarget.style.borderColor = '#e5e7eb';
+                        e.currentTarget.style.transform = 'translateY(0)';
+                        e.currentTarget.style.boxShadow = 'none';
+                      }}
                     >
-                      <h4 className="font-bold text-gray-900 mb-2 text-lg group-hover:text-indigo-600 transition-colors">{section.name}</h4>
+                      <h4 style={{
+                        fontWeight: '800',
+                        color: '#1f2937',
+                        marginBottom: '12px',
+                        fontSize: '18px',
+                        transition: 'color 0.3s ease'
+                      }}>
+                        {section.name}
+                      </h4>
                       {section.description && (
-                        <p className="text-sm text-gray-600 mb-4 leading-relaxed">{section.description}</p>
+                        <p style={{
+                          fontSize: '14px',
+                          color: '#6b7280',
+                          marginBottom: '20px',
+                          lineHeight: '1.6',
+                          fontWeight: '500'
+                        }}>
+                          {section.description}
+                        </p>
                       )}
-                      <div className="space-y-3">
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm font-medium text-gray-500">Capacity</span>
-                          <span className="font-semibold text-gray-900">{section.seatCount?.toLocaleString() || 'N/A'}</span>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                        <div style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          padding: '12px 16px',
+                          background: 'linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%)',
+                          borderRadius: '8px'
+                        }}>
+                          <span style={{
+                            fontSize: '14px',
+                            fontWeight: '600',
+                            color: '#4b5563',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.5px'
+                          }}>
+                            Capacity
+                          </span>
+                          <span style={{
+                            fontWeight: '800',
+                            color: '#1f2937',
+                            fontSize: '16px'
+                          }}>
+                            {section.seatCount?.toLocaleString() || 'N/A'}
+                          </span>
                         </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm font-medium text-gray-500">Price Range</span>
-                          <span className="font-bold text-indigo-600">
+                        <div style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          padding: '12px 16px',
+                          background: 'linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%)',
+                          borderRadius: '8px'
+                        }}>
+                          <span style={{
+                            fontSize: '14px',
+                            fontWeight: '600',
+                            color: '#4b5563',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.5px'
+                          }}>
+                            Price Level
+                          </span>
+                          <span style={{
+                            fontWeight: '800',
+                            background: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)',
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent',
+                            backgroundClip: 'text',
+                            fontSize: '18px'
+                          }}>
                             ${section.priceLevel || 'N/A'}
                           </span>
                         </div>
@@ -608,126 +1078,417 @@ export const EventDetailPage: React.FC = () => {
           </div>
 
           {/* Sidebar */}
-          <div className="space-y-8">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
             {/* Main Action Card */}
-            <div className="bg-white rounded-2xl shadow-xl p-8 border-2 border-indigo-100">
-              <div className="space-y-6">
+            <div style={{
+              background: 'linear-gradient(135deg, #ffffff 0%, #fafbfc 100%)',
+              borderRadius: '24px',
+              padding: '32px',
+              boxShadow: '0 20px 40px rgba(0, 0, 0, 0.12)',
+              border: '2px solid rgba(37, 99, 235, 0.15)',
+              position: 'sticky',
+              top: '32px'
+            }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
                 {/* Price Display */}
-                <div className="text-center bg-gradient-to-r from-indigo-50 to-purple-50 p-6 rounded-xl">
-                  <div className="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-2">Starting From</div>
-                  <div className="text-4xl font-bold text-indigo-600 mb-2">
+                <div style={{
+                  textAlign: 'center',
+                  background: 'linear-gradient(135deg, #2563eb10 0%, #7c3aed10 100%)',
+                  padding: '32px 24px',
+                  borderRadius: '16px',
+                  border: '1px solid #e5e7eb'
+                }}>
+                  <div style={{
+                    fontSize: '14px',
+                    fontWeight: '700',
+                    color: '#6b7280',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.8px',
+                    marginBottom: '12px'
+                  }}>
+                    Starting From
+                  </div>
+                  <div style={{
+                    fontSize: '48px',
+                    fontWeight: '900',
+                    background: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text',
+                    marginBottom: '8px',
+                    lineHeight: '1'
+                  }}>
                     {formatPrice(event.minPrice || 0)}
                   </div>
-                  <div className="text-sm text-gray-600">
+                  <div style={{
+                    fontSize: '16px',
+                    color: '#6b7280',
+                    fontWeight: '600'
+                  }}>
                     {event.availableSeats || 'N/A'} tickets available
                   </div>
                 </div>
 
                 {/* Action Buttons */}
                 {user && user.role === UserRole.BUYER && (
-                  <Button 
-                    onClick={handleMakeOffer} 
-                    className="w-full py-4 text-lg font-semibold bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
-                    size="lg"
+                  <button
+                    onClick={handleMakeOffer}
+                    style={{
+                      width: '100%',
+                      padding: '20px',
+                      fontSize: '18px',
+                      fontWeight: '800',
+                      background: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '16px',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                      boxShadow: '0 8px 25px rgba(37, 99, 235, 0.4)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
+                    onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => {
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                      e.currentTarget.style.boxShadow = '0 12px 35px rgba(37, 99, 235, 0.6)';
+                    }}
+                    onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = '0 8px 25px rgba(37, 99, 235, 0.4)';
+                    }}
                   >
-                    <Plus className="h-6 w-6 mr-3" />
+                    <Plus style={{ width: '24px', height: '24px', marginRight: '12px' }} />
                     Make an Offer
-                  </Button>
+                  </button>
                 )}
 
                 {!user && (
-                  <div className="space-y-4">
-                    <Link to="/login" className="block">
-                      <Button className="w-full py-4 text-lg font-semibold bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 rounded-xl" size="lg">
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                    <Link to="/login" style={{ textDecoration: 'none' }}>
+                      <button style={{
+                        width: '100%',
+                        padding: '20px',
+                        fontSize: '18px',
+                        fontWeight: '800',
+                        background: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '16px',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease',
+                        boxShadow: '0 8px 25px rgba(37, 99, 235, 0.4)'
+                      }}>
                         Sign In to Make Offer
-                      </Button>
+                      </button>
                     </Link>
-                    <Link to="/register" className="block">
-                      <Button variant="outline" className="w-full py-4 text-lg font-semibold border-2 border-indigo-200 text-indigo-600 hover:bg-indigo-50 rounded-xl">
+                    <Link to="/register" style={{ textDecoration: 'none' }}>
+                      <button style={{
+                        width: '100%',
+                        padding: '20px',
+                        fontSize: '18px',
+                        fontWeight: '800',
+                        background: 'transparent',
+                        color: '#2563eb',
+                        border: '2px solid #2563eb',
+                        borderRadius: '16px',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease'
+                      }}>
                         Create Account
-                      </Button>
+                      </button>
                     </Link>
                   </div>
                 )}
 
                 {/* Secondary Actions */}
-                <div className="flex space-x-4 pt-4 border-t border-gray-200">
-                  <Button
-                    variant="outline"
+                <div style={{
+                  display: 'flex',
+                  gap: '16px',
+                  paddingTop: '24px',
+                  borderTop: '2px solid #e5e7eb'
+                }}>
+                  <button
                     onClick={handleToggleFavorite}
-                    className="flex-1 py-3 font-semibold border-2 hover:shadow-md transition-all duration-200"
+                    style={{
+                      flex: 1,
+                      padding: '16px',
+                      fontSize: '16px',
+                      fontWeight: '700',
+                      background: 'transparent',
+                      color: isFavorite ? '#ef4444' : '#6b7280',
+                      border: '2px solid ' + (isFavorite ? '#ef4444' : '#d1d5db'),
+                      borderRadius: '12px',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
+                    onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => {
+                      e.currentTarget.style.transform = 'translateY(-1px)';
+                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.1)';
+                    }}
+                    onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = 'none';
+                    }}
                   >
-                    <Heart 
-                      className={`h-5 w-5 mr-2 ${isFavorite ? 'fill-current text-red-500' : ''}`} 
+                    <Heart
+                      style={{
+                        width: '20px',
+                        height: '20px',
+                        marginRight: '8px',
+                        fill: isFavorite ? '#ef4444' : 'none'
+                      }}
                     />
                     {isFavorite ? 'Saved' : 'Save'}
-                  </Button>
-                  <Button
-                    variant="outline"
+                  </button>
+                  <button
                     onClick={handleShare}
-                    className="flex-1 py-3 font-semibold border-2 hover:shadow-md transition-all duration-200"
+                    style={{
+                      flex: 1,
+                      padding: '16px',
+                      fontSize: '16px',
+                      fontWeight: '700',
+                      background: 'transparent',
+                      color: '#6b7280',
+                      border: '2px solid #d1d5db',
+                      borderRadius: '12px',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
+                    onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => {
+                      e.currentTarget.style.transform = 'translateY(-1px)';
+                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.1)';
+                    }}
+                    onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = 'none';
+                    }}
                   >
-                    <Share2 className="h-5 w-5 mr-2" />
+                    <Share2 style={{ width: '20px', height: '20px', marginRight: '8px' }} />
                     Share
-                  </Button>
+                  </button>
                 </div>
               </div>
             </div>
 
             {/* Venue Information */}
-            <div className="bg-white rounded-2xl shadow-lg p-8 border">
-              <div className="flex items-center mb-6">
-                <div className="bg-blue-100 p-3 rounded-xl">
-                  <MapPin className="h-6 w-6 text-blue-600" />
+            <div style={{
+              background: 'linear-gradient(135deg, #ffffff 0%, #fafbfc 100%)',
+              borderRadius: '20px',
+              padding: '32px',
+              boxShadow: '0 12px 25px rgba(0, 0, 0, 0.08)',
+              border: '1px solid rgba(255, 255, 255, 0.7)'
+            }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                marginBottom: '24px'
+              }}>
+                <div style={{
+                  width: '52px',
+                  height: '52px',
+                  borderRadius: '16px',
+                  background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                  <MapPin style={{ width: '24px', height: '24px', color: 'white' }} />
                 </div>
-                <h3 className="text-xl font-semibold ml-4 text-gray-900">Venue Details</h3>
+                <h3 style={{
+                  fontSize: '20px',
+                  fontWeight: '800',
+                  color: '#1f2937',
+                  marginLeft: '16px'
+                }}>
+                  Venue Details
+                </h3>
               </div>
-              <div className="space-y-6">
-                <div>
-                  <h4 className="font-bold text-lg text-gray-900 mb-2">{event.venue}</h4>
-                  <p className="text-gray-600 leading-relaxed">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                <div style={{
+                  padding: '20px',
+                  background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
+                  borderRadius: '12px',
+                  border: '1px solid #e2e8f0'
+                }}>
+                  <h4 style={{
+                    fontWeight: '800',
+                    fontSize: '18px',
+                    color: '#1f2937',
+                    marginBottom: '12px'
+                  }}>
+                    {event.venue}
+                  </h4>
+                  <p style={{
+                    color: '#6b7280',
+                    lineHeight: '1.6',
+                    fontWeight: '500',
+                    fontSize: '16px'
+                  }}>
                     {event.address}<br />
                     {event.city}, {event.state} {event.zipCode}
                   </p>
                 </div>
-                <Button
-                  variant="outline"
-                  className="w-full py-3 font-semibold border-2 border-blue-200 text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-200"
+                <button
                   onClick={() => {
                     const query = encodeURIComponent(`${event.venue} ${event.address} ${event.city} ${event.state}`);
                     window.open(`https://maps.google.com/?q=${query}`, '_blank');
                   }}
+                  style={{
+                    width: '100%',
+                    padding: '16px',
+                    fontSize: '16px',
+                    fontWeight: '700',
+                    background: 'transparent',
+                    color: '#3b82f6',
+                    border: '2px solid #3b82f6',
+                    borderRadius: '12px',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                  onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => {
+                    e.currentTarget.style.background = '#3b82f6';
+                    e.currentTarget.style.color = 'white';
+                    e.currentTarget.style.transform = 'translateY(-1px)';
+                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.3)';
+                  }}
+                  onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => {
+                    e.currentTarget.style.background = 'transparent';
+                    e.currentTarget.style.color = '#3b82f6';
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
                 >
-                  <ExternalLink className="h-5 w-5 mr-2" />
+                  <ExternalLink style={{ width: '20px', height: '20px', marginRight: '8px' }} />
                   View on Maps
-                </Button>
+                </button>
               </div>
             </div>
 
             {/* Event Status */}
-            <div className="bg-white rounded-2xl shadow-lg p-8 border">
-              <div className="flex items-center mb-6">
-                <div className="bg-yellow-100 p-3 rounded-xl">
-                  <Clock className="h-6 w-6 text-yellow-600" />
+            <div style={{
+              background: 'linear-gradient(135deg, #ffffff 0%, #fafbfc 100%)',
+              borderRadius: '20px',
+              padding: '32px',
+              boxShadow: '0 12px 25px rgba(0, 0, 0, 0.08)',
+              border: '1px solid rgba(255, 255, 255, 0.7)'
+            }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                marginBottom: '24px'
+              }}>
+                <div style={{
+                  width: '52px',
+                  height: '52px',
+                  borderRadius: '16px',
+                  background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                  <Clock style={{ width: '24px', height: '24px', color: 'white' }} />
                 </div>
-                <h3 className="text-xl font-semibold ml-4 text-gray-900">Event Status</h3>
+                <h3 style={{
+                  fontSize: '20px',
+                  fontWeight: '800',
+                  color: '#1f2937',
+                  marginLeft: '16px'
+                }}>
+                  Event Status
+                </h3>
               </div>
-              <div className="space-y-4">
-                <div className="flex justify-between items-center py-3 px-4 bg-gray-50 rounded-xl">
-                  <span className="font-medium text-gray-700">Status</span>
-                  <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                    event.status === 'ACTIVE' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                  }`}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  padding: '16px 20px',
+                  background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
+                  borderRadius: '12px',
+                  border: '1px solid #e2e8f0'
+                }}>
+                  <span style={{
+                    fontWeight: '600',
+                    color: '#4b5563',
+                    fontSize: '16px'
+                  }}>
+                    Status
+                  </span>
+                  <span style={{
+                    padding: '8px 16px',
+                    borderRadius: '20px',
+                    fontSize: '14px',
+                    fontWeight: '700',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.5px',
+                    ...(event.status === 'ACTIVE' ? {
+                      background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                      color: 'white'
+                    } : {
+                      background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                      color: 'white'
+                    })
+                  }}>
                     {event.status || 'Active'}
                   </span>
                 </div>
-                <div className="flex justify-between items-center py-3 px-4 bg-gray-50 rounded-xl">
-                  <span className="font-medium text-gray-700">Listed</span>
-                  <span className="text-gray-900">{new Date(event.createdAt).toLocaleDateString()}</span>
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  padding: '16px 20px',
+                  background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
+                  borderRadius: '12px',
+                  border: '1px solid #e2e8f0'
+                }}>
+                  <span style={{
+                    fontWeight: '600',
+                    color: '#4b5563',
+                    fontSize: '16px'
+                  }}>
+                    Listed
+                  </span>
+                  <span style={{
+                    color: '#1f2937',
+                    fontWeight: '700',
+                    fontSize: '16px'
+                  }}>
+                    {new Date(event.createdAt).toLocaleDateString()}
+                  </span>
                 </div>
-                <div className="flex justify-between items-center py-3 px-4 bg-gray-50 rounded-xl">
-                  <span className="font-medium text-gray-700">Updated</span>
-                  <span className="text-gray-900">{new Date(event.updatedAt).toLocaleDateString()}</span>
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  padding: '16px 20px',
+                  background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
+                  borderRadius: '12px',
+                  border: '1px solid #e2e8f0'
+                }}>
+                  <span style={{
+                    fontWeight: '600',
+                    color: '#4b5563',
+                    fontSize: '16px'
+                  }}>
+                    Updated
+                  </span>
+                  <span style={{
+                    color: '#1f2937',
+                    fontWeight: '700',
+                    fontSize: '16px'
+                  }}>
+                    {new Date(event.updatedAt).toLocaleDateString()}
+                  </span>
                 </div>
               </div>
             </div>
