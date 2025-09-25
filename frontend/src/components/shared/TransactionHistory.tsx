@@ -227,30 +227,30 @@ export const TransactionHistory = ({ userType }: TransactionHistoryProps) => {
   const getStatusConfig = (status: string) => {
     const configs = {
       completed: {
-        color: '#10b981',
-        backgroundColor: '#ecfdf5',
-        borderColor: '#a7f3d0',
+        color: '#1D3557',
+        backgroundColor: '#E8F7F9',
+        borderColor: '#A8DADC',
         icon: '✓',
         label: 'Completed'
       },
       pending: {
-        color: '#f59e0b',
-        backgroundColor: '#fffbeb',
-        borderColor: '#fed7aa',
+        color: '#457B9D',
+        backgroundColor: '#E8F4F8',
+        borderColor: '#A8DADC',
         icon: '⏳',
         label: 'Pending'
       },
       cancelled: {
-        color: '#ef4444',
-        backgroundColor: '#fef2f2',
-        borderColor: '#fca5a5',
+        color: '#555555',
+        backgroundColor: '#F8F8F8',
+        borderColor: '#CCCCCC',
         icon: '✕',
         label: 'Cancelled'
       },
       refunded: {
-        color: '#3b82f6',
-        backgroundColor: '#eff6ff',
-        borderColor: '#93c5fd',
+        color: '#457B9D',
+        backgroundColor: '#E8F4F8',
+        borderColor: '#A8DADC',
         icon: '↩',
         label: 'Refunded'
       }
@@ -296,7 +296,7 @@ export const TransactionHistory = ({ userType }: TransactionHistoryProps) => {
           width: '60px',
           height: '60px',
           borderRadius: '50%',
-          background: 'linear-gradient(45deg, #3b82f6, #8b5cf6)',
+          background: 'linear-gradient(45deg, #1D3557, #457B9D)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -318,13 +318,13 @@ export const TransactionHistory = ({ userType }: TransactionHistoryProps) => {
             margin: '0 0 8px 0', 
             fontSize: '18px', 
             fontWeight: '600',
-            color: '#1f2937'
+            color: '#2C2C2C'
           }}>
             Loading Transactions
           </h3>
           <p style={{ 
             margin: 0, 
-            color: '#6b7280',
+            color: '#555555',
             fontSize: '14px'
           }}>
             Please wait while we fetch your transaction history...
@@ -361,13 +361,13 @@ export const TransactionHistory = ({ userType }: TransactionHistoryProps) => {
               margin: '0 0 8px 0', 
               fontSize: '18px', 
               fontWeight: '600',
-              color: '#dc2626'
+              color: '#555555'
             }}>
               Error Loading Transactions
             </h3>
             <p style={{ 
               margin: '0 0 24px 0', 
-              color: '#6b7280',
+              color: '#555555',
               fontSize: '14px'
             }}>
               We encountered an error while loading your transactions. Please try again.
@@ -391,10 +391,7 @@ export const TransactionHistory = ({ userType }: TransactionHistoryProps) => {
         <h1 style={{
           fontSize: '32px',
           fontWeight: '800',
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent',
-          backgroundClip: 'text',
+          color: '#1D3557',
           margin: '0 0 12px 0',
           letterSpacing: '-0.02em'
         }}>
@@ -433,7 +430,7 @@ export const TransactionHistory = ({ userType }: TransactionHistoryProps) => {
           {data.data.length > 0 && (
             <>
               <Card variant="gradient" hover style={{ padding: '24px', textAlign: 'center' }}>
-                <div style={{ fontSize: '28px', fontWeight: '700', color: '#10b981', marginBottom: '4px' }}>
+                <div style={{ fontSize: '28px', fontWeight: '700', color: '#1D3557', marginBottom: '4px' }}>
                   {data.data.filter(t => t.status.toLowerCase() === 'completed').length}
                 </div>
                 <div style={{ fontSize: '14px', color: '#6b7280', fontWeight: '500' }}>
@@ -442,7 +439,7 @@ export const TransactionHistory = ({ userType }: TransactionHistoryProps) => {
               </Card>
               
               <Card variant="gradient" hover style={{ padding: '24px', textAlign: 'center' }}>
-                <div style={{ fontSize: '28px', fontWeight: '700', color: '#3b82f6', marginBottom: '4px' }}>
+                <div style={{ fontSize: '28px', fontWeight: '700', color: '#1D3557', marginBottom: '4px' }}>
                   {formatCurrency(data.data.reduce((sum, t) => sum + (userType === 'seller' ? (t.sellerAmount || 0) : t.amount), 0))}
                 </div>
                 <div style={{ fontSize: '14px', color: '#6b7280', fontWeight: '500' }}>
@@ -460,7 +457,7 @@ export const TransactionHistory = ({ userType }: TransactionHistoryProps) => {
           <h3 style={{ 
             fontSize: '18px', 
             fontWeight: '600', 
-            color: '#1f2937',
+            color: '#2C2C2C',
             margin: '0 0 20px 0' 
           }}>
             Filter & Sort
@@ -475,7 +472,7 @@ export const TransactionHistory = ({ userType }: TransactionHistoryProps) => {
                 display: 'block',
                 fontSize: '14px',
                 fontWeight: '500',
-                color: '#374151',
+                color: '#2C2C2C',
                 marginBottom: '6px'
               }}>
                 Status
@@ -491,11 +488,11 @@ export const TransactionHistory = ({ userType }: TransactionHistoryProps) => {
                   fontSize: '14px',
                   fontWeight: '500',
                   backgroundColor: 'white',
-                  color: '#374151',
+                  color: '#2C2C2C',
                   transition: 'all 0.2s ease',
                   outline: 'none'
                 }}
-                onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
+                onFocus={(e) => e.target.style.borderColor = '#1D3557'}
                 onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
               >
                 <option value="">All Statuses</option>
@@ -511,7 +508,7 @@ export const TransactionHistory = ({ userType }: TransactionHistoryProps) => {
                 display: 'block',
                 fontSize: '14px',
                 fontWeight: '500',
-                color: '#374151',
+                color: '#2C2C2C',
                 marginBottom: '6px'
               }}>
                 Items per page
@@ -527,11 +524,11 @@ export const TransactionHistory = ({ userType }: TransactionHistoryProps) => {
                   fontSize: '14px',
                   fontWeight: '500',
                   backgroundColor: 'white',
-                  color: '#374151',
+                  color: '#2C2C2C',
                   transition: 'all 0.2s ease',
                   outline: 'none'
                 }}
-                onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
+                onFocus={(e) => e.target.style.borderColor = '#1D3557'}
                 onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
               >
                 <option value={10}>10</option>
@@ -566,7 +563,7 @@ export const TransactionHistory = ({ userType }: TransactionHistoryProps) => {
                         <h3 style={{
                           fontSize: '20px',
                           fontWeight: '700',
-                          color: '#1f2937',
+                          color: '#2C2C2C',
                           margin: 0,
                           lineHeight: '1.2'
                         }}>
@@ -595,7 +592,7 @@ export const TransactionHistory = ({ userType }: TransactionHistoryProps) => {
                         alignItems: 'center',
                         gap: '16px',
                         fontSize: '14px',
-                        color: '#6b7280',
+                        color: '#555555',
                         fontWeight: '500'
                       }}>
                         <span>📅 {formatDate(transaction.offer?.event?.eventDate || transaction.createdAt)}</span>
@@ -676,7 +673,7 @@ export const TransactionHistory = ({ userType }: TransactionHistoryProps) => {
                       <h4 style={{
                         fontSize: '14px',
                         fontWeight: '600',
-                        color: '#374151',
+                        color: '#2C2C2C',
                         margin: '0 0 12px 0',
                         textTransform: 'uppercase',
                         letterSpacing: '0.5px'
@@ -704,8 +701,8 @@ export const TransactionHistory = ({ userType }: TransactionHistoryProps) => {
                             paddingTop: '8px',
                             borderTop: '1px solid #e2e8f0'
                           }}>
-                            <span style={{ fontSize: '14px', fontWeight: '600', color: '#10b981' }}>Your Earnings:</span>
-                            <span style={{ fontSize: '16px', fontWeight: '700', color: '#10b981' }}>
+                            <span style={{ fontSize: '14px', fontWeight: '600', color: '#1D3557' }}>Your Earnings:</span>
+                            <span style={{ fontSize: '16px', fontWeight: '700', color: '#1D3557' }}>
                               {formatCurrency(transaction.sellerAmount)}
                             </span>
                           </div>
@@ -723,7 +720,7 @@ export const TransactionHistory = ({ userType }: TransactionHistoryProps) => {
                       <h4 style={{
                         fontSize: '14px',
                         fontWeight: '600',
-                        color: '#374151',
+                        color: '#2C2C2C',
                         margin: '0 0 12px 0',
                         textTransform: 'uppercase',
                         letterSpacing: '0.5px'
@@ -745,8 +742,8 @@ export const TransactionHistory = ({ userType }: TransactionHistoryProps) => {
                                 display: 'inline-block',
                                 fontSize: '12px',
                                 fontWeight: '600',
-                                color: '#3b82f6',
-                                backgroundColor: '#eff6ff',
+                                color: '#1D3557',
+                                backgroundColor: '#E8F4F8',
                                 padding: '2px 8px',
                                 borderRadius: '12px',
                                 margin: '2px'
@@ -785,7 +782,7 @@ export const TransactionHistory = ({ userType }: TransactionHistoryProps) => {
                           width: '32px',
                           height: '32px',
                           borderRadius: '50%',
-                          backgroundColor: transaction.paidAt ? '#10b981' : '#d1d5db',
+                          backgroundColor: transaction.paidAt ? '#1D3557' : '#d1d5db',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
@@ -1002,12 +999,12 @@ export const TransactionHistory = ({ userType }: TransactionHistoryProps) => {
               width: '80px',
               height: '80px',
               borderRadius: '50%',
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              background: 'linear-gradient(135deg, #1D3557 0%, #457B9D 100%)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               fontSize: '32px',
-              boxShadow: '0 8px 32px rgba(102, 126, 234, 0.3)'
+              boxShadow: '0 8px 32px rgba(29, 53, 87, 0.3)'
             }}>
               🎫
             </div>
@@ -1015,14 +1012,14 @@ export const TransactionHistory = ({ userType }: TransactionHistoryProps) => {
               <h3 style={{
                 fontSize: '24px',
                 fontWeight: '700',
-                color: '#1f2937',
+                color: '#2C2C2C',
                 margin: '0 0 12px 0'
               }}>
                 No Transactions Yet
               </h3>
               <p style={{
                 fontSize: '16px',
-                color: '#6b7280',
+                color: '#555555',
                 margin: '0 0 24px 0',
                 lineHeight: '1.5'
               }}>

@@ -1,30 +1,32 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
 
-/* Tailwind CSS Custom Configuration for v4 */
+/* Tailwind CSS Custom Configuration for v4 - Corporate Color Scheme */
 @theme {
-  --color-primary-50: #eff6ff;
-  --color-primary-100: #dbeafe;
-  --color-primary-200: #bfdbfe;
-  --color-primary-300: #93c5fd;
-  --color-primary-400: #60a5fa;
-  --color-primary-500: #3b82f6;
-  --color-primary-600: #2563eb;
-  --color-primary-700: #1d4ed8;
-  --color-primary-800: #1e40af;
-  --color-primary-900: #1e3a8a;
-  --color-primary-950: #172554;
+  /* Primary Color Scale - Navy Blue (#1D3557) */
+  --color-primary-50: #F0F3F7;
+  --color-primary-100: #E1E6EE;
+  --color-primary-200: #C3CDDD;
+  --color-primary-300: #9FAEC8;
+  --color-primary-400: #7B8FB3;
+  --color-primary-500: #457B9D;
+  --color-primary-600: #1D3557;
+  --color-primary-700: #172A45;
+  --color-primary-800: #111F33;
+  --color-primary-900: #0B1421;
+  --color-primary-950: #050A10;
 
-  --color-secondary-50: #f8fafc;
-  --color-secondary-100: #f1f5f9;
-  --color-secondary-200: #e2e8f0;
-  --color-secondary-300: #cbd5e1;
-  --color-secondary-400: #94a3b8;
-  --color-secondary-500: #64748b;
-  --color-secondary-600: #475569;
-  --color-secondary-700: #334155;
-  --color-secondary-800: #1e293b;
-  --color-secondary-900: #0f172a;
+  /* Secondary Color Scale - Sky Blue (#457B9D) / Turquoise Accent (#A8DADC) */
+  --color-secondary-50: #F7F7F7;
+  --color-secondary-100: #FFFFFF;
+  --color-secondary-200: #E8F4F8;
+  --color-secondary-300: #D0E9F0;
+  --color-secondary-400: #A8DADC;
+  --color-secondary-500: #457B9D;
+  --color-secondary-600: #2C5F7A;
+  --color-secondary-700: #234D61;
+  --color-secondary-800: #1A3B48;
+  --color-secondary-900: #11292F;
 
   --font-family-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
 
@@ -128,16 +130,16 @@ body {
   font-family: var(--font-family-sans);
   font-size: 1rem;
   line-height: 1.6; /* Improved line height for readability */
-  color: #1e293b; /* High contrast text color */
+  color: #2C2C2C; /* Charcoal - Corporate body text color */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  background: linear-gradient(135deg, #F7F7F7 0%, #FFFFFF 100%); /* Corporate background gradient */
   min-height: 100vh;
 }
 
-/* Accessibility improvements */
+/* Accessibility improvements - Corporate Focus States */
 *:focus {
-  outline: 3px solid #3b82f6;
+  outline: 3px solid #1D3557; /* Navy Blue focus outline */
   outline-offset: 2px;
   border-radius: 4px;
 }
@@ -147,7 +149,7 @@ body {
 }
 
 *:focus-visible {
-  outline: 3px solid #3b82f6;
+  outline: 3px solid #1D3557; /* Navy Blue focus outline */
   outline-offset: 2px;
   border-radius: 4px;
 }
@@ -157,10 +159,10 @@ button:focus-visible,
 a:focus-visible,
 [role="button"]:focus-visible,
 [tabindex]:focus-visible {
-  outline: 3px solid #3b82f6;
+  outline: 3px solid #1D3557; /* Navy Blue focus */
   outline-offset: 2px;
   border-radius: 4px;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+  box-shadow: 0 0 0 2px rgba(29, 53, 87, 0.2);
 }
 
 /* High contrast mode improvements */
@@ -188,12 +190,12 @@ a:focus-visible,
   }
 }
 
-/* Skip to main content link */
+/* Skip to main content link - Corporate Style */
 .skip-link {
   position: absolute;
   top: -40px;
   left: 6px;
-  background: #3b82f6;
+  background: #1D3557; /* Navy Blue background */
   color: white;
   padding: 8px;
   text-decoration: none;
@@ -233,12 +235,12 @@ a:focus-visible,
   }
 }
 
-/* Improved typography scale with better contrast */
+/* Improved typography scale with better contrast - Corporate Colors */
 h1, h2, h3, h4, h5, h6 {
   font-weight: 600;
   line-height: 1.3;
   margin: 0 0 1rem 0;
-  color: #0f172a;
+  color: #1D3557; /* Navy Blue for headings */
 }
 
 h1 {
@@ -274,29 +276,30 @@ h6 {
 p {
   margin: 0 0 1rem 0;
   line-height: 1.7;
-  color: #1e293b; /* Improved contrast ratio */
+  color: #2C2C2C; /* Charcoal for body text */
   font-size: clamp(0.875rem, 1.5vw, 1rem);
 }
 
-/* Professional link styles without underlines */
+/* Professional corporate link styles without underlines */
 a:not(.MuiCard-root a):not([role="button"]):not(.no-link-style) {
-  color: #2563eb;
+  color: #1D3557; /* Navy Blue for professional links */
   text-decoration: none;
   transition: all 0.2s ease;
   font-weight: 500;
+  border-bottom: 1px solid transparent; /* Professional subtle indicator */
 }
 
 a:not(.MuiCard-root a):not([role="button"]):not(.no-link-style):hover {
-  color: #1d4ed8;
-  opacity: 0.8;
+  color: #457B9D; /* Sky Blue on hover */
+  border-bottom-color: #A8DADC; /* Turquoise accent underline */
 }
 
 a:not(.MuiCard-root a):not([role="button"]):not(.no-link-style):focus {
-  background-color: rgba(37, 99, 235, 0.1);
+  background-color: rgba(168, 218, 220, 0.1); /* Subtle turquoise background */
   border-radius: 4px;
   padding: 2px 4px;
   margin: -2px -4px;
-  outline: 2px solid #2563eb;
+  outline: 2px solid #1D3557; /* Navy Blue focus outline */
   outline-offset: 2px;
 }
 
@@ -320,13 +323,13 @@ a:not(.MuiCard-root a):not([role="button"]):not(.no-link-style):focus {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #cbd5e1, #94a3b8);
+  background: linear-gradient(135deg, #A8DADC, #457B9D); /* Turquoise to Sky Blue gradient */
   border-radius: 4px;
   transition: background 0.3s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #94a3b8, #64748b);
+  background: linear-gradient(135deg, #457B9D, #1D3557); /* Sky Blue to Navy gradient on hover */
 }
 
 /* Utility classes */

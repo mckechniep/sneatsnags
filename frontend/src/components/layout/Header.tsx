@@ -55,7 +55,7 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
 const LogoText = styled(Typography)(({ theme }) => ({
   fontWeight: 700,
   fontSize: '1.5rem',
-  background: 'linear-gradient(45deg, #2563eb, #7c3aed)',
+  background: 'linear-gradient(45deg, #1D3557, #457B9D)', // Navy to Sky Blue gradient
   backgroundClip: 'text',
   WebkitBackgroundClip: 'text',
   WebkitTextFillColor: 'transparent',
@@ -179,10 +179,10 @@ export const Header: React.FC = () => {
             textTransform: 'none',
             fontWeight: 500,
             '&:hover': {
-              backgroundColor: 'rgba(37, 99, 235, 0.1)',
+              backgroundColor: 'rgba(168, 218, 220, 0.1)', // Turquoise accent hover
             },
             '&:focus-visible': {
-              outline: '3px solid #3b82f6',
+              outline: '3px solid #1D3557', // Navy focus outline
               outlineOffset: '2px'
             }
           }}
@@ -347,7 +347,7 @@ export const Header: React.FC = () => {
                       border: '2px solid',
                       borderColor: 'primary.main',
                       '&:hover': {
-                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                        backgroundColor: 'rgba(168, 218, 220, 0.1)', // Turquoise accent hover
                       },
                     }}
                   >

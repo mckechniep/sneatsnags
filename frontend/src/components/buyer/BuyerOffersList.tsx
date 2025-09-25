@@ -147,7 +147,7 @@ export const BuyerOffersList = ({}: BuyerOffersListProps) => {
           width: '80px',
           height: '80px',
           borderRadius: '50%',
-          background: 'linear-gradient(45deg, #2563eb, #7c3aed)',
+          background: 'linear-gradient(45deg, #1D3557, #457B9D)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -177,7 +177,7 @@ export const BuyerOffersList = ({}: BuyerOffersListProps) => {
             margin: '0 0 8px 0', 
             fontSize: '20px', 
             fontWeight: '600',
-            color: '#1f2937'
+            color: '#2C2C2C'
           }}>
             Loading Your Offers
           </h3>
@@ -222,13 +222,13 @@ export const BuyerOffersList = ({}: BuyerOffersListProps) => {
           margin: '0 0 8px 0',
           fontSize: '20px',
           fontWeight: '600',
-          color: '#dc2626'
+          color: '#555555'
         }}>
           Error Loading Offers
         </h3>
         <p style={{
           margin: 0,
-          color: '#b91c1c',
+          color: '#555555',
           fontSize: '16px'
         }}>
           Something went wrong. Please refresh the page and try again.
@@ -243,7 +243,7 @@ export const BuyerOffersList = ({}: BuyerOffersListProps) => {
       margin: '0 auto',
       padding: '32px 20px',
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)'
+      background: 'linear-gradient(135deg, #F7F7F7 0%, #FFFFFF 100%)'
     }}>
       {/* Header */}
       <div style={{ 
@@ -253,10 +253,7 @@ export const BuyerOffersList = ({}: BuyerOffersListProps) => {
         <h1 style={{
           fontSize: 'clamp(28px, 5vw, 36px)',
           fontWeight: '800',
-          background: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 50%, #dc2626 100%)',
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent',
-          backgroundClip: 'text',
+          color: '#1D3557',
           margin: '0 0 12px 0',
           letterSpacing: '-0.02em'
         }}>
@@ -264,7 +261,7 @@ export const BuyerOffersList = ({}: BuyerOffersListProps) => {
         </h1>
         <p style={{
           fontSize: 'clamp(16px, 2vw, 18px)',
-          color: '#475569',
+          color: '#555555',
           margin: 0,
           fontWeight: '500',
           maxWidth: '600px',
@@ -287,7 +284,7 @@ export const BuyerOffersList = ({}: BuyerOffersListProps) => {
               fontSize: '20px',
               fontWeight: '700',
               marginBottom: '24px',
-              color: '#1f2937',
+              color: '#2C2C2C',
               display: 'flex',
               alignItems: 'center',
               gap: '12px'
@@ -296,7 +293,7 @@ export const BuyerOffersList = ({}: BuyerOffersListProps) => {
                 width: '32px',
                 height: '32px',
                 borderRadius: '8px',
-                background: 'linear-gradient(135deg, #2563eb, #7c3aed)',
+                background: 'linear-gradient(135deg, #1D3557, #457B9D)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -318,7 +315,7 @@ export const BuyerOffersList = ({}: BuyerOffersListProps) => {
                   display: 'block',
                   fontSize: '14px',
                   fontWeight: '600',
-                  color: '#374151',
+                  color: '#2C2C2C',
                   marginBottom: '8px',
                   textTransform: 'uppercase',
                   letterSpacing: '0.5px'
@@ -339,8 +336,8 @@ export const BuyerOffersList = ({}: BuyerOffersListProps) => {
                     outline: 'none'
                   }}
                   onFocus={(e) => {
-                    e.currentTarget.style.borderColor = '#2563eb';
-                    e.currentTarget.style.boxShadow = '0 0 0 3px rgba(37, 99, 235, 0.1)';
+                    e.currentTarget.style.borderColor = '#1D3557';
+                    e.currentTarget.style.boxShadow = '0 0 0 3px rgba(29, 53, 87, 0.1)';
                   }}
                   onBlur={(e) => {
                     e.currentTarget.style.borderColor = '#e5e7eb';
@@ -360,7 +357,7 @@ export const BuyerOffersList = ({}: BuyerOffersListProps) => {
                   display: 'block',
                   fontSize: '14px',
                   fontWeight: '600',
-                  color: '#374151',
+                  color: '#2C2C2C',
                   marginBottom: '8px',
                   textTransform: 'uppercase',
                   letterSpacing: '0.5px'
@@ -386,7 +383,7 @@ export const BuyerOffersList = ({}: BuyerOffersListProps) => {
                   display: 'block',
                   fontSize: '14px',
                   fontWeight: '600',
-                  color: '#374151',
+                  color: '#2C2C2C',
                   marginBottom: '8px',
                   textTransform: 'uppercase',
                   letterSpacing: '0.5px'
@@ -407,8 +404,8 @@ export const BuyerOffersList = ({}: BuyerOffersListProps) => {
                     outline: 'none'
                   }}
                   onFocus={(e) => {
-                    e.currentTarget.style.borderColor = '#2563eb';
-                    e.currentTarget.style.boxShadow = '0 0 0 3px rgba(37, 99, 235, 0.1)';
+                    e.currentTarget.style.borderColor = '#1D3557';
+                    e.currentTarget.style.boxShadow = '0 0 0 3px rgba(29, 53, 87, 0.1)';
                   }}
                   onBlur={(e) => {
                     e.currentTarget.style.borderColor = '#e5e7eb';
@@ -462,7 +459,7 @@ export const BuyerOffersList = ({}: BuyerOffersListProps) => {
                         <h3 style={{
                           fontSize: '20px',
                           fontWeight: '700',
-                          color: '#1f2937',
+                          color: '#2C2C2C',
                           margin: 0
                         }}>
                           {offer.event?.name || 'Event Name'}
@@ -475,21 +472,21 @@ export const BuyerOffersList = ({}: BuyerOffersListProps) => {
                           textTransform: 'uppercase',
                           letterSpacing: '0.5px',
                           ...(offer.status === 'ACTIVE' ? {
-                            background: 'linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)',
-                            color: '#1e40af',
-                            border: '1px solid #93c5fd'
+                            background: 'linear-gradient(135deg, #E8F4F8 0%, #D1E9F1 100%)',
+                            color: '#1D3557',
+                            border: '1px solid #457B9D'
                           } : offer.status === 'ACCEPTED' ? {
-                            background: 'linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%)',
-                            color: '#065f46',
-                            border: '1px solid #6ee7b7'
+                            background: 'linear-gradient(135deg, #E8F7F9 0%, #D1F0F3 100%)',
+                            color: '#1D3557',
+                            border: '1px solid #A8DADC'
                           } : offer.status === 'EXPIRED' ? {
-                            background: 'linear-gradient(135deg, #fee2e2 0%, #fecaca 100%)',
-                            color: '#991b1b',
-                            border: '1px solid #fca5a5'
+                            background: 'linear-gradient(135deg, #F8F8F8 0%, #EEEEEE 100%)',
+                            color: '#555555',
+                            border: '1px solid #CCCCCC'
                           } : {
-                            background: 'linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%)',
-                            color: '#374151',
-                            border: '1px solid #d1d5db'
+                            background: 'linear-gradient(135deg, #F8F8F8 0%, #EEEEEE 100%)',
+                            color: '#555555',
+                            border: '1px solid #CCCCCC'
                           })
                         }}>
                           {offer.status}
@@ -512,7 +509,7 @@ export const BuyerOffersList = ({}: BuyerOffersListProps) => {
                             <p style={{
                               fontSize: '13px',
                               fontWeight: '600',
-                              color: '#6b7280',
+                              color: '#555555',
                               textTransform: 'uppercase',
                               letterSpacing: '0.5px',
                               margin: '0 0 4px 0'
@@ -522,7 +519,7 @@ export const BuyerOffersList = ({}: BuyerOffersListProps) => {
                             <p style={{
                               fontSize: '18px',
                               fontWeight: '700',
-                              color: '#1f2937',
+                              color: '#2C2C2C',
                               margin: 0
                             }}>
                               ${offer.maxPrice}
@@ -532,7 +529,7 @@ export const BuyerOffersList = ({}: BuyerOffersListProps) => {
                             <p style={{
                               fontSize: '13px',
                               fontWeight: '600',
-                              color: '#6b7280',
+                              color: '#555555',
                               textTransform: 'uppercase',
                               letterSpacing: '0.5px',
                               margin: '0 0 4px 0'
@@ -542,7 +539,7 @@ export const BuyerOffersList = ({}: BuyerOffersListProps) => {
                             <p style={{
                               fontSize: '16px',
                               fontWeight: '600',
-                              color: '#1f2937',
+                              color: '#2C2C2C',
                               margin: 0
                             }}>
                               {offer.quantity}
@@ -552,7 +549,7 @@ export const BuyerOffersList = ({}: BuyerOffersListProps) => {
                             <p style={{
                               fontSize: '13px',
                               fontWeight: '600',
-                              color: '#6b7280',
+                              color: '#555555',
                               textTransform: 'uppercase',
                               letterSpacing: '0.5px',
                               margin: '0 0 4px 0'
@@ -562,7 +559,7 @@ export const BuyerOffersList = ({}: BuyerOffersListProps) => {
                             <p style={{
                               fontSize: '14px',
                               fontWeight: '500',
-                              color: '#1f2937',
+                              color: '#2C2C2C',
                               margin: 0
                             }}>
                               {new Date(offer.createdAt).toLocaleDateString()}
@@ -580,7 +577,7 @@ export const BuyerOffersList = ({}: BuyerOffersListProps) => {
                             <p style={{
                               fontSize: '13px',
                               fontWeight: '600',
-                              color: '#6b7280',
+                              color: '#555555',
                               textTransform: 'uppercase',
                               letterSpacing: '0.5px',
                               margin: '0 0 4px 0'
@@ -590,7 +587,7 @@ export const BuyerOffersList = ({}: BuyerOffersListProps) => {
                             <p style={{
                               fontSize: '14px',
                               fontWeight: '500',
-                              color: '#1f2937',
+                              color: '#2C2C2C',
                               margin: 0
                             }}>
                               {new Date(offer.expiresAt).toLocaleDateString()}
@@ -602,7 +599,7 @@ export const BuyerOffersList = ({}: BuyerOffersListProps) => {
                                 <p style={{
                                   fontSize: '13px',
                                   fontWeight: '600',
-                                  color: '#6b7280',
+                                  color: '#555555',
                                   textTransform: 'uppercase',
                                   letterSpacing: '0.5px',
                                   margin: '0 0 4px 0'
@@ -612,7 +609,7 @@ export const BuyerOffersList = ({}: BuyerOffersListProps) => {
                                 <p style={{
                                   fontSize: '14px',
                                   fontWeight: '500',
-                                  color: '#1f2937',
+                                  color: '#2C2C2C',
                                   margin: 0
                                 }}>
                                   {offer.event.venue}
@@ -622,7 +619,7 @@ export const BuyerOffersList = ({}: BuyerOffersListProps) => {
                                 <p style={{
                                   fontSize: '13px',
                                   fontWeight: '600',
-                                  color: '#6b7280',
+                                  color: '#555555',
                                   textTransform: 'uppercase',
                                   letterSpacing: '0.5px',
                                   margin: '0 0 4px 0'
@@ -632,7 +629,7 @@ export const BuyerOffersList = ({}: BuyerOffersListProps) => {
                                 <p style={{
                                   fontSize: '14px',
                                   fontWeight: '500',
-                                  color: '#1f2937',
+                                  color: '#2C2C2C',
                                   margin: 0
                                 }}>
                                   {offer.event.city}, {offer.event.state}
@@ -647,14 +644,14 @@ export const BuyerOffersList = ({}: BuyerOffersListProps) => {
                         <div style={{
                           marginTop: '20px',
                           padding: '16px',
-                          background: 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)',
+                          background: 'linear-gradient(135deg, #E8F4F8 0%, #D1E9F1 100%)',
                           borderRadius: '12px',
-                          border: '1px solid #93c5fd'
+                          border: '1px solid #457B9D'
                         }}>
                           <p style={{
                             fontSize: '13px',
                             fontWeight: '600',
-                            color: '#1e40af',
+                            color: '#1D3557',
                             textTransform: 'uppercase',
                             letterSpacing: '0.5px',
                             margin: '0 0 8px 0'
@@ -664,7 +661,7 @@ export const BuyerOffersList = ({}: BuyerOffersListProps) => {
                           <p style={{
                             fontSize: '14px',
                             fontWeight: '500',
-                            color: '#1f2937',
+                            color: '#2C2C2C',
                             margin: 0,
                             lineHeight: '1.5'
                           }}>
@@ -677,14 +674,14 @@ export const BuyerOffersList = ({}: BuyerOffersListProps) => {
                         <div style={{
                           marginTop: '20px',
                           padding: '16px',
-                          background: 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)',
+                          background: 'linear-gradient(135deg, #E8F7F9 0%, #D1F0F3 100%)',
                           borderRadius: '12px',
-                          border: '1px solid #86efac'
+                          border: '1px solid #A8DADC'
                         }}>
                           <p style={{
                             fontSize: '13px',
                             fontWeight: '600',
-                            color: '#15803d',
+                            color: '#1D3557',
                             textTransform: 'uppercase',
                             letterSpacing: '0.5px',
                             margin: '0 0 8px 0'
@@ -694,7 +691,7 @@ export const BuyerOffersList = ({}: BuyerOffersListProps) => {
                           <p style={{
                             fontSize: '14px',
                             fontWeight: '500',
-                            color: '#1f2937',
+                            color: '#2C2C2C',
                             margin: 0
                           }}>
                             {offer.sections.map(s => s.section?.name).join(', ')}
@@ -734,7 +731,7 @@ export const BuyerOffersList = ({}: BuyerOffersListProps) => {
                             <p style={{
                               fontSize: '15px',
                               fontWeight: '700',
-                              color: '#065f46',
+                              color: '#1D3557',
                               margin: 0
                             }}>
                               Transaction Completed
@@ -743,7 +740,7 @@ export const BuyerOffersList = ({}: BuyerOffersListProps) => {
                           <p style={{
                             fontSize: '16px',
                             fontWeight: '600',
-                            color: '#059669',
+                            color: '#1D3557',
                             margin: 0
                           }}>
                             ${offer.transaction.totalAmount} - {offer.transaction.status}
@@ -823,7 +820,7 @@ export const BuyerOffersList = ({}: BuyerOffersListProps) => {
                 </Button>
                 <span style={{
                   fontSize: '15px',
-                  color: '#475569',
+                  color: '#555555',
                   fontWeight: '600',
                   padding: '0 16px'
                 }}>
@@ -859,27 +856,27 @@ export const BuyerOffersList = ({}: BuyerOffersListProps) => {
                 height: '80px',
                 margin: '0 auto 24px',
                 borderRadius: '50%',
-                background: 'linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%)',
+                background: 'linear-gradient(135deg, #F7F7F7 0%, #FFFFFF 100%)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 fontSize: '32px',
                 fontWeight: 'bold',
-                color: '#9ca3af'
+                color: '#555555'
               }}>
                 📝
               </div>
               <h3 style={{
                 fontSize: '24px',
                 fontWeight: '700',
-                color: '#374151',
+                color: '#2C2C2C',
                 margin: '0 0 12px 0'
               }}>
                 No offers found
               </h3>
               <p style={{
                 fontSize: '16px',
-                color: '#6b7280',
+                color: '#555555',
                 margin: 0,
                 lineHeight: '1.6'
               }}>
@@ -929,23 +926,23 @@ export const BuyerOffersList = ({}: BuyerOffersListProps) => {
                   <h3 style={{
                     fontSize: '24px',
                     fontWeight: '700',
-                    color: '#1f2937',
+                    color: '#2C2C2C',
                     margin: '0 0 12px 0'
                   }}>
                     Cancel Offer
                   </h3>
                   <p style={{
                     fontSize: '16px',
-                    color: '#6b7280',
+                    color: '#555555',
                     margin: 0,
                     lineHeight: '1.6'
                   }}>
                     Are you sure you want to cancel your offer for{' '}
-                    <strong style={{ color: '#1f2937' }}>{cancelConfirmation.offerName}</strong>?
+                    <strong style={{ color: '#2C2C2C' }}>{cancelConfirmation.offerName}</strong>?
                   </p>
                   <p style={{
                     fontSize: '14px',
-                    color: '#ef4444',
+                    color: '#555555',
                     margin: '8px 0 0 0',
                     fontWeight: '500'
                   }}>
@@ -1031,17 +1028,17 @@ export const BuyerOffersList = ({}: BuyerOffersListProps) => {
                   <h3 style={{
                     fontSize: '28px',
                     fontWeight: '700',
-                    color: '#1f2937',
+                    color: '#2C2C2C',
                     margin: '0 0 8px 0'
                   }}>
                     Edit Your Offer
                   </h3>
                   <p style={{
                     fontSize: '16px',
-                    color: '#6b7280',
+                    color: '#555555',
                     margin: 0
                   }}>
-                    Update your offer for <strong style={{ color: '#1f2937' }}>{editingOffer.event?.name}</strong>
+                    Update your offer for <strong style={{ color: '#2C2C2C' }}>{editingOffer.event?.name}</strong>
                   </p>
                 </div>
 
@@ -1051,7 +1048,7 @@ export const BuyerOffersList = ({}: BuyerOffersListProps) => {
                       display: 'block',
                       fontSize: '14px',
                       fontWeight: '600',
-                      color: '#374151',
+                      color: '#2C2C2C',
                       marginBottom: '8px',
                       textTransform: 'uppercase',
                       letterSpacing: '0.5px'
@@ -1078,7 +1075,7 @@ export const BuyerOffersList = ({}: BuyerOffersListProps) => {
                       display: 'block',
                       fontSize: '14px',
                       fontWeight: '600',
-                      color: '#374151',
+                      color: '#2C2C2C',
                       marginBottom: '8px',
                       textTransform: 'uppercase',
                       letterSpacing: '0.5px'
@@ -1102,8 +1099,8 @@ export const BuyerOffersList = ({}: BuyerOffersListProps) => {
                         outline: 'none'
                       }}
                       onFocus={(e: React.FocusEvent<HTMLTextAreaElement>) => {
-                        e.currentTarget.style.borderColor = '#2563eb';
-                        e.currentTarget.style.boxShadow = '0 0 0 3px rgba(37, 99, 235, 0.1)';
+                        e.currentTarget.style.borderColor = '#1D3557';
+                        e.currentTarget.style.boxShadow = '0 0 0 3px rgba(29, 53, 87, 0.1)';
                       }}
                       onBlur={(e: React.FocusEvent<HTMLTextAreaElement>) => {
                         e.currentTarget.style.borderColor = '#e5e7eb';
@@ -1117,7 +1114,7 @@ export const BuyerOffersList = ({}: BuyerOffersListProps) => {
                       display: 'block',
                       fontSize: '14px',
                       fontWeight: '600',
-                      color: '#374151',
+                      color: '#2C2C2C',
                       marginBottom: '8px',
                       textTransform: 'uppercase',
                       letterSpacing: '0.5px'

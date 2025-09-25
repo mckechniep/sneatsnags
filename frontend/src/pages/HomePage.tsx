@@ -68,16 +68,16 @@ export const HomePage: React.FC = () => {
     totalEvents: 0,
     activeUsers: 0,
     avgPrice: 0,
-    popularCategory: 'Concerts',
+    popularCategory: "Concerts",
     totalTicketsSold: 0,
     successRate: 0,
-    totalRevenue: 0
+    totalRevenue: 0,
   });
   const [dynamicStats, setDynamicStats] = useState({
     totalEvents: 0,
     happyCustomers: 0,
     successRate: 98.5,
-    avgResponseTime: '2.3min'
+    avgResponseTime: "2.3min",
   });
   const [eventCategories, setEventCategories] = useState([
     { id: "all", name: "All Events", icon: Globe, count: "Loading..." },
@@ -179,63 +179,90 @@ export const HomePage: React.FC = () => {
       try {
         const featuredResponse = await eventService.getEvents({
           limit: 8,
-          sortBy: 'eventDate',
-          sortOrder: 'asc'
+          sortBy: "eventDate",
+          sortOrder: "asc",
         });
         setFeaturedEvents(featuredResponse.data || []);
       } catch (featuredError) {
-        console.error('Error fetching featured events:', featuredError);
+        console.error("Error fetching featured events:", featuredError);
         setFeaturedEvents([]);
       }
 
       // Calculate dynamic statistics from actual data
-      const allEventsResponse = await eventService.getEvents({ 
-        limit: 1000,  // Get a large sample to calculate accurate stats
-        sortBy: 'createdAt',
-        sortOrder: 'desc'
+      const allEventsResponse = await eventService.getEvents({
+        limit: 1000, // Get a large sample to calculate accurate stats
+        sortBy: "createdAt",
+        sortOrder: "desc",
       });
-      
+
       const allEventsData = allEventsResponse.data || [];
-      
+
       // Calculate real statistics with proper error handling
-      const totalEventsCount = Math.max(allEventsResponse.pagination?.total || allEventsData.length || 0, 0);
-      const eventsWithPrices = allEventsData.filter(event => 
-        event.minPrice && 
-        typeof event.minPrice === 'number' && 
-        event.minPrice > 0 && 
-        event.minPrice < 10000 // Reasonable upper limit
+      const totalEventsCount = Math.max(
+        allEventsResponse.pagination?.total || allEventsData.length || 0,
+        0
       );
-      const avgPrice = eventsWithPrices.length > 0 
-        ? Math.round(eventsWithPrices.reduce((sum, event) => sum + (event.minPrice || 0), 0) / eventsWithPrices.length)
-        : 75; // fallback for reasonable ticket price
-      
+      const eventsWithPrices = allEventsData.filter(
+        (event) =>
+          event.minPrice &&
+          typeof event.minPrice === "number" &&
+          event.minPrice > 0 &&
+          event.minPrice < 10000 // Reasonable upper limit
+      );
+      const avgPrice =
+        eventsWithPrices.length > 0
+          ? Math.round(
+              eventsWithPrices.reduce(
+                (sum, event) => sum + (event.minPrice || 0),
+                0
+              ) / eventsWithPrices.length
+            )
+          : 75; // fallback for reasonable ticket price
+
       // Calculate category popularity with error handling
       const categoryCount = allEventsData.reduce((acc, event) => {
-        const type = event?.eventType || 'OTHER';
-        if (typeof type === 'string' && type.length > 0) {
+        const type = event?.eventType || "OTHER";
+        if (typeof type === "string" && type.length > 0) {
           acc[type.toUpperCase()] = (acc[type.toUpperCase()] || 0) + 1;
         }
         return acc;
       }, {} as Record<string, number>);
-      
-      const popularCategoryKey = Object.entries(categoryCount)
-        .sort(([,a], [,b]) => b - a)[0]?.[0] || 'CONCERT';
-      
-      const popularCategoryName = {
-        'CONCERT': 'Concerts',
-        'SPORTS': 'Sports',
-        'THEATER': 'Theater', 
-        'COMEDY': 'Comedy'
-      }[popularCategoryKey] || 'Concerts';
-      
+
+      const popularCategoryKey =
+        Object.entries(categoryCount).sort(([, a], [, b]) => b - a)[0]?.[0] ||
+        "CONCERT";
+
+      const popularCategoryName =
+        {
+          CONCERT: "Concerts",
+          SPORTS: "Sports",
+          THEATER: "Theater",
+          COMEDY: "Comedy",
+        }[popularCategoryKey] || "Concerts";
+
       // Estimate metrics based on real data with reasonable multipliers and bounds
-      const avgCustomersPerEvent = Math.min(Math.max(totalEventsCount > 50 ? 45 : 25, 15), 80);
-      const avgTicketsPerEvent = Math.min(Math.max(totalEventsCount > 50 ? 120 : 80, 50), 200);
-      
-      const estimatedCustomers = Math.max(Math.floor(totalEventsCount * avgCustomersPerEvent), 1200);
-      const estimatedTicketsSold = Math.max(Math.floor(totalEventsCount * avgTicketsPerEvent), 3500);
-      const estimatedRevenue = Math.max(Math.floor(estimatedTicketsSold * avgPrice), 150000);
-      
+      const avgCustomersPerEvent = Math.min(
+        Math.max(totalEventsCount > 50 ? 45 : 25, 15),
+        80
+      );
+      const avgTicketsPerEvent = Math.min(
+        Math.max(totalEventsCount > 50 ? 120 : 80, 50),
+        200
+      );
+
+      const estimatedCustomers = Math.max(
+        Math.floor(totalEventsCount * avgCustomersPerEvent),
+        1200
+      );
+      const estimatedTicketsSold = Math.max(
+        Math.floor(totalEventsCount * avgTicketsPerEvent),
+        3500
+      );
+      const estimatedRevenue = Math.max(
+        Math.floor(estimatedTicketsSold * avgPrice),
+        150000
+      );
+
       // Set dynamic insights with logging for debugging
       const calculatedInsights = {
         totalEvents: totalEventsCount,
@@ -244,35 +271,35 @@ export const HomePage: React.FC = () => {
         popularCategory: popularCategoryName,
         totalTicketsSold: estimatedTicketsSold,
         successRate: 98.7, // Can be calculated from actual transaction data if available
-        totalRevenue: estimatedRevenue
+        totalRevenue: estimatedRevenue,
       };
-      
-      console.log('📊 Dynamic Statistics Calculated:', {
+
+      console.log("📊 Dynamic Statistics Calculated:", {
         rawEventCount: allEventsData.length,
         totalEvents: totalEventsCount,
         eventsWithPrices: eventsWithPrices.length,
         categoryBreakdown: categoryCount,
-        calculatedInsights
+        calculatedInsights,
       });
-      
+
       setInsights(calculatedInsights);
-      
+
       // Set dynamic stats for the stats section
       setDynamicStats({
         totalEvents: totalEventsCount,
         happyCustomers: estimatedCustomers,
         successRate: 98.5,
-        avgResponseTime: '2.3min' // This would come from support ticket data in real implementation
+        avgResponseTime: "2.3min", // This would come from support ticket data in real implementation
       });
 
       // Fetch actual event categories with real counts
       try {
         // Use the already fetched allEventsData to calculate category counts
         const allCount = totalEventsCount;
-        const concertCount = (categoryCount['CONCERT'] || 0);
-        const sportsCount = (categoryCount['SPORTS'] || 0);
-        const theaterCount = (categoryCount['THEATER'] || 0);
-        const comedyCount = (categoryCount['COMEDY'] || 0);
+        const concertCount = categoryCount["CONCERT"] || 0;
+        const sportsCount = categoryCount["SPORTS"] || 0;
+        const theaterCount = categoryCount["THEATER"] || 0;
+        const comedyCount = categoryCount["COMEDY"] || 0;
 
         setEventCategories([
           {
@@ -403,23 +430,23 @@ export const HomePage: React.FC = () => {
       ]);
       setLiveEvents([]);
       setTestimonials([]);
-      
+
       // Set fallback statistics even when API fails
       setDynamicStats({
         totalEvents: 450, // Conservative fallback
         happyCustomers: 15000,
         successRate: 98.2,
-        avgResponseTime: '3.1min'
+        avgResponseTime: "3.1min",
       });
-      
+
       setInsights({
         totalEvents: 450,
         activeUsers: 15000,
         avgPrice: 75,
-        popularCategory: 'Concerts',
+        popularCategory: "Concerts",
         totalTicketsSold: 48000,
         successRate: 98.2,
-        totalRevenue: 3600000
+        totalRevenue: 3600000,
       });
     } finally {
       setLoading(false);
@@ -455,25 +482,31 @@ export const HomePage: React.FC = () => {
 
   // Dynamic stats array that updates with real data
   const stats = [
-    { 
-      number: dynamicStats.totalEvents > 0 ? `${dynamicStats.totalEvents.toLocaleString()}+` : "Loading...", 
-      label: "Events Listed", 
-      icon: Calendar 
+    {
+      number:
+        dynamicStats.totalEvents > 0
+          ? `${dynamicStats.totalEvents.toLocaleString()}+`
+          : "Loading...",
+      label: "Events Listed",
+      icon: Calendar,
     },
-    { 
-      number: dynamicStats.happyCustomers > 0 ? `${Math.floor(dynamicStats.happyCustomers / 1000)}K+` : "Loading...", 
-      label: "Happy Customers", 
-      icon: Users 
+    {
+      number:
+        dynamicStats.happyCustomers > 0
+          ? `${Math.floor(dynamicStats.happyCustomers / 1000)}K+`
+          : "Loading...",
+      label: "Happy Customers",
+      icon: Users,
     },
-    { 
-      number: `${dynamicStats.successRate}%`, 
-      label: "Success Rate", 
-      icon: CheckCircle 
+    {
+      number: `${dynamicStats.successRate}%`,
+      label: "Success Rate",
+      icon: CheckCircle,
     },
-    { 
-      number: dynamicStats.avgResponseTime || "24/7", 
-      label: "Avg Response Time", 
-      icon: Headphones 
+    {
+      number: dynamicStats.avgResponseTime || "24/7",
+      label: "Avg Response Time",
+      icon: Headphones,
     },
   ];
 
@@ -546,21 +579,21 @@ export const HomePage: React.FC = () => {
 
     setSelectedCategory(categoryId);
     setCategoryLoading(true);
-    
+
     try {
       let eventType: string | undefined;
       switch (categoryId) {
-        case 'concerts':
-          eventType = 'CONCERT';
+        case "concerts":
+          eventType = "CONCERT";
           break;
-        case 'sports':
-          eventType = 'SPORTS';
+        case "sports":
+          eventType = "SPORTS";
           break;
-        case 'theater':
-          eventType = 'THEATER';
+        case "theater":
+          eventType = "THEATER";
           break;
-        case 'comedy':
-          eventType = 'COMEDY';
+        case "comedy":
+          eventType = "COMEDY";
           break;
         default:
           eventType = undefined;
@@ -569,13 +602,13 @@ export const HomePage: React.FC = () => {
       const response = await eventService.getEvents({
         limit: 6,
         eventType,
-        sortBy: 'eventDate',
-        sortOrder: 'asc'
+        sortBy: "eventDate",
+        sortOrder: "asc",
       });
-      
+
       setCategoryEvents(response.data || []);
     } catch (error) {
-      console.error('Error fetching category events:', error);
+      console.error("Error fetching category events:", error);
       setCategoryEvents([]);
     } finally {
       setCategoryLoading(false);
@@ -599,234 +632,285 @@ export const HomePage: React.FC = () => {
   // };
 
   return (
-    <div style={{ position: 'relative', minHeight: '100vh' }}>
+    <div style={{ position: "relative", minHeight: "100vh" }}>
       {/* Professional background with enhanced gradients */}
-      <div style={{
-        position: 'fixed',
-        inset: 0,
-        background: 'linear-gradient(135deg, #f8fafc 0%, #ffffff 25%, #f1f5f9 50%, #ffffff 75%, #e2e8f0 100%)',
-        zIndex: -50
-      }}>
-        <div style={{
-          position: 'absolute',
+      <div
+        style={{
+          position: "fixed",
           inset: 0,
-          background: 'radial-gradient(ellipse at top, rgba(59, 130, 246, 0.03) 0%, transparent 50%)',
-          zIndex: -49
-        }} />
-        <div style={{
-          position: 'absolute',
-          inset: 0,
-          background: 'radial-gradient(ellipse at bottom right, rgba(124, 58, 237, 0.02) 0%, transparent 50%)',
-          zIndex: -48
-        }} />
+          background:
+            "linear-gradient(135deg, #F7F7F7 0%, #FFFFFF 25%, #F7F7F7 50%, #FFFFFF 75%, #F0F3F7 100%)",
+          zIndex: -50,
+        }}
+      >
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            background:
+              "radial-gradient(ellipse at top, rgba(59, 130, 246, 0.03) 0%, transparent 50%)",
+            zIndex: -49,
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            background:
+              "radial-gradient(ellipse at bottom right, rgba(124, 58, 237, 0.02) 0%, transparent 50%)",
+            zIndex: -48,
+          }}
+        />
       </div>
 
       {/* Break out of Layout container for full-width sections */}
-      <div style={{ position: 'relative' }}>
+      <div style={{ position: "relative" }}>
         {/* Enhanced cursor effect */}
         <div
           style={{
-            position: 'fixed',
-            pointerEvents: 'none',
+            position: "fixed",
+            pointerEvents: "none",
             zIndex: 50,
             left: mousePosition.x - 12,
             top: mousePosition.y - 12,
-            width: '24px',
-            height: '24px',
-            background: 'radial-gradient(circle, rgba(37, 99, 235, 0.15) 0%, rgba(124, 58, 237, 0.08) 50%, transparent 100%)',
-            borderRadius: '50%',
-            filter: 'blur(2px)',
-            transform: 'scale(1.5)',
-            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+            width: "24px",
+            height: "24px",
+            background:
+              "radial-gradient(circle, rgba(37, 99, 235, 0.15) 0%, rgba(124, 58, 237, 0.08) 50%, transparent 100%)",
+            borderRadius: "50%",
+            filter: "blur(2px)",
+            transform: "scale(1.5)",
+            transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
           }}
         />
 
         {/* Enhanced Hero Section - Professional Eventbrite Style */}
-        <section style={{
-          position: 'relative',
-          height: 'clamp(600px, 70vh, 800px)',
-          margin: '0 auto',
-          maxWidth: '1400px',
-          padding: '0 20px',
-          marginBottom: '80px',
-          borderRadius: '32px',
-          overflow: 'hidden',
-          boxShadow: '0 25px 50px rgba(0, 0, 0, 0.08), 0 8px 25px rgba(0, 0, 0, 0.04)',
-          border: '1px solid rgba(255, 255, 255, 0.5)',
-          backdropFilter: 'blur(8px)'
-        }}>
+        <section
+          style={{
+            position: "relative",
+            height: "clamp(600px, 70vh, 800px)",
+            margin: "0 auto",
+            maxWidth: "1400px",
+            padding: "0 20px",
+            marginBottom: "80px",
+            borderRadius: "32px",
+            overflow: "hidden",
+            boxShadow:
+              "0 25px 50px rgba(0, 0, 0, 0.08), 0 8px 25px rgba(0, 0, 0, 0.04)",
+            border: "1px solid rgba(255, 255, 255, 0.5)",
+            backdropFilter: "blur(8px)",
+          }}
+        >
           {/* Professional Dynamic Background with Enhanced Overlays */}
           {!loading && currentHeroSlide && (
             <div
               style={{
-                position: 'absolute',
+                position: "absolute",
                 inset: 0,
                 backgroundImage: `url(${currentHeroSlide.image})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                backgroundRepeat: 'no-repeat',
-                transition: 'all 1.2s cubic-bezier(0.4, 0, 0.2, 1)'
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                backgroundRepeat: "no-repeat",
+                transition: "all 1.2s cubic-bezier(0.4, 0, 0.2, 1)",
               }}
             >
               {/* Multiple layered overlays for depth */}
-              <div style={{
-                position: 'absolute',
-                inset: 0,
-                background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(30, 41, 59, 0.75) 25%, rgba(37, 99, 235, 0.65) 50%, rgba(124, 58, 237, 0.55) 75%, rgba(220, 38, 38, 0.45) 100%)'
-              }} />
-              <div style={{
-                position: 'absolute',
-                inset: 0,
-                background: 'linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.1) 40%, rgba(0, 0, 0, 0.3) 100%)'
-              }} />
-              <div style={{
-                position: 'absolute',
-                inset: 0,
-                background: 'radial-gradient(ellipse at center, transparent 0%, rgba(0, 0, 0, 0.2) 70%)'
-              }} />
+              <div
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  background:
+                    "linear-gradient(135deg, rgba(29, 53, 87, 0.85) 0%, rgba(69, 123, 157, 0.65) 40%, rgba(168, 218, 220, 0.45) 80%, rgba(247, 247, 247, 0.25) 100%)",
+                }}
+              />
+              <div
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  background:
+                    "linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.1) 40%, rgba(0, 0, 0, 0.3) 100%)",
+                }}
+              />
+              <div
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  background:
+                    "radial-gradient(ellipse at center, transparent 0%, rgba(0, 0, 0, 0.2) 70%)",
+                }}
+              />
             </div>
           )}
 
           {/* Enhanced loading background */}
           {loading && (
-            <div style={{
-              position: 'absolute',
-              inset: 0,
-              background: 'linear-gradient(135deg, #1e293b 0%, #334155 25%, #2563eb 50%, #7c3aed 75%, #dc2626 100%)'
-            }}>
-              <div style={{
-                position: 'absolute',
+            <div
+              style={{
+                position: "absolute",
                 inset: 0,
-                background: 'linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.1) 40%, rgba(0, 0, 0, 0.2) 100%)'
-              }} />
+                background:
+                  "radial-gradient(ellipse at top left, #1D3557 0%, #457B9D 35%, #A8DADC 70%, #FFFFFF 100%)",
+              }}
+            >
+              <div
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  background:
+                    "linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.1) 40%, rgba(0, 0, 0, 0.2) 100%)",
+                }}
+              />
               {/* Animated shimmer effect */}
-              <div style={{
-                position: 'absolute',
-                inset: 0,
-                background: 'linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%)',
-                animation: 'shimmer 3s ease-in-out infinite'
-              }} />
+              <div
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  background:
+                    "linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%)",
+                  animation: "shimmer 3s ease-in-out infinite",
+                }}
+              />
             </div>
           )}
 
           {/* Enhanced Professional Slider Navigation */}
-          <div style={{
-            position: 'absolute',
-            top: '50%',
-            left: '32px',
-            transform: 'translateY(-50%)',
-            zIndex: 20
-          }}>
+          <div
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: "32px",
+              transform: "translateY(-50%)",
+              zIndex: 20,
+            }}
+          >
             <button
               onClick={prevSlide}
               style={{
-                padding: '16px',
-                borderRadius: '20px',
-                background: 'rgba(255, 255, 255, 0.15)',
-                backdropFilter: 'blur(12px)',
-                border: '2px solid rgba(255, 255, 255, 0.2)',
-                cursor: 'pointer',
-                transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2), 0 2px 8px rgba(0, 0, 0, 0.1)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
+                padding: "16px",
+                borderRadius: "20px",
+                background: "rgba(255, 255, 255, 0.15)",
+                backdropFilter: "blur(12px)",
+                border: "2px solid rgba(255, 255, 255, 0.2)",
+                cursor: "pointer",
+                transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+                boxShadow:
+                  "0 8px 32px rgba(0, 0, 0, 0.2), 0 2px 8px rgba(0, 0, 0, 0.1)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.25)';
-                e.currentTarget.style.transform = 'scale(1.1) translateY(-2px)';
-                e.currentTarget.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.15)';
+                e.currentTarget.style.background = "rgba(255, 255, 255, 0.25)";
+                e.currentTarget.style.transform = "scale(1.1) translateY(-2px)";
+                e.currentTarget.style.boxShadow =
+                  "0 12px 40px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.15)";
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
-                e.currentTarget.style.transform = 'scale(1) translateY(0)';
-                e.currentTarget.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.2), 0 2px 8px rgba(0, 0, 0, 0.1)';
+                e.currentTarget.style.background = "rgba(255, 255, 255, 0.15)";
+                e.currentTarget.style.transform = "scale(1) translateY(0)";
+                e.currentTarget.style.boxShadow =
+                  "0 8px 32px rgba(0, 0, 0, 0.2), 0 2px 8px rgba(0, 0, 0, 0.1)";
               }}
             >
-              <ChevronLeft style={{ width: '20px', height: '20px', color: 'white' }} />
+              <ChevronLeft
+                style={{ width: "20px", height: "20px", color: "white" }}
+              />
             </button>
           </div>
-          <div style={{
-            position: 'absolute',
-            top: '50%',
-            right: '32px',
-            transform: 'translateY(-50%)',
-            zIndex: 20
-          }}>
+          <div
+            style={{
+              position: "absolute",
+              top: "50%",
+              right: "32px",
+              transform: "translateY(-50%)",
+              zIndex: 20,
+            }}
+          >
             <button
               onClick={nextSlide}
               style={{
-                padding: '16px',
-                borderRadius: '20px',
-                background: 'rgba(255, 255, 255, 0.15)',
-                backdropFilter: 'blur(12px)',
-                border: '2px solid rgba(255, 255, 255, 0.2)',
-                cursor: 'pointer',
-                transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2), 0 2px 8px rgba(0, 0, 0, 0.1)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
+                padding: "16px",
+                borderRadius: "20px",
+                background: "rgba(255, 255, 255, 0.15)",
+                backdropFilter: "blur(12px)",
+                border: "2px solid rgba(255, 255, 255, 0.2)",
+                cursor: "pointer",
+                transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+                boxShadow:
+                  "0 8px 32px rgba(0, 0, 0, 0.2), 0 2px 8px rgba(0, 0, 0, 0.1)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.25)';
-                e.currentTarget.style.transform = 'scale(1.1) translateY(-2px)';
-                e.currentTarget.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.15)';
+                e.currentTarget.style.background = "rgba(255, 255, 255, 0.25)";
+                e.currentTarget.style.transform = "scale(1.1) translateY(-2px)";
+                e.currentTarget.style.boxShadow =
+                  "0 12px 40px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.15)";
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
-                e.currentTarget.style.transform = 'scale(1) translateY(0)';
-                e.currentTarget.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.2), 0 2px 8px rgba(0, 0, 0, 0.1)';
+                e.currentTarget.style.background = "rgba(255, 255, 255, 0.15)";
+                e.currentTarget.style.transform = "scale(1) translateY(0)";
+                e.currentTarget.style.boxShadow =
+                  "0 8px 32px rgba(0, 0, 0, 0.2), 0 2px 8px rgba(0, 0, 0, 0.1)";
               }}
             >
-              <ChevronRight style={{ width: '20px', height: '20px', color: 'white' }} />
+              <ChevronRight
+                style={{ width: "20px", height: "20px", color: "white" }}
+              />
             </button>
           </div>
 
           {/* Enhanced Slide Indicators */}
-          <div style={{
-            position: 'absolute',
-            bottom: '32px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            display: 'flex',
-            gap: '12px',
-            zIndex: 20,
-            padding: '12px 20px',
-            background: 'rgba(0, 0, 0, 0.2)',
-            backdropFilter: 'blur(8px)',
-            borderRadius: '25px',
-            border: '1px solid rgba(255, 255, 255, 0.1)'
-          }}>
+          <div
+            style={{
+              position: "absolute",
+              bottom: "32px",
+              left: "50%",
+              transform: "translateX(-50%)",
+              display: "flex",
+              gap: "12px",
+              zIndex: 20,
+              padding: "12px 20px",
+              background: "rgba(0, 0, 0, 0.2)",
+              backdropFilter: "blur(8px)",
+              borderRadius: "25px",
+              border: "1px solid rgba(255, 255, 255, 0.1)",
+            }}
+          >
             {heroSlides.map((_, index) => (
               <button
                 key={index}
                 onClick={() => setCurrentSlide(index)}
                 style={{
-                  width: index === currentSlide ? '32px' : '12px',
-                  height: '12px',
-                  borderRadius: '6px',
-                  border: 'none',
-                  background: index === currentSlide 
-                    ? 'linear-gradient(90deg, #ffffff 0%, #e2e8f0 100%)'
-                    : 'rgba(255, 255, 255, 0.4)',
-                  cursor: 'pointer',
-                  transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                  transform: index === currentSlide ? 'scale(1.1)' : 'scale(1)',
-                  boxShadow: index === currentSlide 
-                    ? '0 4px 12px rgba(255, 255, 255, 0.3)'
-                    : 'none'
+                  width: index === currentSlide ? "32px" : "12px",
+                  height: "12px",
+                  borderRadius: "6px",
+                  border: "none",
+                  background:
+                    index === currentSlide
+                      ? "linear-gradient(90deg, #FFFFFF 0%, #F0F3F7 100%)"
+                      : "rgba(255, 255, 255, 0.4)",
+                  cursor: "pointer",
+                  transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+                  transform: index === currentSlide ? "scale(1.1)" : "scale(1)",
+                  boxShadow:
+                    index === currentSlide
+                      ? "0 4px 12px rgba(255, 255, 255, 0.3)"
+                      : "none",
                 }}
                 onMouseEnter={(e) => {
                   if (index !== currentSlide) {
-                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.6)';
-                    e.currentTarget.style.transform = 'scale(1.05)';
+                    e.currentTarget.style.background =
+                      "rgba(255, 255, 255, 0.6)";
+                    e.currentTarget.style.transform = "scale(1.05)";
                   }
                 }}
                 onMouseLeave={(e) => {
                   if (index !== currentSlide) {
-                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.4)';
-                    e.currentTarget.style.transform = 'scale(1)';
+                    e.currentTarget.style.background =
+                      "rgba(255, 255, 255, 0.4)";
+                    e.currentTarget.style.transform = "scale(1)";
                   }
                 }}
               />
@@ -834,65 +918,76 @@ export const HomePage: React.FC = () => {
           </div>
 
           {/* Professional Hero Content - Eventbrite Style */}
-          <div style={{
-            position: 'relative',
-            zIndex: 10,
-            height: '100%',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '0 40px',
-            textAlign: 'center'
-          }}>
+          <div
+            style={{
+              position: "relative",
+              zIndex: 10,
+              height: "100%",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: "0 40px",
+              textAlign: "center",
+            }}
+          >
             {loading ? (
-              <div style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                textAlign: 'center'
-              }}>
-                <div style={{
-                  width: '80px',
-                  height: '80px',
-                  border: '4px solid rgba(255, 255, 255, 0.2)',
-                  borderTop: '4px solid white',
-                  borderRadius: '50%',
-                  animation: 'spin 1s linear infinite',
-                  marginBottom: '24px'
-                }} />
-                <p style={{
-                  color: 'white',
-                  fontSize: '24px',
-                  fontWeight: '600',
-                  textShadow: '0 2px 8px rgba(0, 0, 0, 0.3)'
-                }}>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  textAlign: "center",
+                }}
+              >
+                <div
+                  style={{
+                    width: "80px",
+                    height: "80px",
+                    border: "4px solid rgba(255, 255, 255, 0.2)",
+                    borderTop: "4px solid white",
+                    borderRadius: "50%",
+                    animation: "spin 1s linear infinite",
+                    marginBottom: "24px",
+                  }}
+                />
+                <p
+                  style={{
+                    color: "white",
+                    fontSize: "24px",
+                    fontWeight: "600",
+                    textShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
+                  }}
+                >
                   Discovering Amazing Events...
                 </p>
               </div>
             ) : currentHeroSlide ? (
-              <div style={{ width: '100%', maxWidth: '1000px' }}>
+              <div style={{ width: "100%", maxWidth: "1000px" }}>
                 {/* Enhanced Booking Badge */}
-                <div style={{ marginBottom: '32px' }}>
-                  <span style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    padding: '12px 24px',
-                    borderRadius: '50px',
-                    background: 'rgba(255, 255, 255, 0.15)',
-                    backdropFilter: 'blur(12px)',
-                    border: '2px solid rgba(255, 255, 255, 0.3)',
-                    color: 'rgba(255, 255, 255, 0.95)',
-                    fontSize: '14px',
-                    fontWeight: '700',
-                    textTransform: 'uppercase',
-                    letterSpacing: '1px',
-                    textShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
-                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
-                  }}>
-                    <Sparkles style={{ width: '18px', height: '18px' }} />
+                <div style={{ marginBottom: "32px" }}>
+                  <span
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "8px",
+                      padding: "12px 24px",
+                      borderRadius: "50px",
+                      background: "rgba(255, 255, 255, 0.15)",
+                      backdropFilter: "blur(12px)",
+                      border: "2px solid rgba(255, 255, 255, 0.3)",
+                      color: "rgba(255, 255, 255, 0.95)",
+                      fontSize: "14px",
+                      fontWeight: "700",
+                      textTransform: "uppercase",
+                      letterSpacing: "1px",
+                      textShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                      boxShadow:
+                        "0 8px 32px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1)",
+                    }}
+                  >
+                    <Sparkles style={{ width: "18px", height: "18px" }} />
                     {currentSlide === 0
                       ? "🔥 Trending Now"
                       : currentSlide === 1
@@ -902,169 +997,194 @@ export const HomePage: React.FC = () => {
                 </div>
 
                 {/* Main Event Title */}
-                <div style={{ position: 'relative', marginBottom: '40px' }}>
+                <div style={{ position: "relative", marginBottom: "40px" }}>
                   {/* Glowing background effect */}
-                  <div style={{
-                    position: 'absolute',
-                    inset: '-20px',
-                    background: 'linear-gradient(45deg, rgba(37, 99, 235, 0.3) 0%, rgba(124, 58, 237, 0.3) 30%, rgba(220, 38, 38, 0.3) 60%, rgba(245, 158, 11, 0.3) 100%)',
-                    borderRadius: '32px',
-                    filter: 'blur(30px)',
-                    animation: 'pulse 4s ease-in-out infinite'
-                  }} />
-                  
-                  <h1 style={{
-                    position: 'relative',
-                    fontSize: 'clamp(36px, 8vw, 72px)',
-                    fontWeight: '900',
-                    lineHeight: '1.1',
-                    background: 'linear-gradient(135deg, #ffffff 0%, #e2e8f0 20%, #ffffff 40%, #f1f5f9 60%, #ffffff 80%, #e5e7eb 100%)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text',
-                    textShadow: '0 4px 16px rgba(0, 0, 0, 0.3)',
-                    letterSpacing: '-0.02em',
-                    marginBottom: '20px'
-                  }}>
+                  <div
+                    style={{
+                      position: "absolute",
+                      inset: "-20px",
+                      background:
+                        "linear-gradient(45deg, rgba(37, 99, 235, 0.3) 0%, rgba(124, 58, 237, 0.3) 30%, rgba(220, 38, 38, 0.3) 60%, rgba(245, 158, 11, 0.3) 100%)",
+                      borderRadius: "32px",
+                      filter: "blur(30px)",
+                      animation: "pulse 4s ease-in-out infinite",
+                    }}
+                  />
+
+                  <h1
+                    style={{
+                      position: "relative",
+                      fontSize: "clamp(36px, 8vw, 72px)",
+                      fontWeight: "900",
+                      lineHeight: "1.1",
+                      color: "#1D3557",
+                      textShadow: "0 2px 8px rgba(29, 53, 87, 0.3)",
+                      letterSpacing: "-0.02em",
+                      marginBottom: "20px",
+                    }}
+                  >
                     {currentHeroSlide.title}
                   </h1>
-                  
-                  <p style={{
-                    fontSize: 'clamp(18px, 3vw, 28px)',
-                    fontWeight: '600',
-                    color: 'rgba(255, 255, 255, 0.9)',
-                    textShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
-                    marginBottom: '16px',
-                    lineHeight: '1.4'
-                  }}>
+
+                  <p
+                    style={{
+                      fontSize: "clamp(18px, 3vw, 28px)",
+                      fontWeight: "600",
+                      color: "rgba(255, 255, 255, 0.9)",
+                      textShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
+                      marginBottom: "16px",
+                      lineHeight: "1.4",
+                    }}
+                  >
                     {currentHeroSlide.subtitle}
                   </p>
                 </div>
 
                 {/* Event Details Cards */}
-                <div style={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  gap: '20px',
-                  flexWrap: 'wrap',
-                  marginBottom: '40px'
-                }}>
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    padding: '12px 20px',
-                    background: 'rgba(255, 255, 255, 0.1)',
-                    backdropFilter: 'blur(8px)',
-                    borderRadius: '20px',
-                    border: '1px solid rgba(255, 255, 255, 0.2)',
-                    color: 'white',
-                    fontSize: '16px',
-                    fontWeight: '600'
-                  }}>
-                    <MapPin style={{ width: '18px', height: '18px' }} />
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    gap: "20px",
+                    flexWrap: "wrap",
+                    marginBottom: "40px",
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
+                      padding: "12px 20px",
+                      background: "rgba(255, 255, 255, 0.1)",
+                      backdropFilter: "blur(8px)",
+                      borderRadius: "20px",
+                      border: "1px solid rgba(255, 255, 255, 0.2)",
+                      color: "white",
+                      fontSize: "16px",
+                      fontWeight: "600",
+                    }}
+                  >
+                    <MapPin style={{ width: "18px", height: "18px" }} />
                     {currentHeroSlide.location}
                   </div>
-                  
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    padding: '12px 20px',
-                    background: 'rgba(255, 255, 255, 0.1)',
-                    backdropFilter: 'blur(8px)',
-                    borderRadius: '20px',
-                    border: '1px solid rgba(255, 255, 255, 0.2)',
-                    color: 'white',
-                    fontSize: '16px',
-                    fontWeight: '600'
-                  }}>
-                    <Calendar style={{ width: '18px', height: '18px' }} />
+
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
+                      padding: "12px 20px",
+                      background: "rgba(255, 255, 255, 0.1)",
+                      backdropFilter: "blur(8px)",
+                      borderRadius: "20px",
+                      border: "1px solid rgba(255, 255, 255, 0.2)",
+                      color: "white",
+                      fontSize: "16px",
+                      fontWeight: "600",
+                    }}
+                  >
+                    <Calendar style={{ width: "18px", height: "18px" }} />
                     {currentHeroSlide.date}
                   </div>
-                  
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    padding: '12px 20px',
-                    background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(16, 185, 129, 0.2) 100%)',
-                    backdropFilter: 'blur(8px)',
-                    borderRadius: '20px',
-                    border: '2px solid rgba(34, 197, 94, 0.3)',
-                    color: '#d1fae5',
-                    fontSize: '16px',
-                    fontWeight: '700',
-                    boxShadow: '0 4px 16px rgba(34, 197, 94, 0.2)'
-                  }}>
-                    <DollarSign style={{ width: '18px', height: '18px' }} />
+
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
+                      padding: "12px 20px",
+                      background:
+                        "linear-gradient(135deg, rgba(168, 218, 220, 0.3) 0%, rgba(69, 123, 157, 0.3) 100%)",
+                      backdropFilter: "blur(8px)",
+                      borderRadius: "20px",
+                      border: "2px solid rgba(168, 218, 220, 0.4)",
+                      color: "#FFFFFF",
+                      fontSize: "16px",
+                      fontWeight: "700",
+                      boxShadow: "0 4px 16px rgba(168, 218, 220, 0.3)",
+                    }}
+                  >
+                    <DollarSign style={{ width: "18px", height: "18px" }} />
                     {currentHeroSlide.price}
                   </div>
                 </div>
 
                 {/* CTA Buttons */}
-                <div style={{
-                  display: 'flex',
-                  gap: '20px',
-                  justifyContent: 'center',
-                  flexWrap: 'wrap'
-                }}>
+                <div
+                  style={{
+                    display: "flex",
+                    gap: "20px",
+                    justifyContent: "center",
+                    flexWrap: "wrap",
+                  }}
+                >
                   <button
                     onClick={() => navigate(`/events/${currentHeroSlide.id}`)}
                     style={{
-                      padding: '16px 32px',
-                      fontSize: '18px',
-                      fontWeight: '700',
-                      background: 'linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%)',
-                      color: '#1f2937',
-                      border: 'none',
-                      borderRadius: '16px',
-                      cursor: 'pointer',
-                      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                      boxShadow: '0 8px 32px rgba(255, 255, 255, 0.2), 0 2px 8px rgba(0, 0, 0, 0.1)',
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '8px'
+                      padding: "16px 32px",
+                      fontSize: "18px",
+                      fontWeight: "700",
+                      background:
+                        "linear-gradient(135deg, #FFFFFF 0%, #F0F3F7 100%)",
+                      color: "#2C2C2C",
+                      border: "none",
+                      borderRadius: "16px",
+                      cursor: "pointer",
+                      transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                      boxShadow:
+                        "0 8px 32px rgba(255, 255, 255, 0.2), 0 2px 8px rgba(0, 0, 0, 0.1)",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "8px",
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = 'translateY(-3px) scale(1.05)';
-                      e.currentTarget.style.boxShadow = '0 12px 40px rgba(255, 255, 255, 0.3), 0 4px 16px rgba(0, 0, 0, 0.15)';
+                      e.currentTarget.style.transform =
+                        "translateY(-3px) scale(1.05)";
+                      e.currentTarget.style.boxShadow =
+                        "0 12px 40px rgba(255, 255, 255, 0.3), 0 4px 16px rgba(0, 0, 0, 0.15)";
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.transform = 'translateY(0) scale(1)';
-                      e.currentTarget.style.boxShadow = '0 8px 32px rgba(255, 255, 255, 0.2), 0 2px 8px rgba(0, 0, 0, 0.1)';
+                      e.currentTarget.style.transform =
+                        "translateY(0) scale(1)";
+                      e.currentTarget.style.boxShadow =
+                        "0 8px 32px rgba(255, 255, 255, 0.2), 0 2px 8px rgba(0, 0, 0, 0.1)";
                     }}
                   >
                     🎫 Get Tickets Now
-                    <ArrowRight style={{ width: '20px', height: '20px' }} />
+                    <ArrowRight style={{ width: "20px", height: "20px" }} />
                   </button>
-                  
+
                   <button
-                    onClick={() => navigate('/events')}
+                    onClick={() => navigate("/events")}
                     style={{
-                      padding: '16px 32px',
-                      fontSize: '18px',
-                      fontWeight: '700',
-                      background: 'rgba(255, 255, 255, 0.1)',
-                      color: 'white',
-                      border: '2px solid rgba(255, 255, 255, 0.3)',
-                      borderRadius: '16px',
-                      cursor: 'pointer',
-                      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                      backdropFilter: 'blur(8px)',
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '8px'
+                      padding: "16px 32px",
+                      fontSize: "18px",
+                      fontWeight: "700",
+                      background: "rgba(255, 255, 255, 0.1)",
+                      color: "white",
+                      border: "2px solid rgba(255, 255, 255, 0.3)",
+                      borderRadius: "16px",
+                      cursor: "pointer",
+                      transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                      backdropFilter: "blur(8px)",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "8px",
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
-                      e.currentTarget.style.transform = 'translateY(-2px)';
-                      e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.5)';
+                      e.currentTarget.style.background =
+                        "rgba(255, 255, 255, 0.2)";
+                      e.currentTarget.style.transform = "translateY(-2px)";
+                      e.currentTarget.style.borderColor =
+                        "rgba(255, 255, 255, 0.5)";
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
-                      e.currentTarget.style.transform = 'translateY(0)';
-                      e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+                      e.currentTarget.style.background =
+                        "rgba(255, 255, 255, 0.1)";
+                      e.currentTarget.style.transform = "translateY(0)";
+                      e.currentTarget.style.borderColor =
+                        "rgba(255, 255, 255, 0.3)";
                     }}
                   >
                     🌟 Explore More
@@ -1072,40 +1192,40 @@ export const HomePage: React.FC = () => {
                 </div>
               </div>
             ) : (
-              <div style={{ width: '100%', maxWidth: '800px' }}>
-                <div style={{ marginBottom: '32px' }}>
-                  <span style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    padding: '12px 24px',
-                    borderRadius: '50px',
-                    background: 'rgba(255, 255, 255, 0.15)',
-                    backdropFilter: 'blur(12px)',
-                    border: '2px solid rgba(255, 255, 255, 0.3)',
-                    color: 'rgba(255, 255, 255, 0.95)',
-                    fontSize: '14px',
-                    fontWeight: '700',
-                    textTransform: 'uppercase',
-                    letterSpacing: '1px'
-                  }}>
-                    <Sparkles style={{ width: '18px', height: '18px' }} />
-                    ✨ Discover Events
+              <div style={{ width: "100%", maxWidth: "800px" }}>
+                <div style={{ marginBottom: "32px" }}>
+                  <span
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "8px",
+                      padding: "12px 24px",
+                      borderRadius: "50px",
+                      background: "rgba(255, 255, 255, 0.15)",
+                      backdropFilter: "blur(12px)",
+                      border: "2px solid rgba(255, 255, 255, 0.3)",
+                      color: "rgba(255, 255, 255, 0.95)",
+                      fontSize: "14px",
+                      fontWeight: "700",
+                      textTransform: "uppercase",
+                      letterSpacing: "1px",
+                    }}
+                  >
+                    <Sparkles style={{ width: "18px", height: "18px" }} />✨
+                    Discover Events
                   </span>
                 </div>
-                
-                <h1 style={{
-                  fontSize: 'clamp(36px, 8vw, 72px)',
-                  fontWeight: '900',
-                  lineHeight: '1.1',
-                  background: 'linear-gradient(135deg, #ffffff 0%, #e2e8f0 20%, #ffffff 40%, #f1f5f9 60%, #ffffff 80%, #e5e7eb 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                  textShadow: '0 4px 16px rgba(0, 0, 0, 0.3)',
-                  letterSpacing: '-0.02em',
-                  marginBottom: '40px'
-                }}>
+
+                <h1
+                  style={{
+                    fontSize: "clamp(36px, 8vw, 72px)",
+                    fontWeight: "900",
+                    lineHeight: "1.1",
+                    color: "#1D3557",
+                    letterSpacing: "-0.02em",
+                    marginBottom: "40px",
+                  }}
+                >
                   Amazing Events Await
                 </h1>
               </div>
@@ -1113,186 +1233,237 @@ export const HomePage: React.FC = () => {
           </div>
         </section>
         {/* Enhanced Stats Section - Professional Eventbrite Style */}
-        <section style={{
-          padding: '120px 0',
-          background: 'linear-gradient(135deg, #f8fafc 0%, #ffffff 25%, #f1f5f9 50%, #ffffff 75%, #e2e8f0 100%)',
-          position: 'relative',
-          overflow: 'hidden'
-        }}>
+        <section
+          style={{
+            padding: "120px 0",
+            background:
+              "linear-gradient(135deg, #F7F7F7 0%, #FFFFFF 25%, #F7F7F7 50%, #FFFFFF 75%, #F0F3F7 100%)",
+            position: "relative",
+            overflow: "hidden",
+          }}
+        >
           {/* Background decorative elements */}
-          <div style={{
-            position: 'absolute',
-            top: '-100px',
-            left: '-100px',
-            width: '300px',
-            height: '300px',
-            background: 'linear-gradient(135deg, rgba(37, 99, 235, 0.05), rgba(124, 58, 237, 0.05))',
-            borderRadius: '50%',
-            filter: 'blur(60px)'
-          }} />
-          <div style={{
-            position: 'absolute',
-            bottom: '-150px',
-            right: '-150px',
-            width: '400px',
-            height: '400px',
-            background: 'linear-gradient(135deg, rgba(220, 38, 38, 0.03), rgba(245, 158, 11, 0.03))',
-            borderRadius: '50%',
-            filter: 'blur(80px)'
-          }} />
-          
-          <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 20px' }}>
-            <div style={{ textAlign: 'center', marginBottom: '80px' }}>
-              <div style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                padding: '12px 24px',
-                borderRadius: '50px',
-                background: 'linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%)',
-                border: '2px solid rgba(37, 99, 235, 0.15)',
-                marginBottom: '32px',
-                backdropFilter: 'blur(8px)'
-              }}>
-                <CheckCircle style={{ width: '20px', height: '20px', color: '#2563eb' }} />
-                <span style={{
-                  fontSize: '14px',
-                  fontWeight: '700',
-                  color: '#1e40af',
-                  textTransform: 'uppercase',
-                  letterSpacing: '1px'
-                }}>
+          <div
+            style={{
+              position: "absolute",
+              top: "-100px",
+              left: "-100px",
+              width: "300px",
+              height: "300px",
+              background:
+                "linear-gradient(135deg, rgba(37, 99, 235, 0.05), rgba(124, 58, 237, 0.05))",
+              borderRadius: "50%",
+              filter: "blur(60px)",
+            }}
+          />
+          <div
+            style={{
+              position: "absolute",
+              bottom: "-150px",
+              right: "-150px",
+              width: "400px",
+              height: "400px",
+              background:
+                "linear-gradient(135deg, rgba(220, 38, 38, 0.03), rgba(245, 158, 11, 0.03))",
+              borderRadius: "50%",
+              filter: "blur(80px)",
+            }}
+          />
+
+          <div
+            style={{ maxWidth: "1400px", margin: "0 auto", padding: "0 20px" }}
+          >
+            <div style={{ textAlign: "center", marginBottom: "80px" }}>
+              <div
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  padding: "12px 24px",
+                  borderRadius: "50px",
+                  background:
+                    "linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%)",
+                  border: "2px solid rgba(37, 99, 235, 0.15)",
+                  marginBottom: "32px",
+                  backdropFilter: "blur(8px)",
+                }}
+              >
+                <CheckCircle
+                  style={{ width: "20px", height: "20px", color: "#1D3557" }}
+                />
+                <span
+                  style={{
+                    fontSize: "14px",
+                    fontWeight: "700",
+                    color: "#1D3557",
+                    textTransform: "uppercase",
+                    letterSpacing: "1px",
+                  }}
+                >
                   Industry Leading Performance
                 </span>
               </div>
-              
-              <h2 style={{
-                fontSize: 'clamp(36px, 6vw, 56px)',
-                fontWeight: '900',
-                background: 'linear-gradient(135deg, #1f2937 0%, #374151 50%, #1f2937 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-                marginBottom: '24px',
-                letterSpacing: '-0.02em',
-                lineHeight: '1.1'
-              }}>
+
+              <h2
+                style={{
+                  fontSize: "clamp(36px, 6vw, 56px)",
+                  fontWeight: "900",
+                  color: "#1D3557",
+                  marginBottom: "24px",
+                  letterSpacing: "-0.02em",
+                  lineHeight: "1.1",
+                }}
+              >
                 🌟 Trusted by Millions Worldwide
               </h2>
-              
-              <p style={{
-                fontSize: 'clamp(18px, 3vw, 24px)',
-                color: '#6b7280',
-                maxWidth: '800px',
-                margin: '0 auto',
-                lineHeight: '1.6',
-                fontWeight: '500'
-              }}>
-                Join the world's most trusted event marketplace, powering magical connections between event organizers and attendees globally
+
+              <p
+                style={{
+                  fontSize: "clamp(18px, 3vw, 24px)",
+                  color: "#555555",
+                  maxWidth: "800px",
+                  margin: "0 auto",
+                  lineHeight: "1.6",
+                  fontWeight: "500",
+                }}
+              >
+                Join the world's most trusted event marketplace, powering
+                magical connections between event organizers and attendees
+                globally
               </p>
             </div>
 
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-              gap: '40px',
-              alignItems: 'center'
-            }}>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+                gap: "40px",
+                alignItems: "center",
+              }}
+            >
               {stats.map((stat, index) => {
                 const Icon = stat.icon;
                 const gradients = [
-                  'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)',
-                  'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                  'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
-                  'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)'
+                  "linear-gradient(135deg, #1D3557 0%, #457B9D 100%)",
+                  "linear-gradient(135deg, #457B9D 0%, #A8DADC 100%)",
+                  "linear-gradient(135deg, #457B9D 0%, #1D3557 100%)",
+                  "linear-gradient(135deg, #A8DADC 0%, #457B9D 100%)",
                 ];
                 const backgrounds = [
-                  'linear-gradient(135deg, rgba(37, 99, 235, 0.05) 0%, rgba(59, 130, 246, 0.05) 100%)',
-                  'linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(5, 150, 105, 0.05) 100%)',
-                  'linear-gradient(135deg, rgba(139, 92, 246, 0.05) 0%, rgba(124, 58, 237, 0.05) 100%)',
-                  'linear-gradient(135deg, rgba(245, 158, 11, 0.05) 0%, rgba(217, 119, 6, 0.05) 100%)'
+                  "linear-gradient(135deg, rgba(37, 99, 235, 0.05) 0%, rgba(59, 130, 246, 0.05) 100%)",
+                  "linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(5, 150, 105, 0.05) 100%)",
+                  "linear-gradient(135deg, rgba(139, 92, 246, 0.05) 0%, rgba(124, 58, 237, 0.05) 100%)",
+                  "linear-gradient(135deg, rgba(245, 158, 11, 0.05) 0%, rgba(217, 119, 6, 0.05) 100%)",
                 ];
                 const borderColors = [
-                  'rgba(37, 99, 235, 0.15)',
-                  'rgba(16, 185, 129, 0.15)',
-                  'rgba(139, 92, 246, 0.15)',
-                  'rgba(245, 158, 11, 0.15)'
+                  "rgba(37, 99, 235, 0.15)",
+                  "rgba(16, 185, 129, 0.15)",
+                  "rgba(139, 92, 246, 0.15)",
+                  "rgba(245, 158, 11, 0.15)",
                 ];
-                
+
                 return (
-                  <div key={index} style={{
-                    textAlign: 'center',
-                    padding: '40px 32px',
-                    background: backgrounds[index],
-                    borderRadius: '24px',
-                    border: `2px solid ${borderColors[index]}`,
-                    backdropFilter: 'blur(8px)',
-                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.06)',
-                    transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                    cursor: 'pointer',
-                    position: 'relative',
-                    overflow: 'hidden'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-8px) scale(1.02)';
-                    e.currentTarget.style.boxShadow = '0 20px 40px rgba(0, 0, 0, 0.08), 0 4px 8px rgba(0, 0, 0, 0.06)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'translateY(0) scale(1)';
-                    e.currentTarget.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.06)';
-                  }}>
+                  <div
+                    key={index}
+                    style={{
+                      textAlign: "center",
+                      padding: "40px 32px",
+                      background: backgrounds[index],
+                      borderRadius: "24px",
+                      border: `2px solid ${borderColors[index]}`,
+                      backdropFilter: "blur(8px)",
+                      boxShadow:
+                        "0 8px 32px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.06)",
+                      transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+                      cursor: "pointer",
+                      position: "relative",
+                      overflow: "hidden",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform =
+                        "translateY(-8px) scale(1.02)";
+                      e.currentTarget.style.boxShadow =
+                        "0 20px 40px rgba(0, 0, 0, 0.08), 0 4px 8px rgba(0, 0, 0, 0.06)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform =
+                        "translateY(0) scale(1)";
+                      e.currentTarget.style.boxShadow =
+                        "0 8px 32px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.06)";
+                    }}
+                  >
                     {/* Background glow effect */}
-                    <div style={{
-                      position: 'absolute',
-                      top: '-50%',
-                      left: '-50%',
-                      width: '200%',
-                      height: '200%',
-                      background: gradients[index],
-                      borderRadius: '50%',
-                      opacity: 0.02,
-                      zIndex: 0
-                    }} />
-                    
-                    <div style={{
-                      position: 'relative',
-                      zIndex: 1
-                    }}>
-                      <div style={{
-                        width: '80px',
-                        height: '80px',
-                        margin: '0 auto 24px',
+                    <div
+                      style={{
+                        position: "absolute",
+                        top: "-50%",
+                        left: "-50%",
+                        width: "200%",
+                        height: "200%",
                         background: gradients[index],
-                        borderRadius: '20px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        boxShadow: `0 12px 40px ${borderColors[index]}, 0 4px 16px rgba(0, 0, 0, 0.05)`,
-                        transition: 'all 0.3s ease'
-                      }}>
-                        <Icon style={{ width: '40px', height: '40px', color: 'white' }} />
+                        borderRadius: "50%",
+                        opacity: 0.02,
+                        zIndex: 0,
+                      }}
+                    />
+
+                    <div
+                      style={{
+                        position: "relative",
+                        zIndex: 1,
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: "80px",
+                          height: "80px",
+                          margin: "0 auto 24px",
+                          background: gradients[index],
+                          borderRadius: "20px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          boxShadow: `0 12px 40px ${borderColors[index]}, 0 4px 16px rgba(0, 0, 0, 0.05)`,
+                          transition: "all 0.3s ease",
+                        }}
+                      >
+                        <Icon
+                          style={{
+                            width: "40px",
+                            height: "40px",
+                            color: "white",
+                          }}
+                        />
                       </div>
-                      
-                      <div style={{
-                        fontSize: 'clamp(32px, 5vw, 48px)',
-                        fontWeight: '900',
-                        background: gradients[index],
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                        backgroundClip: 'text',
-                        marginBottom: '16px',
-                        letterSpacing: '-0.02em'
-                      }}>
+
+                      <div
+                        style={{
+                          fontSize: "clamp(32px, 5vw, 48px)",
+                          fontWeight: "900",
+                          color:
+                            index === 0
+                              ? "#1D3557"
+                              : index === 1
+                              ? "#457B9D"
+                              : index === 2
+                              ? "#A8DADC"
+                              : "#1D3557",
+                          marginBottom: "16px",
+                          letterSpacing: "-0.02em",
+                        }}
+                      >
                         {stat.number}
                       </div>
-                      
-                      <div style={{
-                        fontSize: '16px',
-                        color: '#4b5563',
-                        fontWeight: '600',
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.5px'
-                      }}>
+
+                      <div
+                        style={{
+                          fontSize: "16px",
+                          color: "#555555",
+                          fontWeight: "600",
+                          textTransform: "uppercase",
+                          letterSpacing: "0.5px",
+                        }}
+                      >
                         {stat.label}
                       </div>
                     </div>
@@ -1304,128 +1475,153 @@ export const HomePage: React.FC = () => {
         </section>
 
         {/* Enhanced Search Section - Modern Professional Design */}
-        <section style={{
-          padding: '120px 0',
-          background: 'linear-gradient(135deg, #ffffff 0%, #fafbfc 100%)',
-          position: 'relative',
-          overflow: 'hidden'
-        }}>
+        <section
+          style={{
+            padding: "120px 0",
+            background: "linear-gradient(135deg, #FFFFFF 0%, #F7F7F7 100%)",
+            position: "relative",
+            overflow: "hidden",
+          }}
+        >
           {/* Sophisticated background patterns */}
-          <div style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundImage: `
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundImage: `
               radial-gradient(circle at 25% 25%, rgba(37, 99, 235, 0.03) 0%, transparent 50%),
               radial-gradient(circle at 75% 75%, rgba(124, 58, 237, 0.03) 0%, transparent 50%),
               radial-gradient(circle at 50% 50%, rgba(220, 38, 38, 0.02) 0%, transparent 50%)
-            `
-          }} />
-          
-          <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 20px', position: 'relative', zIndex: 1 }}>
-            <div style={{ textAlign: 'center', marginBottom: '80px' }}>
-              <div style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '12px',
-                padding: '16px 32px',
-                borderRadius: '50px',
-                background: 'linear-gradient(135deg, rgba(37, 99, 235, 0.08) 0%, rgba(124, 58, 237, 0.08) 100%)',
-                border: '2px solid rgba(37, 99, 235, 0.1)',
-                marginBottom: '40px',
-                backdropFilter: 'blur(8px)',
-                boxShadow: '0 8px 32px rgba(37, 99, 235, 0.1)'
-              }}>
-                <Sparkles style={{ width: '24px', height: '24px', color: '#2563eb' }} />
-                <span style={{
-                  fontSize: '16px',
-                  fontWeight: '700',
-                  background: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                  textTransform: 'uppercase',
-                  letterSpacing: '1px'
-                }}>
+            `,
+            }}
+          />
+
+          <div
+            style={{
+              maxWidth: "1400px",
+              margin: "0 auto",
+              padding: "0 20px",
+              position: "relative",
+              zIndex: 1,
+            }}
+          >
+            <div style={{ textAlign: "center", marginBottom: "80px" }}>
+              <div
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "12px",
+                  padding: "16px 32px",
+                  borderRadius: "50px",
+                  background:
+                    "linear-gradient(135deg, rgba(37, 99, 235, 0.08) 0%, rgba(124, 58, 237, 0.08) 100%)",
+                  border: "2px solid rgba(37, 99, 235, 0.1)",
+                  marginBottom: "40px",
+                  backdropFilter: "blur(8px)",
+                  boxShadow: "0 8px 32px rgba(37, 99, 235, 0.1)",
+                }}
+              >
+                <Sparkles
+                  style={{ width: "24px", height: "24px", color: "#1D3557" }}
+                />
+                <span
+                  style={{
+                    fontSize: "16px",
+                    fontWeight: "700",
+                    color: "#1D3557",
+                    textTransform: "uppercase",
+                    letterSpacing: "1px",
+                  }}
+                >
                   The Future of Event Discovery
                 </span>
               </div>
 
-              <h1 style={{
-                fontSize: 'clamp(40px, 8vw, 80px)',
-                fontWeight: '900',
-                lineHeight: '1.1',
-                marginBottom: '40px',
-                letterSpacing: '-0.02em'
-              }}>
-                <span style={{
-                  background: 'linear-gradient(135deg, #1f2937 0%, #374151 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text'
-                }}>
+              <h1
+                style={{
+                  fontSize: "clamp(40px, 8vw, 80px)",
+                  fontWeight: "900",
+                  lineHeight: "1.1",
+                  marginBottom: "40px",
+                  letterSpacing: "-0.02em",
+                }}
+              >
+                <span
+                  style={{
+                    color: "#1D3557",
+                  }}
+                >
                   Discover Events
                 </span>
                 <br />
-                <span style={{
-                  background: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 50%, #dc2626 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                  position: 'relative'
-                }}>
+                <span
+                  style={{
+                    color: "#1D3557",
+                    position: "relative",
+                  }}
+                >
                   Like Never Before
                   {/* Underline decoration */}
-                  <div style={{
-                    position: 'absolute',
-                    bottom: '-8px',
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    width: '80%',
-                    height: '4px',
-                    background: 'linear-gradient(90deg, #2563eb, #7c3aed, #dc2626)',
-                    borderRadius: '2px'
-                  }} />
+                  <div
+                    style={{
+                      position: "absolute",
+                      bottom: "-8px",
+                      left: "50%",
+                      transform: "translateX(-50%)",
+                      width: "80%",
+                      height: "4px",
+                      background:
+                        "linear-gradient(90deg, #2563eb, #7c3aed, #dc2626)",
+                      borderRadius: "2px",
+                    }}
+                  />
                 </span>
               </h1>
 
-              <div style={{ maxWidth: '900px', margin: '0 auto', marginBottom: '60px' }}>
-                <p style={{
-                  fontSize: 'clamp(18px, 3vw, 24px)',
-                  color: '#4b5563',
-                  lineHeight: '1.6',
-                  fontWeight: '500'
-                }}>
-                  Connect with millions of events worldwide. Experience seamless ticket discovery with{' '}
-                  <span style={{
-                    fontWeight: '700',
-                    background: 'linear-gradient(135deg, #2563eb, #7c3aed)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text'
-                  }}>
+              <div
+                style={{
+                  maxWidth: "900px",
+                  margin: "0 auto",
+                  marginBottom: "60px",
+                }}
+              >
+                <p
+                  style={{
+                    fontSize: "clamp(18px, 3vw, 24px)",
+                    color: "#555555",
+                    lineHeight: "1.6",
+                    fontWeight: "500",
+                  }}
+                >
+                  Connect with millions of events worldwide. Experience seamless
+                  ticket discovery with{" "}
+                  <span
+                    style={{
+                      fontWeight: "700",
+                      color: "#1D3557",
+                    }}
+                  >
                     AI-powered matching
                   </span>
-                  ,{' '}
-                  <span style={{
-                    fontWeight: '700',
-                    background: 'linear-gradient(135deg, #10b981, #059669)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text'
-                  }}>
+                  ,{" "}
+                  <span
+                    style={{
+                      fontWeight: "700",
+                      color: "#457B9D",
+                    }}
+                  >
                     verified authenticity
                   </span>
-                  , and{' '}
-                  <span style={{
-                    fontWeight: '700',
-                    background: 'linear-gradient(135deg, #f59e0b, #d97706)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text'
-                  }}>
+                  , and{" "}
+                  <span
+                    style={{
+                      fontWeight: "700",
+                      color: "#1D3557",
+                    }}
+                  >
                     instant delivery
                   </span>
                   .
@@ -1434,91 +1630,118 @@ export const HomePage: React.FC = () => {
             </div>
 
             {/* Professional Search Bar */}
-            <div style={{ maxWidth: '800px', margin: '0 auto', marginBottom: '60px' }}>
-              <div style={{
-                position: 'relative',
-                background: 'linear-gradient(135deg, #ffffff 0%, #fafbfc 100%)',
-                borderRadius: '24px',
-                padding: '8px',
-                boxShadow: '0 20px 40px rgba(0, 0, 0, 0.08), 0 4px 16px rgba(0, 0, 0, 0.04)',
-                border: '2px solid rgba(229, 231, 235, 0.5)',
-                backdropFilter: 'blur(8px)'
-              }}>
-                <div style={{
-                  position: 'absolute',
-                  left: '24px',
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  pointerEvents: 'none',
-                  zIndex: 2
-                }}>
-                  <Search style={{
-                    width: '24px',
-                    height: '24px',
-                    color: '#9ca3af',
-                    transition: 'color 0.3s ease'
-                  }} />
+            <div
+              style={{
+                maxWidth: "800px",
+                margin: "0 auto",
+                marginBottom: "60px",
+              }}
+            >
+              <div
+                style={{
+                  position: "relative",
+                  background:
+                    "linear-gradient(135deg, #FFFFFF 0%, #F7F7F7 100%)",
+                  borderRadius: "24px",
+                  padding: "8px",
+                  boxShadow:
+                    "0 20px 40px rgba(0, 0, 0, 0.08), 0 4px 16px rgba(0, 0, 0, 0.04)",
+                  border: "2px solid rgba(229, 231, 235, 0.5)",
+                  backdropFilter: "blur(8px)",
+                }}
+              >
+                <div
+                  style={{
+                    position: "absolute",
+                    left: "24px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    pointerEvents: "none",
+                    zIndex: 2,
+                  }}
+                >
+                  <Search
+                    style={{
+                      width: "24px",
+                      height: "24px",
+                      color: "#555555",
+                      transition: "color 0.3s ease",
+                    }}
+                  />
                 </div>
                 <input
                   type="text"
                   placeholder="Search events, artists, venues, or teams..."
                   style={{
-                    width: '100%',
-                    paddingLeft: '64px',
-                    paddingRight: '160px',
-                    paddingTop: '20px',
-                    paddingBottom: '20px',
-                    background: 'transparent',
-                    border: 'none',
-                    borderRadius: '20px',
-                    fontSize: '18px',
-                    color: '#1f2937',
-                    outline: 'none',
-                    fontWeight: '500'
+                    width: "100%",
+                    paddingLeft: "64px",
+                    paddingRight: "160px",
+                    paddingTop: "20px",
+                    paddingBottom: "20px",
+                    background: "transparent",
+                    border: "none",
+                    borderRadius: "20px",
+                    fontSize: "18px",
+                    color: "#2C2C2C",
+                    outline: "none",
+                    fontWeight: "500",
                   }}
                   onFocus={(e) => {
-                    const searchIcon = e.currentTarget.parentElement?.querySelector('div svg');
+                    const searchIcon =
+                      e.currentTarget.parentElement?.querySelector("div svg");
                     if (searchIcon) {
-                      (searchIcon as HTMLElement).style.color = '#2563eb';
+                      (searchIcon as HTMLElement).style.color = "#1D3557";
                     }
-                    e.currentTarget.parentElement!.style.borderColor = 'rgba(37, 99, 235, 0.3)';
-                    e.currentTarget.parentElement!.style.boxShadow = '0 20px 40px rgba(37, 99, 235, 0.1), 0 4px 16px rgba(37, 99, 235, 0.08)';
+                    e.currentTarget.parentElement!.style.borderColor =
+                      "rgba(37, 99, 235, 0.3)";
+                    e.currentTarget.parentElement!.style.boxShadow =
+                      "0 20px 40px rgba(37, 99, 235, 0.1), 0 4px 16px rgba(37, 99, 235, 0.08)";
                   }}
                   onBlur={(e) => {
-                    const searchIcon = e.currentTarget.parentElement?.querySelector('div svg');
+                    const searchIcon =
+                      e.currentTarget.parentElement?.querySelector("div svg");
                     if (searchIcon) {
-                      (searchIcon as HTMLElement).style.color = '#9ca3af';
+                      (searchIcon as HTMLElement).style.color = "#555555";
                     }
-                    e.currentTarget.parentElement!.style.borderColor = 'rgba(229, 231, 235, 0.5)';
-                    e.currentTarget.parentElement!.style.boxShadow = '0 20px 40px rgba(0, 0, 0, 0.08), 0 4px 16px rgba(0, 0, 0, 0.04)';
+                    e.currentTarget.parentElement!.style.borderColor =
+                      "rgba(229, 231, 235, 0.5)";
+                    e.currentTarget.parentElement!.style.boxShadow =
+                      "0 20px 40px rgba(0, 0, 0, 0.08), 0 4px 16px rgba(0, 0, 0, 0.04)";
                   }}
                 />
-                <div style={{
-                  position: 'absolute',
-                  right: '8px',
-                  top: '50%',
-                  transform: 'translateY(-50%)'
-                }}>
+                <div
+                  style={{
+                    position: "absolute",
+                    right: "8px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                  }}
+                >
                   <button
                     style={{
-                      padding: '12px 28px',
-                      fontSize: '16px',
-                      fontWeight: '700',
-                      background: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '16px',
-                      cursor: 'pointer',
-                      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                      boxShadow: '0 8px 32px rgba(37, 99, 235, 0.3)'
+                      padding: "12px 28px",
+                      fontSize: "16px",
+                      fontWeight: "700",
+                      background:
+                        "linear-gradient(135deg, #1D3557 0%, #A8DADC 100%)",
+                      color: "white",
+                      border: "none",
+                      borderRadius: "16px",
+                      cursor: "pointer",
+                      transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                      boxShadow: "0 8px 32px rgba(37, 99, 235, 0.3)",
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = 'translateY(-2px) scale(1.05)';
-                      e.currentTarget.style.boxShadow = '0 12px 40px rgba(37, 99, 235, 0.4)';
+                      e.currentTarget.style.transform =
+                        "translateY(-2px) scale(1.05)";
+                      e.currentTarget.style.boxShadow =
+                        "0 12px 40px rgba(37, 99, 235, 0.4)";
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.transform = 'translateY(0) scale(1)';
-                      e.currentTarget.style.boxShadow = '0 8px 32px rgba(37, 99, 235, 0.3)';
+                      e.currentTarget.style.transform =
+                        "translateY(0) scale(1)";
+                      e.currentTarget.style.boxShadow =
+                        "0 8px 32px rgba(37, 99, 235, 0.3)";
                     }}
                   >
                     🔍 Search
@@ -1528,76 +1751,91 @@ export const HomePage: React.FC = () => {
             </div>
 
             {/* Enhanced CTA Buttons */}
-            <div style={{
-              display: 'flex',
-              gap: '24px',
-              justifyContent: 'center',
-              alignItems: 'center',
-              flexWrap: 'wrap'
-            }}>
-              <Link to="/events" style={{ textDecoration: 'none' }}>
-                <button style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                  padding: '20px 40px',
-                  fontSize: '18px',
-                  fontWeight: '700',
-                  background: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '20px',
-                  cursor: 'pointer',
-                  transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                  boxShadow: '0 12px 40px rgba(37, 99, 235, 0.3), 0 4px 16px rgba(0, 0, 0, 0.1)',
-                  minWidth: '220px',
-                  justifyContent: 'center'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-4px) scale(1.05)';
-                  e.currentTarget.style.boxShadow = '0 20px 60px rgba(37, 99, 235, 0.4), 0 8px 32px rgba(0, 0, 0, 0.15)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0) scale(1)';
-                  e.currentTarget.style.boxShadow = '0 12px 40px rgba(37, 99, 235, 0.3), 0 4px 16px rgba(0, 0, 0, 0.1)';
-                }}>
-                  <Calendar style={{ width: '24px', height: '24px' }} />
+            <div
+              style={{
+                display: "flex",
+                gap: "24px",
+                justifyContent: "center",
+                alignItems: "center",
+                flexWrap: "wrap",
+              }}
+            >
+              <Link to="/events" style={{ textDecoration: "none" }}>
+                <button
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "12px",
+                    padding: "20px 40px",
+                    fontSize: "18px",
+                    fontWeight: "700",
+                    background:
+                      "linear-gradient(135deg, #1D3557 0%, #A8DADC 100%)",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "20px",
+                    cursor: "pointer",
+                    transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+                    boxShadow:
+                      "0 12px 40px rgba(37, 99, 235, 0.3), 0 4px 16px rgba(0, 0, 0, 0.1)",
+                    minWidth: "220px",
+                    justifyContent: "center",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform =
+                      "translateY(-4px) scale(1.05)";
+                    e.currentTarget.style.boxShadow =
+                      "0 20px 60px rgba(37, 99, 235, 0.4), 0 8px 32px rgba(0, 0, 0, 0.15)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = "translateY(0) scale(1)";
+                    e.currentTarget.style.boxShadow =
+                      "0 12px 40px rgba(37, 99, 235, 0.3), 0 4px 16px rgba(0, 0, 0, 0.1)";
+                  }}
+                >
+                  <Calendar style={{ width: "24px", height: "24px" }} />
                   🎉 Browse Events
-                  <ArrowRight style={{ width: '20px', height: '20px' }} />
+                  <ArrowRight style={{ width: "20px", height: "20px" }} />
                 </button>
               </Link>
-              
-              <Link to="/register" style={{ textDecoration: 'none' }}>
-                <button style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                  padding: '20px 40px',
-                  fontSize: '18px',
-                  fontWeight: '700',
-                  background: 'rgba(37, 99, 235, 0.05)',
-                  color: '#2563eb',
-                  border: '2px solid rgba(37, 99, 235, 0.2)',
-                  borderRadius: '20px',
-                  cursor: 'pointer',
-                  transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                  backdropFilter: 'blur(8px)',
-                  minWidth: '220px',
-                  justifyContent: 'center'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'rgba(37, 99, 235, 0.1)';
-                  e.currentTarget.style.borderColor = 'rgba(37, 99, 235, 0.3)';
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                  e.currentTarget.style.boxShadow = '0 8px 32px rgba(37, 99, 235, 0.15)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'rgba(37, 99, 235, 0.05)';
-                  e.currentTarget.style.borderColor = 'rgba(37, 99, 235, 0.2)';
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = 'none';
-                }}>
-                  <Play style={{ width: '24px', height: '24px' }} />
+
+              <Link to="/register" style={{ textDecoration: "none" }}>
+                <button
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "12px",
+                    padding: "20px 40px",
+                    fontSize: "18px",
+                    fontWeight: "700",
+                    background: "rgba(37, 99, 235, 0.05)",
+                    color: "#1D3557",
+                    border: "2px solid rgba(37, 99, 235, 0.2)",
+                    borderRadius: "20px",
+                    cursor: "pointer",
+                    transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+                    backdropFilter: "blur(8px)",
+                    minWidth: "220px",
+                    justifyContent: "center",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = "rgba(37, 99, 235, 0.1)";
+                    e.currentTarget.style.borderColor =
+                      "rgba(37, 99, 235, 0.3)";
+                    e.currentTarget.style.transform = "translateY(-2px)";
+                    e.currentTarget.style.boxShadow =
+                      "0 8px 32px rgba(37, 99, 235, 0.15)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background =
+                      "rgba(37, 99, 235, 0.05)";
+                    e.currentTarget.style.borderColor =
+                      "rgba(37, 99, 235, 0.2)";
+                    e.currentTarget.style.transform = "translateY(0)";
+                    e.currentTarget.style.boxShadow = "none";
+                  }}
+                >
+                  <Play style={{ width: "24px", height: "24px" }} />
                   🚀 Start Selling
                 </button>
               </Link>
@@ -1715,271 +1953,350 @@ export const HomePage: React.FC = () => {
         </section>
 
         {/* Professional Featured Events Section */}
-        <section style={{
-          padding: '120px 0',
-          background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #ffffff 100%)',
-          position: 'relative',
-          overflow: 'hidden'
-        }}>
+        <section
+          style={{
+            padding: "120px 0",
+            background:
+              "linear-gradient(135deg, #FFFFFF 0%, #F7F7F7 50%, #FFFFFF 100%)",
+            position: "relative",
+            overflow: "hidden",
+          }}
+        >
           {/* Background decoration */}
-          <div style={{
-            position: 'absolute',
-            top: '-150px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            width: '600px',
-            height: '600px',
-            background: 'radial-gradient(circle, rgba(37, 99, 235, 0.03) 0%, transparent 70%)',
-            borderRadius: '50%'
-          }} />
-          
-          <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 20px' }}>
-            <div style={{ textAlign: 'center', marginBottom: '80px' }}>
-              <div style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '12px',
-                padding: '16px 32px',
-                borderRadius: '50px',
-                background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(37, 99, 235, 0.08) 100%)',
-                border: '2px solid rgba(245, 158, 11, 0.1)',
-                marginBottom: '40px',
-                backdropFilter: 'blur(8px)',
-                boxShadow: '0 8px 32px rgba(245, 158, 11, 0.1)'
-              }}>
-                <Star style={{ width: '24px', height: '24px', color: '#f59e0b' }} />
-                <span style={{
-                  fontSize: '16px',
-                  fontWeight: '700',
-                  background: 'linear-gradient(135deg, #f59e0b 0%, #2563eb 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                  textTransform: 'uppercase',
-                  letterSpacing: '1px'
-                }}>
+          <div
+            style={{
+              position: "absolute",
+              top: "-150px",
+              left: "50%",
+              transform: "translateX(-50%)",
+              width: "600px",
+              height: "600px",
+              background:
+                "radial-gradient(circle, rgba(37, 99, 235, 0.03) 0%, transparent 70%)",
+              borderRadius: "50%",
+            }}
+          />
+
+          <div
+            style={{ maxWidth: "1400px", margin: "0 auto", padding: "0 20px" }}
+          >
+            <div style={{ textAlign: "center", marginBottom: "80px" }}>
+              <div
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "12px",
+                  padding: "16px 32px",
+                  borderRadius: "50px",
+                  background:
+                    "linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(37, 99, 235, 0.08) 100%)",
+                  border: "2px solid rgba(245, 158, 11, 0.1)",
+                  marginBottom: "40px",
+                  backdropFilter: "blur(8px)",
+                  boxShadow: "0 8px 32px rgba(245, 158, 11, 0.1)",
+                }}
+              >
+                <Star
+                  style={{ width: "24px", height: "24px", color: "#A8DADC" }}
+                />
+                <span
+                  style={{
+                    fontSize: "16px",
+                    fontWeight: "700",
+                    color: "#1D3557",
+                    textTransform: "uppercase",
+                    letterSpacing: "1px",
+                  }}
+                >
                   Handpicked for You
                 </span>
               </div>
 
-              <h2 style={{
-                fontSize: 'clamp(36px, 6vw, 56px)',
-                fontWeight: '900',
-                background: 'linear-gradient(135deg, #1f2937 0%, #374151 50%, #1f2937 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-                marginBottom: '24px',
-                letterSpacing: '-0.02em',
-                lineHeight: '1.1'
-              }}>
+              <h2
+                style={{
+                  fontSize: "clamp(36px, 6vw, 56px)",
+                  fontWeight: "900",
+                  color: "#1D3557",
+                  marginBottom: "24px",
+                  letterSpacing: "-0.02em",
+                  lineHeight: "1.1",
+                }}
+              >
                 ✨ Featured Events
               </h2>
-              
-              <p style={{
-                fontSize: 'clamp(18px, 3vw, 22px)',
-                color: '#4b5563',
-                maxWidth: '700px',
-                margin: '0 auto',
-                lineHeight: '1.6',
-                fontWeight: '500'
-              }}>
-                Don't miss these carefully selected events happening near you. Book your tickets before they sell out!
+
+              <p
+                style={{
+                  fontSize: "clamp(18px, 3vw, 22px)",
+                  color: "#2C2C2C",
+                  maxWidth: "700px",
+                  margin: "0 auto",
+                  lineHeight: "1.6",
+                  fontWeight: "500",
+                }}
+              >
+                Don't miss these carefully selected events happening near you.
+                Book your tickets before they sell out!
               </p>
             </div>
 
             {/* Featured Events Grid */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
-              gap: '40px',
-              marginBottom: '60px'
-            }}>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(350px, 1fr))",
+                gap: "40px",
+                marginBottom: "60px",
+              }}
+            >
               {featuredEvents.slice(0, 4).map((event, index) => {
                 const gradients = [
-                  'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)',
-                  'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                  'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-                  'linear-gradient(135deg, #ec4899 0%, #be185d 100%)'
+                  "linear-gradient(135deg, #1D3557 0%, #A8DADC 100%)",
+                  "linear-gradient(135deg, #457B9D 0%, #A8DADC 100%)",
+                  "linear-gradient(135deg, #A8DADC 0%, #457B9D 100%)",
+                  "linear-gradient(135deg, #ec4899 0%, #be185d 100%)",
                 ];
-                
+
                 return (
                   <div
                     key={event.id}
                     onClick={() => navigate(`/events/${event.id}`)}
                     style={{
-                      background: 'linear-gradient(135deg, #ffffff 0%, #fafbfc 100%)',
-                      borderRadius: '24px',
-                      overflow: 'hidden',
-                      cursor: 'pointer',
-                      transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                      boxShadow: '0 12px 40px rgba(0, 0, 0, 0.08), 0 4px 16px rgba(0, 0, 0, 0.04)',
-                      border: '1px solid rgba(255, 255, 255, 0.5)',
-                      position: 'relative',
-                      backdropFilter: 'blur(8px)'
+                      background:
+                        "linear-gradient(135deg, #FFFFFF 0%, #F7F7F7 100%)",
+                      borderRadius: "24px",
+                      overflow: "hidden",
+                      cursor: "pointer",
+                      transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+                      boxShadow:
+                        "0 12px 40px rgba(0, 0, 0, 0.08), 0 4px 16px rgba(0, 0, 0, 0.04)",
+                      border: "1px solid rgba(255, 255, 255, 0.5)",
+                      position: "relative",
+                      backdropFilter: "blur(8px)",
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = 'translateY(-12px) scale(1.02)';
-                      e.currentTarget.style.boxShadow = '0 25px 50px rgba(0, 0, 0, 0.15), 0 8px 32px rgba(0, 0, 0, 0.08)';
+                      e.currentTarget.style.transform =
+                        "translateY(-12px) scale(1.02)";
+                      e.currentTarget.style.boxShadow =
+                        "0 25px 50px rgba(0, 0, 0, 0.15), 0 8px 32px rgba(0, 0, 0, 0.08)";
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.transform = 'translateY(0) scale(1)';
-                      e.currentTarget.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.08), 0 4px 16px rgba(0, 0, 0, 0.04)';
+                      e.currentTarget.style.transform =
+                        "translateY(0) scale(1)";
+                      e.currentTarget.style.boxShadow =
+                        "0 12px 40px rgba(0, 0, 0, 0.08), 0 4px 16px rgba(0, 0, 0, 0.04)";
                     }}
                   >
                     {/* Featured badge */}
                     {index === 0 && (
-                      <div style={{
-                        position: 'absolute',
-                        top: '20px',
-                        left: '20px',
-                        padding: '8px 16px',
-                        background: gradients[0],
-                        color: 'white',
-                        borderRadius: '20px',
-                        fontSize: '12px',
-                        fontWeight: '700',
-                        zIndex: 2,
-                        backdropFilter: 'blur(8px)',
-                        boxShadow: '0 4px 16px rgba(37, 99, 235, 0.3)',
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.5px'
-                      }}>
+                      <div
+                        style={{
+                          position: "absolute",
+                          top: "20px",
+                          left: "20px",
+                          padding: "8px 16px",
+                          background: gradients[0],
+                          color: "white",
+                          borderRadius: "20px",
+                          fontSize: "12px",
+                          fontWeight: "700",
+                          zIndex: 2,
+                          backdropFilter: "blur(8px)",
+                          boxShadow: "0 4px 16px rgba(37, 99, 235, 0.3)",
+                          textTransform: "uppercase",
+                          letterSpacing: "0.5px",
+                        }}
+                      >
                         🌟 Featured
                       </div>
                     )}
-                    
+
                     {/* Event image */}
-                    <div style={{
-                      height: '200px',
-                      background: event.imageUrl 
-                        ? `linear-gradient(135deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.1) 100%), url(${event.imageUrl})`
-                        : gradients[index],
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center',
-                      position: 'relative',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}>
+                    <div
+                      style={{
+                        height: "200px",
+                        background: event.imageUrl
+                          ? `linear-gradient(135deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.1) 100%), url(${event.imageUrl})`
+                          : gradients[index],
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                        position: "relative",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
                       {!event.imageUrl && (
-                        <div style={{
-                          fontSize: '48px',
-                          filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2))'
-                        }}>
-                          {event.eventType === 'CONCERT' ? '🎤' :
-                           event.eventType === 'SPORTS' ? '🏆' :
-                           event.eventType === 'THEATER' ? '🎭' :
-                           event.eventType === 'COMEDY' ? '🎙️' : '🎫'}
+                        <div
+                          style={{
+                            fontSize: "48px",
+                            filter: "drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2))",
+                          }}
+                        >
+                          {event.eventType === "CONCERT"
+                            ? "🎤"
+                            : event.eventType === "SPORTS"
+                            ? "🏆"
+                            : event.eventType === "THEATER"
+                            ? "🎭"
+                            : event.eventType === "COMEDY"
+                            ? "🎙️"
+                            : "🎫"}
                         </div>
                       )}
-                      
+
                       {/* Event type badge */}
-                      <div style={{
-                        position: 'absolute',
-                        top: '16px',
-                        right: '16px',
-                        padding: '6px 12px',
-                        background: 'rgba(0, 0, 0, 0.7)',
-                        color: 'white',
-                        borderRadius: '12px',
-                        fontSize: '12px',
-                        fontWeight: '600',
-                        backdropFilter: 'blur(8px)'
-                      }}>
-                        {event.eventType || 'EVENT'}
+                      <div
+                        style={{
+                          position: "absolute",
+                          top: "16px",
+                          right: "16px",
+                          padding: "6px 12px",
+                          background: "rgba(0, 0, 0, 0.7)",
+                          color: "white",
+                          borderRadius: "12px",
+                          fontSize: "12px",
+                          fontWeight: "600",
+                          backdropFilter: "blur(8px)",
+                        }}
+                      >
+                        {event.eventType || "EVENT"}
                       </div>
                     </div>
-                    
+
                     {/* Event content */}
-                    <div style={{ padding: '24px' }}>
-                      <h3 style={{
-                        fontSize: '18px',
-                        fontWeight: '700',
-                        color: '#1f2937',
-                        marginBottom: '16px',
-                        lineHeight: '1.3'
-                      }}>
+                    <div style={{ padding: "24px" }}>
+                      <h3
+                        style={{
+                          fontSize: "18px",
+                          fontWeight: "700",
+                          color: "#2C2C2C",
+                          marginBottom: "16px",
+                          lineHeight: "1.3",
+                        }}
+                      >
                         {event.name}
                       </h3>
-                      
-                      <div style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: '8px',
-                        marginBottom: '20px'
-                      }}>
-                        <div style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '8px',
-                          fontSize: '14px',
-                          color: '#6b7280'
-                        }}>
-                          <MapPin style={{ width: '16px', height: '16px', color: '#f59e0b' }} />
-                          <span>{event.venue}, {event.city}</span>
-                        </div>
-                        
-                        <div style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '8px',
-                          fontSize: '14px',
-                          color: '#6b7280'
-                        }}>
-                          <Calendar style={{ width: '16px', height: '16px', color: '#2563eb' }} />
+
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: "8px",
+                          marginBottom: "20px",
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "8px",
+                            fontSize: "14px",
+                            color: "#555555",
+                          }}
+                        >
+                          <MapPin
+                            style={{
+                              width: "16px",
+                              height: "16px",
+                              color: "#A8DADC",
+                            }}
+                          />
                           <span>
-                            {new Date(event.eventDate).toLocaleDateString('en-US', {
-                              weekday: 'short',
-                              month: 'short',
-                              day: 'numeric',
-                              hour: '2-digit',
-                              minute: '2-digit'
-                            })}
+                            {event.venue}, {event.city}
+                          </span>
+                        </div>
+
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "8px",
+                            fontSize: "14px",
+                            color: "#555555",
+                          }}
+                        >
+                          <Calendar
+                            style={{
+                              width: "16px",
+                              height: "16px",
+                              color: "#1D3557",
+                            }}
+                          />
+                          <span>
+                            {new Date(event.eventDate).toLocaleDateString(
+                              "en-US",
+                              {
+                                weekday: "short",
+                                month: "short",
+                                day: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              }
+                            )}
                           </span>
                         </div>
                       </div>
-                      
-                      <div style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center'
-                      }}>
-                        <div style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '6px',
-                          padding: '8px 16px',
-                          background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.1) 100%)',
-                          borderRadius: '12px',
-                          border: '1px solid rgba(16, 185, 129, 0.2)'
-                        }}>
-                          <DollarSign style={{ width: '16px', height: '16px', color: '#059669' }} />
-                          <span style={{
-                            fontSize: '14px',
-                            fontWeight: '700',
-                            color: '#047857'
-                          }}>
-                            {event.minPrice ? `From $${event.minPrice}` : 'Price TBA'}
+
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "6px",
+                            padding: "8px 16px",
+                            background:
+                              "linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.1) 100%)",
+                            borderRadius: "12px",
+                            border: "1px solid rgba(16, 185, 129, 0.2)",
+                          }}
+                        >
+                          <DollarSign
+                            style={{
+                              width: "16px",
+                              height: "16px",
+                              color: "#457B9D",
+                            }}
+                          />
+                          <span
+                            style={{
+                              fontSize: "14px",
+                              fontWeight: "700",
+                              color: "#1D3557",
+                            }}
+                          >
+                            {event.minPrice
+                              ? `From $${event.minPrice}`
+                              : "Price TBA"}
                           </span>
                         </div>
-                        
-                        <button style={{
-                          padding: '8px 16px',
-                          fontSize: '14px',
-                          fontWeight: '600',
-                          background: gradients[index],
-                          color: 'white',
-                          border: 'none',
-                          borderRadius: '12px',
-                          cursor: 'pointer',
-                          transition: 'all 0.2s ease',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '4px'
-                        }}>
+
+                        <button
+                          style={{
+                            padding: "8px 16px",
+                            fontSize: "14px",
+                            fontWeight: "600",
+                            background: gradients[index],
+                            color: "white",
+                            border: "none",
+                            borderRadius: "12px",
+                            cursor: "pointer",
+                            transition: "all 0.2s ease",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "4px",
+                          }}
+                        >
                           Get Tickets
-                          <ArrowRight style={{ width: '14px', height: '14px' }} />
+                          <ArrowRight
+                            style={{ width: "14px", height: "14px" }}
+                          />
                         </button>
                       </div>
                     </div>
@@ -1989,39 +2306,49 @@ export const HomePage: React.FC = () => {
             </div>
 
             {/* View all events CTA */}
-            <div style={{ textAlign: 'center' }}>
-              <Link to="/events" style={{ textDecoration: 'none' }}>
-                <button style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                  padding: '20px 40px',
-                  fontSize: '18px',
-                  fontWeight: '700',
-                  background: 'linear-gradient(135deg, rgba(37, 99, 235, 0.08) 0%, rgba(124, 58, 237, 0.08) 100%)',
-                  color: '#2563eb',
-                  border: '2px solid rgba(37, 99, 235, 0.2)',
-                  borderRadius: '20px',
-                  cursor: 'pointer',
-                  transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                  backdropFilter: 'blur(8px)',
-                  boxShadow: '0 8px 32px rgba(37, 99, 235, 0.1)'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'linear-gradient(135deg, rgba(37, 99, 235, 0.15) 0%, rgba(124, 58, 237, 0.15) 100%)';
-                  e.currentTarget.style.borderColor = 'rgba(37, 99, 235, 0.3)';
-                  e.currentTarget.style.transform = 'translateY(-3px) scale(1.02)';
-                  e.currentTarget.style.boxShadow = '0 12px 40px rgba(37, 99, 235, 0.2)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'linear-gradient(135deg, rgba(37, 99, 235, 0.08) 0%, rgba(124, 58, 237, 0.08) 100%)';
-                  e.currentTarget.style.borderColor = 'rgba(37, 99, 235, 0.2)';
-                  e.currentTarget.style.transform = 'translateY(0) scale(1)';
-                  e.currentTarget.style.boxShadow = '0 8px 32px rgba(37, 99, 235, 0.1)';
-                }}>
-                  <Globe style={{ width: '24px', height: '24px' }} />
+            <div style={{ textAlign: "center" }}>
+              <Link to="/events" style={{ textDecoration: "none" }}>
+                <button
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "12px",
+                    padding: "20px 40px",
+                    fontSize: "18px",
+                    fontWeight: "700",
+                    background:
+                      "linear-gradient(135deg, rgba(37, 99, 235, 0.08) 0%, rgba(124, 58, 237, 0.08) 100%)",
+                    color: "#1D3557",
+                    border: "2px solid rgba(37, 99, 235, 0.2)",
+                    borderRadius: "20px",
+                    cursor: "pointer",
+                    transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+                    backdropFilter: "blur(8px)",
+                    boxShadow: "0 8px 32px rgba(37, 99, 235, 0.1)",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background =
+                      "linear-gradient(135deg, rgba(37, 99, 235, 0.15) 0%, rgba(124, 58, 237, 0.15) 100%)";
+                    e.currentTarget.style.borderColor =
+                      "rgba(37, 99, 235, 0.3)";
+                    e.currentTarget.style.transform =
+                      "translateY(-3px) scale(1.02)";
+                    e.currentTarget.style.boxShadow =
+                      "0 12px 40px rgba(37, 99, 235, 0.2)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background =
+                      "linear-gradient(135deg, rgba(37, 99, 235, 0.08) 0%, rgba(124, 58, 237, 0.08) 100%)";
+                    e.currentTarget.style.borderColor =
+                      "rgba(37, 99, 235, 0.2)";
+                    e.currentTarget.style.transform = "translateY(0) scale(1)";
+                    e.currentTarget.style.boxShadow =
+                      "0 8px 32px rgba(37, 99, 235, 0.1)";
+                  }}
+                >
+                  <Globe style={{ width: "24px", height: "24px" }} />
                   🌍 View All Events
-                  <ArrowRight style={{ width: '20px', height: '20px' }} />
+                  <ArrowRight style={{ width: "20px", height: "20px" }} />
                 </button>
               </Link>
             </div>
@@ -2029,249 +2356,314 @@ export const HomePage: React.FC = () => {
         </section>
 
         {/* Enhanced Event Categories Section */}
-        <section style={{
-          padding: '120px 0',
-          background: 'linear-gradient(135deg, #f8fafc 0%, #ffffff 50%, #f1f5f9 100%)',
-          position: 'relative',
-          overflow: 'hidden'
-        }}>
+        <section
+          style={{
+            padding: "120px 0",
+            background:
+              "linear-gradient(135deg, #F7F7F7 0%, #FFFFFF 50%, #F7F7F7 100%)",
+            position: "relative",
+            overflow: "hidden",
+          }}
+        >
           {/* Decorative background elements */}
-          <div style={{
-            position: 'absolute',
-            top: '-200px',
-            right: '-200px',
-            width: '500px',
-            height: '500px',
-            background: 'linear-gradient(135deg, rgba(124, 58, 237, 0.03), rgba(220, 38, 38, 0.03))',
-            borderRadius: '50%',
-            filter: 'blur(100px)'
-          }} />
-          <div style={{
-            position: 'absolute',
-            bottom: '-100px',
-            left: '-100px',
-            width: '300px',
-            height: '300px',
-            background: 'linear-gradient(135deg, rgba(37, 99, 235, 0.04), rgba(16, 185, 129, 0.04))',
-            borderRadius: '50%',
-            filter: 'blur(80px)'
-          }} />
-          
-          <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 20px', position: 'relative', zIndex: 1 }}>
-            <div style={{ textAlign: 'center', marginBottom: '80px' }}>
-              <div style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '12px',
-                padding: '16px 32px',
-                borderRadius: '50px',
-                background: 'linear-gradient(135deg, rgba(124, 58, 237, 0.08) 0%, rgba(37, 99, 235, 0.08) 100%)',
-                border: '2px solid rgba(124, 58, 237, 0.1)',
-                marginBottom: '40px',
-                backdropFilter: 'blur(8px)',
-                boxShadow: '0 8px 32px rgba(124, 58, 237, 0.1)'
-              }}>
-                <Globe style={{ width: '24px', height: '24px', color: '#7c3aed' }} />
-                <span style={{
-                  fontSize: '16px',
-                  fontWeight: '700',
-                  background: 'linear-gradient(135deg, #7c3aed 0%, #2563eb 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                  textTransform: 'uppercase',
-                  letterSpacing: '1px'
-                }}>
+          <div
+            style={{
+              position: "absolute",
+              top: "-200px",
+              right: "-200px",
+              width: "500px",
+              height: "500px",
+              background:
+                "linear-gradient(135deg, rgba(124, 58, 237, 0.03), rgba(220, 38, 38, 0.03))",
+              borderRadius: "50%",
+              filter: "blur(100px)",
+            }}
+          />
+          <div
+            style={{
+              position: "absolute",
+              bottom: "-100px",
+              left: "-100px",
+              width: "300px",
+              height: "300px",
+              background:
+                "linear-gradient(135deg, rgba(37, 99, 235, 0.04), rgba(16, 185, 129, 0.04))",
+              borderRadius: "50%",
+              filter: "blur(80px)",
+            }}
+          />
+
+          <div
+            style={{
+              maxWidth: "1400px",
+              margin: "0 auto",
+              padding: "0 20px",
+              position: "relative",
+              zIndex: 1,
+            }}
+          >
+            <div style={{ textAlign: "center", marginBottom: "80px" }}>
+              <div
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "12px",
+                  padding: "16px 32px",
+                  borderRadius: "50px",
+                  background:
+                    "linear-gradient(135deg, rgba(124, 58, 237, 0.08) 0%, rgba(37, 99, 235, 0.08) 100%)",
+                  border: "2px solid rgba(124, 58, 237, 0.1)",
+                  marginBottom: "40px",
+                  backdropFilter: "blur(8px)",
+                  boxShadow: "0 8px 32px rgba(124, 58, 237, 0.1)",
+                }}
+              >
+                <Globe
+                  style={{ width: "24px", height: "24px", color: "#1D3557" }}
+                />
+                <span
+                  style={{
+                    fontSize: "16px",
+                    fontWeight: "700",
+                    color: "#1D3557",
+                    textTransform: "uppercase",
+                    letterSpacing: "1px",
+                  }}
+                >
                   Event Discovery Hub
                 </span>
               </div>
 
-              <h2 style={{
-                fontSize: 'clamp(36px, 6vw, 56px)',
-                fontWeight: '900',
-                marginBottom: '24px',
-                letterSpacing: '-0.02em',
-                lineHeight: '1.1'
-              }}>
-                <span style={{
-                  background: 'linear-gradient(135deg, #1f2937 0%, #374151 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text'
-                }}>
-                  🎆 Explore by Category
-                </span>
+              <h2
+                style={{
+                  fontSize: "clamp(36px, 6vw, 56px)",
+                  fontWeight: "900",
+                  marginBottom: "24px",
+                  letterSpacing: "-0.02em",
+                  lineHeight: "1.1",
+                  color: "#1D3557",
+                }}
+              >
+                🎆 Explore by Category
               </h2>
-              
-              <p style={{
-                fontSize: 'clamp(18px, 3vw, 22px)',
-                color: '#4b5563',
-                maxWidth: '700px',
-                margin: '0 auto',
-                lineHeight: '1.6',
-                fontWeight: '500'
-              }}>
-                Discover events tailored to your interests with our curated categories. Click any category to explore events instantly.
+
+              <p
+                style={{
+                  fontSize: "clamp(18px, 3vw, 22px)",
+                  color: "#2C2C2C",
+                  maxWidth: "700px",
+                  margin: "0 auto",
+                  lineHeight: "1.6",
+                  fontWeight: "500",
+                }}
+              >
+                Discover events tailored to your interests with our curated
+                categories. Click any category to explore events instantly.
               </p>
             </div>
 
             {/* Professional Category Grid */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-              gap: '32px',
-              marginBottom: selectedCategory ? '80px' : '0'
-            }}>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+                gap: "32px",
+                marginBottom: selectedCategory ? "80px" : "0",
+              }}
+            >
               {eventCategories.map((category) => {
                 const Icon = category.icon;
                 const isSelected = selectedCategory === category.id;
                 const gradients = {
-                  all: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
-                  concerts: 'linear-gradient(135deg, #ec4899 0%, #be185d 100%)',
-                  sports: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                  theater: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-                  comedy: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)'
+                  all: "linear-gradient(135deg, #1D3557 0%, #457B9D 100%)",
+                  concerts: "linear-gradient(135deg, #457B9D 0%, #A8DADC 100%)",
+                  sports: "linear-gradient(135deg, #1D3557 0%, #A8DADC 100%)",
+                  theater: "linear-gradient(135deg, #A8DADC 0%, #457B9D 100%)",
+                  comedy: "linear-gradient(135deg, #457B9D 0%, #1D3557 100%)",
                 };
                 const backgrounds = {
-                  all: 'linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%)',
-                  concerts: 'linear-gradient(135deg, rgba(236, 72, 153, 0.05) 0%, rgba(190, 24, 93, 0.05) 100%)',
-                  sports: 'linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(5, 150, 105, 0.05) 100%)',
-                  theater: 'linear-gradient(135deg, rgba(245, 158, 11, 0.05) 0%, rgba(217, 119, 6, 0.05) 100%)',
-                  comedy: 'linear-gradient(135deg, rgba(239, 68, 68, 0.05) 0%, rgba(220, 38, 38, 0.05) 100%)'
+                  all: "linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%)",
+                  concerts:
+                    "linear-gradient(135deg, rgba(236, 72, 153, 0.05) 0%, rgba(190, 24, 93, 0.05) 100%)",
+                  sports:
+                    "linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(5, 150, 105, 0.05) 100%)",
+                  theater:
+                    "linear-gradient(135deg, rgba(245, 158, 11, 0.05) 0%, rgba(217, 119, 6, 0.05) 100%)",
+                  comedy:
+                    "linear-gradient(135deg, rgba(239, 68, 68, 0.05) 0%, rgba(220, 38, 38, 0.05) 100%)",
                 };
-                
+
                 return (
                   <div
                     key={category.id}
                     onClick={() => handleCategoryClick(category.id)}
                     style={{
-                      padding: '32px 24px',
-                      background: isSelected 
+                      padding: "32px 24px",
+                      background: isSelected
                         ? gradients[category.id as keyof typeof gradients]
                         : backgrounds[category.id as keyof typeof backgrounds],
-                      borderRadius: '24px',
-                      border: isSelected 
-                        ? '3px solid rgba(255, 255, 255, 0.3)'
-                        : '2px solid rgba(0, 0, 0, 0.05)',
-                      cursor: 'pointer',
-                      transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                      textAlign: 'center',
-                      position: 'relative',
-                      overflow: 'hidden',
-                      backdropFilter: 'blur(8px)',
-                      boxShadow: isSelected 
-                        ? '0 20px 40px rgba(0, 0, 0, 0.1), 0 8px 32px rgba(0, 0, 0, 0.08)'
-                        : '0 8px 32px rgba(0, 0, 0, 0.04)',
-                      transform: isSelected ? 'translateY(-8px) scale(1.02)' : 'translateY(0) scale(1)'
+                      borderRadius: "24px",
+                      border: isSelected
+                        ? "3px solid rgba(255, 255, 255, 0.3)"
+                        : "2px solid rgba(0, 0, 0, 0.05)",
+                      cursor: "pointer",
+                      transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+                      textAlign: "center",
+                      position: "relative",
+                      overflow: "hidden",
+                      backdropFilter: "blur(8px)",
+                      boxShadow: isSelected
+                        ? "0 20px 40px rgba(0, 0, 0, 0.1), 0 8px 32px rgba(0, 0, 0, 0.08)"
+                        : "0 8px 32px rgba(0, 0, 0, 0.04)",
+                      transform: isSelected
+                        ? "translateY(-8px) scale(1.02)"
+                        : "translateY(0) scale(1)",
                     }}
                     onMouseEnter={(e) => {
                       if (!isSelected) {
-                        e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
-                        e.currentTarget.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.08), 0 4px 16px rgba(0, 0, 0, 0.06)';
-                        e.currentTarget.style.borderColor = 'rgba(0, 0, 0, 0.1)';
+                        e.currentTarget.style.transform =
+                          "translateY(-4px) scale(1.02)";
+                        e.currentTarget.style.boxShadow =
+                          "0 12px 40px rgba(0, 0, 0, 0.08), 0 4px 16px rgba(0, 0, 0, 0.06)";
+                        e.currentTarget.style.borderColor =
+                          "rgba(0, 0, 0, 0.1)";
                       }
                     }}
                     onMouseLeave={(e) => {
                       if (!isSelected) {
-                        e.currentTarget.style.transform = 'translateY(0) scale(1)';
-                        e.currentTarget.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.04)';
-                        e.currentTarget.style.borderColor = 'rgba(0, 0, 0, 0.05)';
+                        e.currentTarget.style.transform =
+                          "translateY(0) scale(1)";
+                        e.currentTarget.style.boxShadow =
+                          "0 8px 32px rgba(0, 0, 0, 0.04)";
+                        e.currentTarget.style.borderColor =
+                          "rgba(0, 0, 0, 0.05)";
                       }
                     }}
                   >
                     {/* Subtle glow effect for selected */}
                     {isSelected && (
-                      <div style={{
-                        position: 'absolute',
-                        inset: '-20px',
-                        background: gradients[category.id as keyof typeof gradients],
-                        borderRadius: '32px',
-                        opacity: 0.1,
-                        filter: 'blur(20px)',
-                        zIndex: -1
-                      }} />
+                      <div
+                        style={{
+                          position: "absolute",
+                          inset: "-20px",
+                          background:
+                            gradients[category.id as keyof typeof gradients],
+                          borderRadius: "32px",
+                          opacity: 0.1,
+                          filter: "blur(20px)",
+                          zIndex: -1,
+                        }}
+                      />
                     )}
-                    
-                    <div style={{
-                      width: '80px',
-                      height: '80px',
-                      margin: '0 auto 24px',
-                      background: isSelected 
-                        ? 'rgba(255, 255, 255, 0.2)'
-                        : gradients[category.id as keyof typeof gradients],
-                      borderRadius: '20px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '32px',
-                      boxShadow: isSelected 
-                        ? '0 8px 32px rgba(255, 255, 255, 0.2)'
-                        : '0 8px 32px rgba(0, 0, 0, 0.1)',
-                      transition: 'all 0.3s ease'
-                    }}>
+
+                    <div
+                      style={{
+                        width: "80px",
+                        height: "80px",
+                        margin: "0 auto 24px",
+                        background: isSelected
+                          ? "rgba(255, 255, 255, 0.2)"
+                          : gradients[category.id as keyof typeof gradients],
+                        borderRadius: "20px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: "32px",
+                        boxShadow: isSelected
+                          ? "0 8px 32px rgba(255, 255, 255, 0.2)"
+                          : "0 8px 32px rgba(0, 0, 0, 0.1)",
+                        transition: "all 0.3s ease",
+                      }}
+                    >
                       {isSelected ? (
-                        <div style={{ fontSize: '28px' }}>
-                          {category.id === 'all' ? '🌍' :
-                           category.id === 'concerts' ? '🎤' :
-                           category.id === 'sports' ? '🏆' :
-                           category.id === 'theater' ? '🎭' :
-                           category.id === 'comedy' ? '🎙️' : '🎫'}
+                        <div style={{ fontSize: "28px" }}>
+                          {category.id === "all"
+                            ? "🌍"
+                            : category.id === "concerts"
+                            ? "🎤"
+                            : category.id === "sports"
+                            ? "🏆"
+                            : category.id === "theater"
+                            ? "🎭"
+                            : category.id === "comedy"
+                            ? "🎙️"
+                            : "🎫"}
                         </div>
                       ) : (
-                        <Icon style={{ width: '40px', height: '40px', color: 'white' }} />
+                        <Icon
+                          style={{
+                            width: "40px",
+                            height: "40px",
+                            color: "white",
+                          }}
+                        />
                       )}
                     </div>
-                    
-                    <h3 style={{
-                      fontSize: '20px',
-                      fontWeight: '700',
-                      color: isSelected ? 'white' : '#1f2937',
-                      marginBottom: '12px',
-                      textShadow: isSelected ? '0 2px 4px rgba(0, 0, 0, 0.2)' : 'none'
-                    }}>
+
+                    <h3
+                      style={{
+                        fontSize: "20px",
+                        fontWeight: "700",
+                        color: isSelected ? "white" : "#2C2C2C",
+                        marginBottom: "12px",
+                        textShadow: isSelected
+                          ? "0 2px 4px rgba(0, 0, 0, 0.2)"
+                          : "none",
+                      }}
+                    >
                       {category.name}
                     </h3>
-                    
-                    <div style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '8px',
-                      padding: '8px 16px',
-                      background: isSelected 
-                        ? 'rgba(255, 255, 255, 0.15)'
-                        : 'rgba(0, 0, 0, 0.05)',
-                      borderRadius: '12px',
-                      backdropFilter: 'blur(4px)',
-                      margin: '0 auto'
-                    }}>
-                      <span style={{
-                        fontSize: '14px',
-                        fontWeight: '600',
-                        color: isSelected ? 'rgba(255, 255, 255, 0.9)' : '#6b7280'
-                      }}>
+
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: "8px",
+                        padding: "8px 16px",
+                        background: isSelected
+                          ? "rgba(255, 255, 255, 0.15)"
+                          : "rgba(0, 0, 0, 0.05)",
+                        borderRadius: "12px",
+                        backdropFilter: "blur(4px)",
+                        margin: "0 auto",
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontSize: "14px",
+                          fontWeight: "600",
+                          color: isSelected
+                            ? "rgba(255, 255, 255, 0.9)"
+                            : "#555555",
+                        }}
+                      >
                         {category.count}
                       </span>
                       {isSelected && (
-                        <div style={{
-                          width: '8px',
-                          height: '8px',
-                          background: 'rgba(255, 255, 255, 0.7)',
-                          borderRadius: '50%',
-                          animation: 'pulse 2s ease-in-out infinite'
-                        }} />
+                        <div
+                          style={{
+                            width: "8px",
+                            height: "8px",
+                            background: "rgba(255, 255, 255, 0.7)",
+                            borderRadius: "50%",
+                            animation: "pulse 2s ease-in-out infinite",
+                          }}
+                        />
                       )}
                     </div>
-                    
+
                     {isSelected && (
-                      <div style={{
-                        marginTop: '16px',
-                        fontSize: '12px',
-                        color: 'rgba(255, 255, 255, 0.8)',
-                        fontWeight: '600',
-                        textTransform: 'uppercase',
-                        letterSpacing: '1px'
-                      }}>
+                      <div
+                        style={{
+                          marginTop: "16px",
+                          fontSize: "12px",
+                          color: "rgba(255, 255, 255, 0.8)",
+                          fontWeight: "600",
+                          textTransform: "uppercase",
+                          letterSpacing: "1px",
+                        }}
+                      >
                         ✨ Active
                       </div>
                     )}
@@ -2282,223 +2674,305 @@ export const HomePage: React.FC = () => {
 
             {/* Dynamic Category Events Display */}
             {selectedCategory && (
-              <div style={{
-                marginTop: '60px',
-                background: 'linear-gradient(135deg, #ffffff 0%, #fafbfc 100%)',
-                borderRadius: '32px',
-                padding: '60px 40px',
-                boxShadow: '0 25px 50px rgba(0, 0, 0, 0.08), 0 8px 25px rgba(0, 0, 0, 0.04)',
-                border: '1px solid rgba(255, 255, 255, 0.5)',
-                backdropFilter: 'blur(8px)',
-                position: 'relative',
-                overflow: 'hidden'
-              }}>
+              <div
+                style={{
+                  marginTop: "60px",
+                  background:
+                    "linear-gradient(135deg, #FFFFFF 0%, #F7F7F7 100%)",
+                  borderRadius: "32px",
+                  padding: "60px 40px",
+                  boxShadow:
+                    "0 25px 50px rgba(0, 0, 0, 0.08), 0 8px 25px rgba(0, 0, 0, 0.04)",
+                  border: "1px solid rgba(255, 255, 255, 0.5)",
+                  backdropFilter: "blur(8px)",
+                  position: "relative",
+                  overflow: "hidden",
+                }}
+              >
                 {/* Section header */}
-                <div style={{ textAlign: 'center', marginBottom: '48px' }}>
-                  <h3 style={{
-                    fontSize: 'clamp(24px, 4vw, 36px)',
-                    fontWeight: '800',
-                    background: 'linear-gradient(135deg, #1f2937 0%, #374151 100%)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text',
-                    marginBottom: '16px'
-                  }}>
-                    {eventCategories.find(cat => cat.id === selectedCategory)?.name || 'Featured'} Events
+                <div style={{ textAlign: "center", marginBottom: "48px" }}>
+                  <h3
+                    style={{
+                      fontSize: "clamp(24px, 4vw, 36px)",
+                      fontWeight: "800",
+                      color: "#1D3557",
+                      marginBottom: "16px",
+                    }}
+                  >
+                    {eventCategories.find((cat) => cat.id === selectedCategory)
+                      ?.name || "Featured"}{" "}
+                    Events
                   </h3>
-                  <p style={{
-                    fontSize: '16px',
-                    color: '#6b7280',
-                    fontWeight: '500'
-                  }}>
+                  <p
+                    style={{
+                      fontSize: "16px",
+                      color: "#555555",
+                      fontWeight: "500",
+                    }}
+                  >
                     Discover amazing events in this category
                   </p>
                 </div>
 
                 {/* Events grid or loading */}
                 {categoryLoading ? (
-                  <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-                    gap: '32px'
-                  }}>
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns:
+                        "repeat(auto-fit, minmax(300px, 1fr))",
+                      gap: "32px",
+                    }}
+                  >
                     {[...Array(6)].map((_, index) => (
-                      <div key={index} style={{
-                        height: '320px',
-                        background: 'linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%)',
-                        borderRadius: '20px',
-                        position: 'relative',
-                        overflow: 'hidden'
-                      }}>
-                        <div style={{
-                          position: 'absolute',
-                          inset: 0,
-                          background: 'linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.4) 50%, transparent 100%)',
-                          animation: 'shimmer 2s ease-in-out infinite'
-                        }} />
+                      <div
+                        key={index}
+                        style={{
+                          height: "320px",
+                          background:
+                            "linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%)",
+                          borderRadius: "20px",
+                          position: "relative",
+                          overflow: "hidden",
+                        }}
+                      >
+                        <div
+                          style={{
+                            position: "absolute",
+                            inset: 0,
+                            background:
+                              "linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.4) 50%, transparent 100%)",
+                            animation: "shimmer 2s ease-in-out infinite",
+                          }}
+                        />
                       </div>
                     ))}
                   </div>
                 ) : categoryEvents.length > 0 ? (
-                  <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-                    gap: '32px'
-                  }}>
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns:
+                        "repeat(auto-fit, minmax(320px, 1fr))",
+                      gap: "32px",
+                    }}
+                  >
                     {categoryEvents.map((event) => (
                       <div
                         key={event.id}
                         onClick={() => navigate(`/events/${event.id}`)}
                         style={{
-                          background: 'linear-gradient(135deg, #ffffff 0%, #fafbfc 100%)',
-                          borderRadius: '20px',
-                          overflow: 'hidden',
-                          cursor: 'pointer',
-                          transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.06)',
-                          border: '1px solid rgba(0, 0, 0, 0.05)',
-                          position: 'relative'
+                          background:
+                            "linear-gradient(135deg, #FFFFFF 0%, #F7F7F7 100%)",
+                          borderRadius: "20px",
+                          overflow: "hidden",
+                          cursor: "pointer",
+                          transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+                          boxShadow: "0 8px 32px rgba(0, 0, 0, 0.06)",
+                          border: "1px solid rgba(0, 0, 0, 0.05)",
+                          position: "relative",
                         }}
                         onMouseEnter={(e) => {
-                          e.currentTarget.style.transform = 'translateY(-8px) scale(1.02)';
-                          e.currentTarget.style.boxShadow = '0 20px 40px rgba(0, 0, 0, 0.12)';
+                          e.currentTarget.style.transform =
+                            "translateY(-8px) scale(1.02)";
+                          e.currentTarget.style.boxShadow =
+                            "0 20px 40px rgba(0, 0, 0, 0.12)";
                         }}
                         onMouseLeave={(e) => {
-                          e.currentTarget.style.transform = 'translateY(0) scale(1)';
-                          e.currentTarget.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.06)';
+                          e.currentTarget.style.transform =
+                            "translateY(0) scale(1)";
+                          e.currentTarget.style.boxShadow =
+                            "0 8px 32px rgba(0, 0, 0, 0.06)";
                         }}
                       >
                         {/* Event image placeholder */}
-                        <div style={{
-                          height: '200px',
-                          background: event.imageUrl 
-                            ? `linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(124, 58, 237, 0.1) 100%), url(${event.imageUrl})`
-                            : 'linear-gradient(135deg, #2563eb 0%, #7c3aed 50%, #dc2626 100%)',
-                          backgroundSize: 'cover',
-                          backgroundPosition: 'center',
-                          position: 'relative',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center'
-                        }}>
+                        <div
+                          style={{
+                            height: "200px",
+                            background: event.imageUrl
+                              ? `linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(124, 58, 237, 0.1) 100%), url(${event.imageUrl})`
+                              : "linear-gradient(135deg, #2563eb 0%, #7c3aed 50%, #dc2626 100%)",
+                            backgroundSize: "cover",
+                            backgroundPosition: "center",
+                            position: "relative",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}
+                        >
                           {!event.imageUrl && (
-                            <div style={{
-                              fontSize: '48px',
-                              filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2))'
-                            }}>
-                              {event.eventType === 'CONCERT' ? '🎤' :
-                               event.eventType === 'SPORTS' ? '🏆' :
-                               event.eventType === 'THEATER' ? '🎭' :
-                               event.eventType === 'COMEDY' ? '🎙️' : '🎫'}
+                            <div
+                              style={{
+                                fontSize: "48px",
+                                filter:
+                                  "drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2))",
+                              }}
+                            >
+                              {event.eventType === "CONCERT"
+                                ? "🎤"
+                                : event.eventType === "SPORTS"
+                                ? "🏆"
+                                : event.eventType === "THEATER"
+                                ? "🎭"
+                                : event.eventType === "COMEDY"
+                                ? "🎙️"
+                                : "🎫"}
                             </div>
                           )}
-                          
+
                           {/* Event type badge */}
-                          <div style={{
-                            position: 'absolute',
-                            top: '16px',
-                            right: '16px',
-                            padding: '6px 12px',
-                            background: 'rgba(0, 0, 0, 0.7)',
-                            color: 'white',
-                            borderRadius: '12px',
-                            fontSize: '12px',
-                            fontWeight: '600',
-                            backdropFilter: 'blur(8px)'
-                          }}>
-                            {event.eventType || 'EVENT'}
+                          <div
+                            style={{
+                              position: "absolute",
+                              top: "16px",
+                              right: "16px",
+                              padding: "6px 12px",
+                              background: "rgba(0, 0, 0, 0.7)",
+                              color: "white",
+                              borderRadius: "12px",
+                              fontSize: "12px",
+                              fontWeight: "600",
+                              backdropFilter: "blur(8px)",
+                            }}
+                          >
+                            {event.eventType || "EVENT"}
                           </div>
                         </div>
-                        
+
                         {/* Event details */}
-                        <div style={{ padding: '24px' }}>
-                          <h4 style={{
-                            fontSize: '18px',
-                            fontWeight: '700',
-                            color: '#1f2937',
-                            marginBottom: '12px',
-                            lineHeight: '1.3'
-                          }}>
+                        <div style={{ padding: "24px" }}>
+                          <h4
+                            style={{
+                              fontSize: "18px",
+                              fontWeight: "700",
+                              color: "#2C2C2C",
+                              marginBottom: "12px",
+                              lineHeight: "1.3",
+                            }}
+                          >
                             {event.name}
                           </h4>
-                          
-                          <div style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: '8px',
-                            marginBottom: '16px'
-                          }}>
-                            <div style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: '8px',
-                              fontSize: '14px',
-                              color: '#6b7280'
-                            }}>
-                              <MapPin style={{ width: '16px', height: '16px', color: '#f59e0b' }} />
-                              <span>{event.venue}, {event.city}</span>
-                            </div>
-                            
-                            <div style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: '8px',
-                              fontSize: '14px',
-                              color: '#6b7280'
-                            }}>
-                              <Calendar style={{ width: '16px', height: '16px', color: '#2563eb' }} />
+
+                          <div
+                            style={{
+                              display: "flex",
+                              flexDirection: "column",
+                              gap: "8px",
+                              marginBottom: "16px",
+                            }}
+                          >
+                            <div
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "8px",
+                                fontSize: "14px",
+                                color: "#555555",
+                              }}
+                            >
+                              <MapPin
+                                style={{
+                                  width: "16px",
+                                  height: "16px",
+                                  color: "#A8DADC",
+                                }}
+                              />
                               <span>
-                                {new Date(event.eventDate).toLocaleDateString('en-US', {
-                                  weekday: 'short',
-                                  month: 'short',
-                                  day: 'numeric',
-                                  hour: '2-digit',
-                                  minute: '2-digit'
-                                })}
+                                {event.venue}, {event.city}
+                              </span>
+                            </div>
+
+                            <div
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "8px",
+                                fontSize: "14px",
+                                color: "#555555",
+                              }}
+                            >
+                              <Calendar
+                                style={{
+                                  width: "16px",
+                                  height: "16px",
+                                  color: "#1D3557",
+                                }}
+                              />
+                              <span>
+                                {new Date(event.eventDate).toLocaleDateString(
+                                  "en-US",
+                                  {
+                                    weekday: "short",
+                                    month: "short",
+                                    day: "numeric",
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                  }
+                                )}
                               </span>
                             </div>
                           </div>
-                          
-                          <div style={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center'
-                          }}>
-                            <div style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: '6px',
-                              padding: '8px 16px',
-                              background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.1) 100%)',
-                              borderRadius: '12px',
-                              border: '1px solid rgba(16, 185, 129, 0.2)'
-                            }}>
-                              <DollarSign style={{ width: '16px', height: '16px', color: '#059669' }} />
-                              <span style={{
-                                fontSize: '14px',
-                                fontWeight: '700',
-                                color: '#047857'
-                              }}>
-                                {event.minPrice ? `From $${event.minPrice}` : 'Price TBA'}
+
+                          <div
+                            style={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                            }}
+                          >
+                            <div
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "6px",
+                                padding: "8px 16px",
+                                background:
+                                  "linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.1) 100%)",
+                                borderRadius: "12px",
+                                border: "1px solid rgba(16, 185, 129, 0.2)",
+                              }}
+                            >
+                              <DollarSign
+                                style={{
+                                  width: "16px",
+                                  height: "16px",
+                                  color: "#457B9D",
+                                }}
+                              />
+                              <span
+                                style={{
+                                  fontSize: "14px",
+                                  fontWeight: "700",
+                                  color: "#1D3557",
+                                }}
+                              >
+                                {event.minPrice
+                                  ? `From $${event.minPrice}`
+                                  : "Price TBA"}
                               </span>
                             </div>
-                            
-                            <button style={{
-                              padding: '8px 16px',
-                              fontSize: '14px',
-                              fontWeight: '600',
-                              background: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)',
-                              color: 'white',
-                              border: 'none',
-                              borderRadius: '12px',
-                              cursor: 'pointer',
-                              transition: 'all 0.2s ease',
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: '4px'
-                            }}>
+
+                            <button
+                              style={{
+                                padding: "8px 16px",
+                                fontSize: "14px",
+                                fontWeight: "600",
+                                background:
+                                  "linear-gradient(135deg, #1D3557 0%, #A8DADC 100%)",
+                                color: "white",
+                                border: "none",
+                                borderRadius: "12px",
+                                cursor: "pointer",
+                                transition: "all 0.2s ease",
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "4px",
+                              }}
+                            >
                               View Event
-                              <ArrowRight style={{ width: '14px', height: '14px' }} />
+                              <ArrowRight
+                                style={{ width: "14px", height: "14px" }}
+                              />
                             </button>
                           </div>
                         </div>
@@ -2506,26 +2980,35 @@ export const HomePage: React.FC = () => {
                     ))}
                   </div>
                 ) : (
-                  <div style={{
-                    textAlign: 'center',
-                    padding: '60px 20px',
-                    color: '#6b7280'
-                  }}>
-                    <div style={{
-                      fontSize: '64px',
-                      marginBottom: '24px',
-                      opacity: 0.5
-                    }}>🎭</div>
-                    <h4 style={{
-                      fontSize: '20px',
-                      fontWeight: '600',
-                      marginBottom: '12px',
-                      color: '#374151'
-                    }}>
+                  <div
+                    style={{
+                      textAlign: "center",
+                      padding: "60px 20px",
+                      color: "#2C2C2C",
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: "64px",
+                        marginBottom: "24px",
+                        opacity: 0.5,
+                      }}
+                    >
+                      🎭
+                    </div>
+                    <h4
+                      style={{
+                        fontSize: "20px",
+                        fontWeight: "600",
+                        marginBottom: "12px",
+                        color: "#2C2C2C",
+                      }}
+                    >
                       No Events Found
                     </h4>
-                    <p style={{ fontSize: '16px' }}>
-                      We couldn't find any events in this category right now. Check back soon!
+                    <p style={{ fontSize: "16px" }}>
+                      We couldn't find any events in this category right now.
+                      Check back soon!
                     </p>
                   </div>
                 )}
@@ -2535,359 +3018,446 @@ export const HomePage: React.FC = () => {
         </section>
 
         {/* Professional Insights Section */}
-        <section style={{
-          padding: '120px 0',
-          background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 25%, #f1f5f9 50%, #ffffff 75%, #f8fafc 100%)',
-          position: 'relative',
-          overflow: 'hidden'
-        }}>
+        <section
+          style={{
+            padding: "120px 0",
+            background:
+              "linear-gradient(135deg, #F7F7F7 0%, #F0F3F7 25%, #F7F7F7 50%, #FFFFFF 75%, #F7F7F7 100%)",
+            position: "relative",
+            overflow: "hidden",
+          }}
+        >
           {/* Background decoration */}
-          <div style={{
-            position: 'absolute',
-            top: '-100px',
-            right: '-200px',
-            width: '500px',
-            height: '500px',
-            background: 'radial-gradient(circle, rgba(124, 58, 237, 0.04) 0%, transparent 70%)',
-            borderRadius: '50%'
-          }} />
-          <div style={{
-            position: 'absolute',
-            bottom: '-150px',
-            left: '-150px',
-            width: '400px',
-            height: '400px',
-            background: 'radial-gradient(circle, rgba(37, 99, 235, 0.04) 0%, transparent 70%)',
-            borderRadius: '50%'
-          }} />
-          
-          <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 20px' }}>
-            <div style={{ textAlign: 'center', marginBottom: '80px' }}>
-              <div style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '12px',
-                padding: '16px 32px',
-                borderRadius: '50px',
-                background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.08) 0%, rgba(16, 185, 129, 0.08) 100%)',
-                border: '2px solid rgba(34, 197, 94, 0.1)',
-                marginBottom: '40px',
-                backdropFilter: 'blur(8px)',
-                boxShadow: '0 8px 32px rgba(34, 197, 94, 0.1)'
-              }}>
-                <BarChart3 style={{ width: '24px', height: '24px', color: '#10b981' }} />
-                <span style={{
-                  fontSize: '16px',
-                  fontWeight: '700',
-                  background: 'linear-gradient(135deg, #22c55e 0%, #10b981 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                  textTransform: 'uppercase',
-                  letterSpacing: '1px'
-                }}>
+          <div
+            style={{
+              position: "absolute",
+              top: "-100px",
+              right: "-200px",
+              width: "500px",
+              height: "500px",
+              background:
+                "radial-gradient(circle, rgba(124, 58, 237, 0.04) 0%, transparent 70%)",
+              borderRadius: "50%",
+            }}
+          />
+          <div
+            style={{
+              position: "absolute",
+              bottom: "-150px",
+              left: "-150px",
+              width: "400px",
+              height: "400px",
+              background:
+                "radial-gradient(circle, rgba(37, 99, 235, 0.04) 0%, transparent 70%)",
+              borderRadius: "50%",
+            }}
+          />
+
+          <div
+            style={{ maxWidth: "1400px", margin: "0 auto", padding: "0 20px" }}
+          >
+            <div style={{ textAlign: "center", marginBottom: "80px" }}>
+              <div
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "12px",
+                  padding: "16px 32px",
+                  borderRadius: "50px",
+                  background:
+                    "linear-gradient(135deg, rgba(34, 197, 94, 0.08) 0%, rgba(16, 185, 129, 0.08) 100%)",
+                  border: "2px solid rgba(34, 197, 94, 0.1)",
+                  marginBottom: "40px",
+                  backdropFilter: "blur(8px)",
+                  boxShadow: "0 8px 32px rgba(34, 197, 94, 0.1)",
+                }}
+              >
+                <BarChart3
+                  style={{ width: "24px", height: "24px", color: "#457B9D" }}
+                />
+                <span
+                  style={{
+                    fontSize: "16px",
+                    fontWeight: "700",
+                    color: "#457B9D",
+                    textTransform: "uppercase",
+                    letterSpacing: "1px",
+                  }}
+                >
                   Market Insights
                 </span>
               </div>
 
-              <h2 style={{
-                fontSize: 'clamp(36px, 6vw, 56px)',
-                fontWeight: '900',
-                background: 'linear-gradient(135deg, #1f2937 0%, #374151 50%, #1f2937 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-                marginBottom: '24px',
-                letterSpacing: '-0.02em',
-                lineHeight: '1.1'
-              }}>
+              <h2
+                style={{
+                  fontSize: "clamp(36px, 6vw, 56px)",
+                  fontWeight: "900",
+                  color: "#1D3557",
+                  marginBottom: "24px",
+                  letterSpacing: "-0.02em",
+                  lineHeight: "1.1",
+                }}
+              >
                 📊 Event Industry Insights
               </h2>
-              
-              <p style={{
-                fontSize: 'clamp(18px, 3vw, 22px)',
-                color: '#4b5563',
-                maxWidth: '800px',
-                margin: '0 auto',
-                lineHeight: '1.6',
-                fontWeight: '500'
-              }}>
-                Real-time data and trends from our marketplace. See what's happening in the event industry right now.
+
+              <p
+                style={{
+                  fontSize: "clamp(18px, 3vw, 22px)",
+                  color: "#2C2C2C",
+                  maxWidth: "800px",
+                  margin: "0 auto",
+                  lineHeight: "1.6",
+                  fontWeight: "500",
+                }}
+              >
+                Real-time data and trends from our marketplace. See what's
+                happening in the event industry right now.
               </p>
             </div>
 
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-              gap: '40px',
-              marginBottom: '80px'
-            }}>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
+                gap: "40px",
+                marginBottom: "80px",
+              }}
+            >
               {/* Insight Cards */}
-              <div style={{
-                background: 'linear-gradient(135deg, #ffffff 0%, #fafbfc 100%)',
-                borderRadius: '24px',
-                padding: '40px 32px',
-                boxShadow: '0 12px 40px rgba(0, 0, 0, 0.08), 0 4px 16px rgba(0, 0, 0, 0.04)',
-                border: '1px solid rgba(255, 255, 255, 0.5)',
-                backdropFilter: 'blur(8px)',
-                textAlign: 'center',
-                position: 'relative',
-                overflow: 'hidden'
-              }}>
+              <div
+                style={{
+                  background:
+                    "linear-gradient(135deg, #FFFFFF 0%, #F7F7F7 100%)",
+                  borderRadius: "24px",
+                  padding: "40px 32px",
+                  boxShadow:
+                    "0 12px 40px rgba(0, 0, 0, 0.08), 0 4px 16px rgba(0, 0, 0, 0.04)",
+                  border: "1px solid rgba(255, 255, 255, 0.5)",
+                  backdropFilter: "blur(8px)",
+                  textAlign: "center",
+                  position: "relative",
+                  overflow: "hidden",
+                }}
+              >
                 {/* Background glow */}
-                <div style={{
-                  position: 'absolute',
-                  top: '-50%',
-                  left: '-50%',
-                  width: '200%',
-                  height: '200%',
-                  background: 'linear-gradient(135deg, rgba(37, 99, 235, 0.02) 0%, rgba(59, 130, 246, 0.02) 100%)',
-                  borderRadius: '50%'
-                }} />
-                
-                <div style={{ position: 'relative', zIndex: 1 }}>
-                  <div style={{
-                    width: '80px',
-                    height: '80px',
-                    margin: '0 auto 24px',
-                    background: 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)',
-                    borderRadius: '20px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    boxShadow: '0 12px 40px rgba(37, 99, 235, 0.3)'
-                  }}>
-                    <Calendar style={{ width: '40px', height: '40px', color: 'white' }} />
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "-50%",
+                    left: "-50%",
+                    width: "200%",
+                    height: "200%",
+                    background:
+                      "linear-gradient(135deg, rgba(37, 99, 235, 0.02) 0%, rgba(59, 130, 246, 0.02) 100%)",
+                    borderRadius: "50%",
+                  }}
+                />
+
+                <div style={{ position: "relative", zIndex: 1 }}>
+                  <div
+                    style={{
+                      width: "80px",
+                      height: "80px",
+                      margin: "0 auto 24px",
+                      background:
+                        "linear-gradient(135deg, #1D3557 0%, #457B9D 100%)",
+                      borderRadius: "20px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      boxShadow: "0 12px 40px rgba(37, 99, 235, 0.3)",
+                    }}
+                  >
+                    <Calendar
+                      style={{ width: "40px", height: "40px", color: "white" }}
+                    />
                   </div>
-                  
-                  <div style={{
-                    fontSize: 'clamp(28px, 4vw, 40px)',
-                    fontWeight: '900',
-                    background: 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text',
-                    marginBottom: '12px'
-                  }}>
-                    {insights.totalEvents > 0 ? `${insights.totalEvents.toLocaleString()}+` : 'Loading...'}
+
+                  <div
+                    style={{
+                      fontSize: "clamp(28px, 4vw, 40px)",
+                      fontWeight: "900",
+                      color: "#1D3557",
+                      marginBottom: "12px",
+                    }}
+                  >
+                    {insights.totalEvents > 0
+                      ? `${insights.totalEvents.toLocaleString()}+`
+                      : "Loading..."}
                   </div>
-                  
-                  <h3 style={{
-                    fontSize: '18px',
-                    fontWeight: '700',
-                    color: '#1f2937',
-                    marginBottom: '8px'
-                  }}>
+
+                  <h3
+                    style={{
+                      fontSize: "18px",
+                      fontWeight: "700",
+                      color: "#2C2C2C",
+                      marginBottom: "8px",
+                    }}
+                  >
                     Active Events
                   </h3>
-                  
-                  <p style={{
-                    fontSize: '14px',
-                    color: '#6b7280',
-                    lineHeight: '1.5'
-                  }}>
+
+                  <p
+                    style={{
+                      fontSize: "14px",
+                      color: "#555555",
+                      lineHeight: "1.5",
+                    }}
+                  >
                     Live events currently available on our platform
                   </p>
                 </div>
               </div>
 
-              <div style={{
-                background: 'linear-gradient(135deg, #ffffff 0%, #fafbfc 100%)',
-                borderRadius: '24px',
-                padding: '40px 32px',
-                boxShadow: '0 12px 40px rgba(0, 0, 0, 0.08), 0 4px 16px rgba(0, 0, 0, 0.04)',
-                border: '1px solid rgba(255, 255, 255, 0.5)',
-                backdropFilter: 'blur(8px)',
-                textAlign: 'center',
-                position: 'relative',
-                overflow: 'hidden'
-              }}>
-                <div style={{
-                  position: 'absolute',
-                  top: '-50%',
-                  left: '-50%',
-                  width: '200%',
-                  height: '200%',
-                  background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.02) 0%, rgba(5, 150, 105, 0.02) 100%)',
-                  borderRadius: '50%'
-                }} />
-                
-                <div style={{ position: 'relative', zIndex: 1 }}>
-                  <div style={{
-                    width: '80px',
-                    height: '80px',
-                    margin: '0 auto 24px',
-                    background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                    borderRadius: '20px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    boxShadow: '0 12px 40px rgba(16, 185, 129, 0.3)'
-                  }}>
-                    <Users style={{ width: '40px', height: '40px', color: 'white' }} />
+              <div
+                style={{
+                  background:
+                    "linear-gradient(135deg, #FFFFFF 0%, #F7F7F7 100%)",
+                  borderRadius: "24px",
+                  padding: "40px 32px",
+                  boxShadow:
+                    "0 12px 40px rgba(0, 0, 0, 0.08), 0 4px 16px rgba(0, 0, 0, 0.04)",
+                  border: "1px solid rgba(255, 255, 255, 0.5)",
+                  backdropFilter: "blur(8px)",
+                  textAlign: "center",
+                  position: "relative",
+                  overflow: "hidden",
+                }}
+              >
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "-50%",
+                    left: "-50%",
+                    width: "200%",
+                    height: "200%",
+                    background:
+                      "linear-gradient(135deg, rgba(16, 185, 129, 0.02) 0%, rgba(5, 150, 105, 0.02) 100%)",
+                    borderRadius: "50%",
+                  }}
+                />
+
+                <div style={{ position: "relative", zIndex: 1 }}>
+                  <div
+                    style={{
+                      width: "80px",
+                      height: "80px",
+                      margin: "0 auto 24px",
+                      background:
+                        "linear-gradient(135deg, #457B9D 0%, #A8DADC 100%)",
+                      borderRadius: "20px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      boxShadow: "0 12px 40px rgba(16, 185, 129, 0.3)",
+                    }}
+                  >
+                    <Users
+                      style={{ width: "40px", height: "40px", color: "white" }}
+                    />
                   </div>
-                  
-                  <div style={{
-                    fontSize: 'clamp(28px, 4vw, 40px)',
-                    fontWeight: '900',
-                    background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text',
-                    marginBottom: '12px'
-                  }}>
-                    {insights.activeUsers > 0 ? `${Math.floor(insights.activeUsers / 1000)}K+` : 'Loading...'}
+
+                  <div
+                    style={{
+                      fontSize: "clamp(28px, 4vw, 40px)",
+                      fontWeight: "900",
+                      color: "#457B9D",
+                      marginBottom: "12px",
+                    }}
+                  >
+                    {insights.activeUsers > 0
+                      ? `${Math.floor(insights.activeUsers / 1000)}K+`
+                      : "Loading..."}
                   </div>
-                  
-                  <h3 style={{
-                    fontSize: '18px',
-                    fontWeight: '700',
-                    color: '#1f2937',
-                    marginBottom: '8px'
-                  }}>
+
+                  <h3
+                    style={{
+                      fontSize: "18px",
+                      fontWeight: "700",
+                      color: "#2C2C2C",
+                      marginBottom: "8px",
+                    }}
+                  >
                     Active Users
                   </h3>
-                  
-                  <p style={{
-                    fontSize: '14px',
-                    color: '#6b7280',
-                    lineHeight: '1.5'
-                  }}>
+
+                  <p
+                    style={{
+                      fontSize: "14px",
+                      color: "#555555",
+                      lineHeight: "1.5",
+                    }}
+                  >
                     Users actively buying and selling tickets
                   </p>
                 </div>
               </div>
 
-              <div style={{
-                background: 'linear-gradient(135deg, #ffffff 0%, #fafbfc 100%)',
-                borderRadius: '24px',
-                padding: '40px 32px',
-                boxShadow: '0 12px 40px rgba(0, 0, 0, 0.08), 0 4px 16px rgba(0, 0, 0, 0.04)',
-                border: '1px solid rgba(255, 255, 255, 0.5)',
-                backdropFilter: 'blur(8px)',
-                textAlign: 'center',
-                position: 'relative',
-                overflow: 'hidden'
-              }}>
-                <div style={{
-                  position: 'absolute',
-                  top: '-50%',
-                  left: '-50%',
-                  width: '200%',
-                  height: '200%',
-                  background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.02) 0%, rgba(217, 119, 6, 0.02) 100%)',
-                  borderRadius: '50%'
-                }} />
-                
-                <div style={{ position: 'relative', zIndex: 1 }}>
-                  <div style={{
-                    width: '80px',
-                    height: '80px',
-                    margin: '0 auto 24px',
-                    background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-                    borderRadius: '20px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    boxShadow: '0 12px 40px rgba(245, 158, 11, 0.3)'
-                  }}>
-                    <DollarSign style={{ width: '40px', height: '40px', color: 'white' }} />
+              <div
+                style={{
+                  background:
+                    "linear-gradient(135deg, #FFFFFF 0%, #F7F7F7 100%)",
+                  borderRadius: "24px",
+                  padding: "40px 32px",
+                  boxShadow:
+                    "0 12px 40px rgba(0, 0, 0, 0.08), 0 4px 16px rgba(0, 0, 0, 0.04)",
+                  border: "1px solid rgba(255, 255, 255, 0.5)",
+                  backdropFilter: "blur(8px)",
+                  textAlign: "center",
+                  position: "relative",
+                  overflow: "hidden",
+                }}
+              >
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "-50%",
+                    left: "-50%",
+                    width: "200%",
+                    height: "200%",
+                    background:
+                      "linear-gradient(135deg, rgba(245, 158, 11, 0.02) 0%, rgba(217, 119, 6, 0.02) 100%)",
+                    borderRadius: "50%",
+                  }}
+                />
+
+                <div style={{ position: "relative", zIndex: 1 }}>
+                  <div
+                    style={{
+                      width: "80px",
+                      height: "80px",
+                      margin: "0 auto 24px",
+                      background:
+                        "linear-gradient(135deg, #A8DADC 0%, #457B9D 100%)",
+                      borderRadius: "20px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      boxShadow: "0 12px 40px rgba(245, 158, 11, 0.3)",
+                    }}
+                  >
+                    <DollarSign
+                      style={{ width: "40px", height: "40px", color: "white" }}
+                    />
                   </div>
-                  
-                  <div style={{
-                    fontSize: 'clamp(28px, 4vw, 40px)',
-                    fontWeight: '900',
-                    background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text',
-                    marginBottom: '12px'
-                  }}>
-                    {insights.avgPrice > 0 ? `$${insights.avgPrice}` : 'Loading...'}
+
+                  <div
+                    style={{
+                      fontSize: "clamp(28px, 4vw, 40px)",
+                      fontWeight: "900",
+                      color: "#A8DADC",
+                      marginBottom: "12px",
+                    }}
+                  >
+                    {insights.avgPrice > 0
+                      ? `$${insights.avgPrice}`
+                      : "Loading..."}
                   </div>
-                  
-                  <h3 style={{
-                    fontSize: '18px',
-                    fontWeight: '700',
-                    color: '#1f2937',
-                    marginBottom: '8px'
-                  }}>
+
+                  <h3
+                    style={{
+                      fontSize: "18px",
+                      fontWeight: "700",
+                      color: "#2C2C2C",
+                      marginBottom: "8px",
+                    }}
+                  >
                     Average Price
                   </h3>
-                  
-                  <p style={{
-                    fontSize: '14px',
-                    color: '#6b7280',
-                    lineHeight: '1.5'
-                  }}>
+
+                  <p
+                    style={{
+                      fontSize: "14px",
+                      color: "#555555",
+                      lineHeight: "1.5",
+                    }}
+                  >
                     Average ticket price across all events
                   </p>
                 </div>
               </div>
-              
+
               {/* Additional Dynamic Metric - Total Tickets Sold */}
-              <div style={{
-                background: 'linear-gradient(135deg, #ffffff 0%, #fafbfc 100%)',
-                borderRadius: '24px',
-                padding: '40px 32px',
-                boxShadow: '0 12px 40px rgba(0, 0, 0, 0.08), 0 4px 16px rgba(0, 0, 0, 0.04)',
-                border: '1px solid rgba(255, 255, 255, 0.5)',
-                backdropFilter: 'blur(8px)',
-                textAlign: 'center',
-                position: 'relative',
-                overflow: 'hidden'
-              }}>
-                <div style={{
-                  position: 'absolute',
-                  top: '-50%',
-                  left: '-50%',
-                  width: '200%',
-                  height: '200%',
-                  background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.02) 0%, rgba(124, 58, 237, 0.02) 100%)',
-                  borderRadius: '50%'
-                }} />
-                
-                <div style={{ position: 'relative', zIndex: 1 }}>
-                  <div style={{
-                    width: '80px',
-                    height: '80px',
-                    margin: '0 auto 24px',
-                    background: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
-                    borderRadius: '20px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    boxShadow: '0 12px 40px rgba(139, 92, 246, 0.3)'
-                  }}>
-                    <Ticket style={{ width: '40px', height: '40px', color: 'white' }} />
+              <div
+                style={{
+                  background:
+                    "linear-gradient(135deg, #FFFFFF 0%, #F7F7F7 100%)",
+                  borderRadius: "24px",
+                  padding: "40px 32px",
+                  boxShadow:
+                    "0 12px 40px rgba(0, 0, 0, 0.08), 0 4px 16px rgba(0, 0, 0, 0.04)",
+                  border: "1px solid rgba(255, 255, 255, 0.5)",
+                  backdropFilter: "blur(8px)",
+                  textAlign: "center",
+                  position: "relative",
+                  overflow: "hidden",
+                }}
+              >
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "-50%",
+                    left: "-50%",
+                    width: "200%",
+                    height: "200%",
+                    background:
+                      "linear-gradient(135deg, rgba(139, 92, 246, 0.02) 0%, rgba(124, 58, 237, 0.02) 100%)",
+                    borderRadius: "50%",
+                  }}
+                />
+
+                <div style={{ position: "relative", zIndex: 1 }}>
+                  <div
+                    style={{
+                      width: "80px",
+                      height: "80px",
+                      margin: "0 auto 24px",
+                      background:
+                        "linear-gradient(135deg, #457B9D 0%, #1D3557 100%)",
+                      borderRadius: "20px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      boxShadow: "0 12px 40px rgba(139, 92, 246, 0.3)",
+                    }}
+                  >
+                    <Ticket
+                      style={{ width: "40px", height: "40px", color: "white" }}
+                    />
                   </div>
-                  
-                  <div style={{
-                    fontSize: 'clamp(28px, 4vw, 40px)',
-                    fontWeight: '900',
-                    background: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text',
-                    marginBottom: '12px'
-                  }}>
-                    {insights.totalTicketsSold > 0 ? `${Math.floor(insights.totalTicketsSold / 1000)}K+` : 'Loading...'}
+
+                  <div
+                    style={{
+                      fontSize: "clamp(28px, 4vw, 40px)",
+                      fontWeight: "900",
+                      color: "#1D3557",
+                      marginBottom: "12px",
+                    }}
+                  >
+                    {insights.totalTicketsSold > 0
+                      ? `${Math.floor(insights.totalTicketsSold / 1000)}K+`
+                      : "Loading..."}
                   </div>
-                  
-                  <h3 style={{
-                    fontSize: '18px',
-                    fontWeight: '700',
-                    color: '#1f2937',
-                    marginBottom: '8px'
-                  }}>
+
+                  <h3
+                    style={{
+                      fontSize: "18px",
+                      fontWeight: "700",
+                      color: "#2C2C2C",
+                      marginBottom: "8px",
+                    }}
+                  >
                     Tickets Sold
                   </h3>
-                  
-                  <p style={{
-                    fontSize: '14px',
-                    color: '#6b7280',
-                    lineHeight: '1.5'
-                  }}>
+
+                  <p
+                    style={{
+                      fontSize: "14px",
+                      color: "#555555",
+                      lineHeight: "1.5",
+                    }}
+                  >
                     Total tickets sold across all events
                   </p>
                 </div>
@@ -2895,100 +3465,120 @@ export const HomePage: React.FC = () => {
             </div>
 
             {/* Trending Category Highlight */}
-            <div style={{
-              background: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 50%, #dc2626 100%)',
-              borderRadius: '24px',
-              padding: '48px 40px',
-              textAlign: 'center',
-              position: 'relative',
-              overflow: 'hidden',
-              boxShadow: '0 25px 50px rgba(37, 99, 235, 0.2)'
-            }}>
+            <div
+              style={{
+                background:
+                  "linear-gradient(135deg, #1D3557 0%, #457B9D 40%, #A8DADC 80%, rgba(168, 218, 220, 0.8) 100%)",
+                borderRadius: "24px",
+                padding: "48px 40px",
+                textAlign: "center",
+                position: "relative",
+                overflow: "hidden",
+                boxShadow: "0 25px 50px rgba(37, 99, 235, 0.2)",
+              }}
+            >
               {/* Background pattern */}
-              <div style={{
-                position: 'absolute',
-                inset: 0,
-                backgroundImage: `
+              <div
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  backgroundImage: `
                   radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
                   radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.05) 0%, transparent 50%)
                 `,
-                zIndex: 0
-              }} />
-              
-              <div style={{ position: 'relative', zIndex: 1 }}>
-                <div style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                  padding: '12px 24px',
-                  background: 'rgba(255, 255, 255, 0.15)',
-                  borderRadius: '25px',
-                  marginBottom: '24px',
-                  backdropFilter: 'blur(8px)'
-                }}>
-                  <Target style={{ width: '20px', height: '20px', color: 'white' }} />
-                  <span style={{
-                    color: 'white',
-                    fontSize: '14px',
-                    fontWeight: '700',
-                    textTransform: 'uppercase',
-                    letterSpacing: '1px'
-                  }}>
+                  zIndex: 0,
+                }}
+              />
+
+              <div style={{ position: "relative", zIndex: 1 }}>
+                <div
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "12px",
+                    padding: "12px 24px",
+                    background: "rgba(255, 255, 255, 0.15)",
+                    borderRadius: "25px",
+                    marginBottom: "24px",
+                    backdropFilter: "blur(8px)",
+                  }}
+                >
+                  <Target
+                    style={{ width: "20px", height: "20px", color: "white" }}
+                  />
+                  <span
+                    style={{
+                      color: "white",
+                      fontSize: "14px",
+                      fontWeight: "700",
+                      textTransform: "uppercase",
+                      letterSpacing: "1px",
+                    }}
+                  >
                     🔥 Trending Now
                   </span>
                 </div>
-                
-                <h3 style={{
-                  fontSize: 'clamp(24px, 4vw, 36px)',
-                  fontWeight: '800',
-                  color: 'white',
-                  marginBottom: '16px',
-                  textShadow: '0 4px 12px rgba(0, 0, 0, 0.3)'
-                }}>
+
+                <h3
+                  style={{
+                    fontSize: "clamp(24px, 4vw, 36px)",
+                    fontWeight: "800",
+                    color: "white",
+                    marginBottom: "16px",
+                    textShadow: "0 4px 12px rgba(0, 0, 0, 0.3)",
+                  }}
+                >
                   {insights.popularCategory} are Hot Right Now! 🎤
                 </h3>
-                
-                <p style={{
-                  fontSize: '18px',
-                  color: 'rgba(255, 255, 255, 0.9)',
-                  marginBottom: '32px',
-                  maxWidth: '600px',
-                  margin: '0 auto 32px',
-                  textShadow: '0 2px 8px rgba(0, 0, 0, 0.2)'
-                }}>
-                  The most popular category this week with highest demand. Don't miss out on these amazing events!
-                </p>
-                
-                <button
-                  onClick={() => handleCategoryClick('concerts')}
+
+                <p
                   style={{
-                    padding: '16px 32px',
-                    fontSize: '18px',
-                    fontWeight: '700',
-                    background: 'rgba(255, 255, 255, 0.2)',
-                    color: 'white',
-                    border: '2px solid rgba(255, 255, 255, 0.3)',
-                    borderRadius: '16px',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease',
-                    backdropFilter: 'blur(8px)',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '8px'
+                    fontSize: "18px",
+                    color: "rgba(255, 255, 255, 0.9)",
+                    marginBottom: "32px",
+                    maxWidth: "600px",
+                    margin: "0 auto 32px",
+                    textShadow: "0 2px 8px rgba(0, 0, 0, 0.2)",
+                  }}
+                >
+                  The most popular category this week with highest demand. Don't
+                  miss out on these amazing events!
+                </p>
+
+                <button
+                  onClick={() => handleCategoryClick("concerts")}
+                  style={{
+                    padding: "16px 32px",
+                    fontSize: "18px",
+                    fontWeight: "700",
+                    background: "rgba(255, 255, 255, 0.2)",
+                    color: "white",
+                    border: "2px solid rgba(255, 255, 255, 0.3)",
+                    borderRadius: "16px",
+                    cursor: "pointer",
+                    transition: "all 0.3s ease",
+                    backdropFilter: "blur(8px)",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "8px",
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)';
-                    e.currentTarget.style.transform = 'translateY(-3px) scale(1.05)';
-                    e.currentTarget.style.boxShadow = '0 12px 40px rgba(255, 255, 255, 0.2)';
+                    e.currentTarget.style.background =
+                      "rgba(255, 255, 255, 0.3)";
+                    e.currentTarget.style.transform =
+                      "translateY(-3px) scale(1.05)";
+                    e.currentTarget.style.boxShadow =
+                      "0 12px 40px rgba(255, 255, 255, 0.2)";
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
-                    e.currentTarget.style.transform = 'translateY(0) scale(1)';
-                    e.currentTarget.style.boxShadow = 'none';
+                    e.currentTarget.style.background =
+                      "rgba(255, 255, 255, 0.2)";
+                    e.currentTarget.style.transform = "translateY(0) scale(1)";
+                    e.currentTarget.style.boxShadow = "none";
                   }}
                 >
                   🎵 Explore Concerts
-                  <ArrowRight style={{ width: '20px', height: '20px' }} />
+                  <ArrowRight style={{ width: "20px", height: "20px" }} />
                 </button>
               </div>
             </div>
@@ -3301,7 +3891,7 @@ export const HomePage: React.FC = () => {
           </div>
         </section>
       </div>
-      
+
       {/* Enhanced CSS Animations and Styles */}
       <style>{`
         @keyframes spin {
@@ -3365,15 +3955,15 @@ export const HomePage: React.FC = () => {
           width: 8px;
         }
         ::-webkit-scrollbar-track {
-          background: #f1f5f9;
+          background: #F7F7F7;
           border-radius: 4px;
         }
         ::-webkit-scrollbar-thumb {
-          background: linear-gradient(135deg, #2563eb, #7c3aed);
+          background: linear-gradient(135deg, #1D3557, #457B9D);
           border-radius: 4px;
         }
         ::-webkit-scrollbar-thumb:hover {
-          background: linear-gradient(135deg, #1d4ed8, #6d28d9);
+          background: linear-gradient(135deg, #0F1C2E, #2C5F7A);
         }
         
         /* Focus states for accessibility */

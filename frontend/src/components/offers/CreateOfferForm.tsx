@@ -174,7 +174,7 @@ export const CreateOfferForm: React.FC<CreateOfferFormProps> = ({
             width: '48px',
             height: '48px',
             borderRadius: '12px',
-            background: 'linear-gradient(135deg, #2563eb, #7c3aed)',
+            background: 'linear-gradient(135deg, #1D3557, #457B9D)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -188,14 +188,14 @@ export const CreateOfferForm: React.FC<CreateOfferFormProps> = ({
             <h3 style={{
               fontSize: '20px',
               fontWeight: '800',
-              color: '#1f2937',
+              color: '#2C2C2C',
               margin: '0 0 4px 0'
             }}>
               Event Details
             </h3>
             <p style={{
               fontSize: '14px',
-              color: '#6b7280',
+              color: '#555555',
               margin: 0,
               fontWeight: '500'
             }}>
@@ -213,7 +213,7 @@ export const CreateOfferForm: React.FC<CreateOfferFormProps> = ({
           <h4 style={{
             fontSize: '18px',
             fontWeight: '700',
-            color: '#1f2937',
+            color: '#2C2C2C',
             margin: '0 0 12px 0',
             lineHeight: '1.3'
           }}>
@@ -224,11 +224,11 @@ export const CreateOfferForm: React.FC<CreateOfferFormProps> = ({
             <div style={{ 
               display: 'flex', 
               alignItems: 'center', 
-              color: '#6b7280',
+              color: '#555555',
               fontSize: '14px',
               fontWeight: '500'
             }}>
-              <svg style={{ width: '16px', height: '16px', marginRight: '8px', color: '#2563eb' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg style={{ width: '16px', height: '16px', marginRight: '8px', color: '#1D3557' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
               <span>{new Date(event.eventDate || event.date).toLocaleDateString('en-US', {
@@ -242,11 +242,11 @@ export const CreateOfferForm: React.FC<CreateOfferFormProps> = ({
             <div style={{ 
               display: 'flex', 
               alignItems: 'center', 
-              color: '#6b7280',
+              color: '#555555',
               fontSize: '14px',
               fontWeight: '500'
             }}>
-              <svg style={{ width: '16px', height: '16px', marginRight: '8px', color: '#2563eb' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg style={{ width: '16px', height: '16px', marginRight: '8px', color: '#1D3557' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
@@ -257,12 +257,12 @@ export const CreateOfferForm: React.FC<CreateOfferFormProps> = ({
               <div style={{ 
                 display: 'flex', 
                 alignItems: 'center', 
-                color: '#6b7280',
+                color: '#555555',
                 fontSize: '14px',
                 fontWeight: '500',
                 marginTop: '8px'
               }}>
-                <svg style={{ width: '16px', height: '16px', marginRight: '8px', color: '#2563eb' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg style={{ width: '16px', height: '16px', marginRight: '8px', color: '#1D3557' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
                 </svg>
                 <span>Price Range: ${event.minPrice || 0} - ${event.maxPrice || 0}</span>
@@ -290,7 +290,7 @@ export const CreateOfferForm: React.FC<CreateOfferFormProps> = ({
             width: '48px',
             height: '48px',
             borderRadius: '12px',
-            background: 'linear-gradient(135deg, #dc2626, #ef4444)',
+            background: 'linear-gradient(135deg, #1D3557, #A8DADC)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -302,14 +302,14 @@ export const CreateOfferForm: React.FC<CreateOfferFormProps> = ({
             <h2 style={{
               fontSize: '24px',
               fontWeight: '800',
-              color: '#1f2937',
+              color: '#2C2C2C',
               margin: '0 0 4px 0'
             }}>
               Create Your Offer
             </h2>
             <p style={{
               fontSize: '16px',
-              color: '#6b7280',
+              color: '#555555',
               margin: 0,
               fontWeight: '500'
             }}>
@@ -325,7 +325,7 @@ export const CreateOfferForm: React.FC<CreateOfferFormProps> = ({
               display: 'block',
               fontSize: '16px',
               fontWeight: '700',
-              color: '#374151',
+              color: '#2C2C2C',
               marginBottom: '12px',
               textTransform: 'uppercase',
               letterSpacing: '0.5px'
@@ -357,8 +357,8 @@ export const CreateOfferForm: React.FC<CreateOfferFormProps> = ({
                   fontWeight: '600'
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)';
-                  e.currentTarget.style.borderColor = '#2563eb';
+                  e.currentTarget.style.background = 'linear-gradient(135deg, #E8F4F8 0%, #D1E9F1 100%)';
+                  e.currentTarget.style.borderColor = '#1D3557';
                 }}
                 onMouseLeave={(e) => {
                   const checkbox = e.currentTarget.querySelector('input') as HTMLInputElement;
@@ -374,20 +374,20 @@ export const CreateOfferForm: React.FC<CreateOfferFormProps> = ({
                       handleSectionChange(section.id, e.target.checked);
                       const label = e.currentTarget.parentElement as HTMLLabelElement;
                       if (e.target.checked) {
-                        label.style.background = 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)';
-                        label.style.borderColor = '#2563eb';
+                        label.style.background = 'linear-gradient(135deg, #E8F4F8 0%, #D1E9F1 100%)';
+                        label.style.borderColor = '#1D3557';
                         label.style.color = '#1e40af';
                       } else {
                         label.style.background = 'white';
                         label.style.borderColor = '#e5e7eb';
-                        label.style.color = '#374151';
+                        label.style.color = '#2C2C2C';
                       }
                     }}
                     style={{
                       width: '18px',
                       height: '18px',
                       marginRight: '12px',
-                      accentColor: '#2563eb'
+                      accentColor: '#1D3557'
                     }}
                   />
                   <span>{section.name}</span>
@@ -409,8 +409,8 @@ export const CreateOfferForm: React.FC<CreateOfferFormProps> = ({
           {/* Price Suggestion Section */}
           {priceSuggestion && (
             <div style={{
-              background: 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)',
-              border: '2px solid #93c5fd',
+              background: 'linear-gradient(135deg, #E8F4F8 0%, #D1E9F1 100%)',
+              border: '2px solid #457B9D',
               borderRadius: '16px',
               padding: '24px'
             }}>
@@ -423,7 +423,7 @@ export const CreateOfferForm: React.FC<CreateOfferFormProps> = ({
                   width: '32px',
                   height: '32px',
                   borderRadius: '8px',
-                  background: 'linear-gradient(135deg, #2563eb, #1d4ed8)',
+                  background: 'linear-gradient(135deg, #1D3557, #457B9D)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -434,7 +434,7 @@ export const CreateOfferForm: React.FC<CreateOfferFormProps> = ({
                 <h3 style={{
                   fontSize: '18px',
                   fontWeight: '700',
-                  color: '#1e40af',
+                  color: '#1D3557',
                   margin: 0
                 }}>
                   Smart Price Suggestions
@@ -474,7 +474,7 @@ export const CreateOfferForm: React.FC<CreateOfferFormProps> = ({
                   }}>
                     <span style={{
                       fontSize: '16px',
-                      color: '#1e40af',
+                      color: '#1D3557',
                       fontWeight: '600'
                     }}>
                       💰 Recommended Price:
@@ -492,7 +492,7 @@ export const CreateOfferForm: React.FC<CreateOfferFormProps> = ({
                         onClick={handleUseSuggestedPrice}
                         style={{
                           fontSize: '12px',
-                          background: 'linear-gradient(135deg, #2563eb, #1d4ed8)',
+                          background: 'linear-gradient(135deg, #1D3557, #457B9D)',
                           color: 'white',
                           padding: '6px 12px',
                           border: 'none',
@@ -505,7 +505,7 @@ export const CreateOfferForm: React.FC<CreateOfferFormProps> = ({
                         }}
                         onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => {
                           e.currentTarget.style.transform = 'scale(1.05)';
-                          e.currentTarget.style.boxShadow = '0 4px 12px rgba(37, 99, 235, 0.4)';
+                          e.currentTarget.style.boxShadow = '0 4px 12px rgba(29, 53, 87, 0.4)';
                         }}
                         onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => {
                           e.currentTarget.style.transform = 'scale(1)';
@@ -522,7 +522,7 @@ export const CreateOfferForm: React.FC<CreateOfferFormProps> = ({
                     gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
                     gap: '12px',
                     fontSize: '13px',
-                    color: '#1e40af',
+                    color: '#1D3557',
                     fontWeight: '600'
                   }}>
                     <div style={{
@@ -561,7 +561,7 @@ export const CreateOfferForm: React.FC<CreateOfferFormProps> = ({
                   
                   <p style={{
                     fontSize: '12px',
-                    color: '#1e40af',
+                    color: '#1D3557',
                     margin: 0,
                     textAlign: 'center',
                     fontWeight: '500',
@@ -588,7 +588,7 @@ export const CreateOfferForm: React.FC<CreateOfferFormProps> = ({
               display: 'block',
               fontSize: '16px',
               fontWeight: '700',
-              color: '#374151',
+              color: '#2C2C2C',
               marginBottom: '12px',
               textTransform: 'uppercase',
               letterSpacing: '0.5px'
@@ -601,7 +601,7 @@ export const CreateOfferForm: React.FC<CreateOfferFormProps> = ({
                 left: '16px',
                 top: '50%',
                 transform: 'translateY(-50%)',
-                color: '#6b7280',
+                color: '#555555',
                 fontSize: '18px',
                 fontWeight: '600'
               }}>
@@ -626,8 +626,8 @@ export const CreateOfferForm: React.FC<CreateOfferFormProps> = ({
                   fontWeight: '600'
                 }}
                 onFocus={(e: React.FocusEvent<HTMLInputElement>) => {
-                  e.currentTarget.style.borderColor = '#2563eb';
-                  e.currentTarget.style.boxShadow = '0 0 0 3px rgba(37, 99, 235, 0.1)';
+                  e.currentTarget.style.borderColor = '#1D3557';
+                  e.currentTarget.style.boxShadow = '0 0 0 3px rgba(29, 53, 87, 0.1)';
                 }}
                 onBlur={(e: React.FocusEvent<HTMLInputElement>) => {
                   e.currentTarget.style.borderColor = '#e5e7eb';
@@ -708,7 +708,7 @@ export const CreateOfferForm: React.FC<CreateOfferFormProps> = ({
                 display: 'block',
                 fontSize: '16px',
                 fontWeight: '700',
-                color: '#374151',
+                color: '#2C2C2C',
                 marginBottom: '12px',
                 textTransform: 'uppercase',
                 letterSpacing: '0.5px'
@@ -731,8 +731,8 @@ export const CreateOfferForm: React.FC<CreateOfferFormProps> = ({
                   backgroundColor: 'white'
                 }}
                 onFocus={(e: React.FocusEvent<HTMLSelectElement>) => {
-                  e.currentTarget.style.borderColor = '#2563eb';
-                  e.currentTarget.style.boxShadow = '0 0 0 3px rgba(37, 99, 235, 0.1)';
+                  e.currentTarget.style.borderColor = '#1D3557';
+                  e.currentTarget.style.boxShadow = '0 0 0 3px rgba(29, 53, 87, 0.1)';
                 }}
                 onBlur={(e: React.FocusEvent<HTMLSelectElement>) => {
                   e.currentTarget.style.borderColor = '#e5e7eb';
@@ -761,7 +761,7 @@ export const CreateOfferForm: React.FC<CreateOfferFormProps> = ({
                 display: 'block',
                 fontSize: '16px',
                 fontWeight: '700',
-                color: '#374151',
+                color: '#2C2C2C',
                 marginBottom: '12px',
                 textTransform: 'uppercase',
                 letterSpacing: '0.5px'
@@ -784,8 +784,8 @@ export const CreateOfferForm: React.FC<CreateOfferFormProps> = ({
                   backgroundColor: 'white'
                 }}
                 onFocus={(e: React.FocusEvent<HTMLSelectElement>) => {
-                  e.currentTarget.style.borderColor = '#2563eb';
-                  e.currentTarget.style.boxShadow = '0 0 0 3px rgba(37, 99, 235, 0.1)';
+                  e.currentTarget.style.borderColor = '#1D3557';
+                  e.currentTarget.style.boxShadow = '0 0 0 3px rgba(29, 53, 87, 0.1)';
                 }}
                 onBlur={(e: React.FocusEvent<HTMLSelectElement>) => {
                   e.currentTarget.style.borderColor = '#e5e7eb';
@@ -817,7 +817,7 @@ export const CreateOfferForm: React.FC<CreateOfferFormProps> = ({
               display: 'block',
               fontSize: '16px',
               fontWeight: '700',
-              color: '#374151',
+              color: '#2C2C2C',
               marginBottom: '12px',
               textTransform: 'uppercase',
               letterSpacing: '0.5px'
@@ -843,8 +843,8 @@ export const CreateOfferForm: React.FC<CreateOfferFormProps> = ({
                 fontFamily: 'inherit'
               }}
               onFocus={(e: React.FocusEvent<HTMLTextAreaElement>) => {
-                e.currentTarget.style.borderColor = '#2563eb';
-                e.currentTarget.style.boxShadow = '0 0 0 3px rgba(37, 99, 235, 0.1)';
+                e.currentTarget.style.borderColor = '#1D3557';
+                e.currentTarget.style.boxShadow = '0 0 0 3px rgba(29, 53, 87, 0.1)';
               }}
               onBlur={(e: React.FocusEvent<HTMLTextAreaElement>) => {
                 e.currentTarget.style.borderColor = '#e5e7eb';
@@ -871,7 +871,7 @@ export const CreateOfferForm: React.FC<CreateOfferFormProps> = ({
                   padding: '16px 32px',
                   fontSize: '16px',
                   fontWeight: '700',
-                  color: '#6b7280',
+                  color: '#555555',
                   background: 'white',
                   border: '2px solid #d1d5db',
                   borderRadius: '12px',
@@ -903,24 +903,24 @@ export const CreateOfferForm: React.FC<CreateOfferFormProps> = ({
                 color: 'white',
                 background: isLoading 
                   ? 'linear-gradient(135deg, #9ca3af 0%, #6b7280 100%)'
-                  : 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)',
+                  : 'linear-gradient(135deg, #1D3557 0%, #457B9D 100%)',
                 border: 'none',
                 borderRadius: '12px',
                 cursor: isLoading ? 'not-allowed' : 'pointer',
                 transition: 'all 0.2s ease',
                 opacity: isLoading ? 0.7 : 1,
-                boxShadow: isLoading ? 'none' : '0 4px 16px rgba(37, 99, 235, 0.4)'
+                boxShadow: isLoading ? 'none' : '0 4px 16px rgba(29, 53, 87, 0.4)'
               }}
               onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => {
                 if (!isLoading) {
                   e.currentTarget.style.transform = 'translateY(-2px)';
-                  e.currentTarget.style.boxShadow = '0 8px 25px rgba(37, 99, 235, 0.6)';
+                  e.currentTarget.style.boxShadow = '0 8px 25px rgba(29, 53, 87, 0.6)';
                 }
               }}
               onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => {
                 if (!isLoading) {
                   e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = '0 4px 16px rgba(37, 99, 235, 0.4)';
+                  e.currentTarget.style.boxShadow = '0 4px 16px rgba(29, 53, 87, 0.4)';
                 }
               }}
             >

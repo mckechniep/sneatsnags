@@ -46,7 +46,7 @@ export const CreateOfferPage: React.FC = () => {
     return (
       <div style={{
         minHeight: '100vh',
-        background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+        background: 'linear-gradient(135deg, #F7F7F7 0%, #FFFFFF 100%)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -66,7 +66,7 @@ export const CreateOfferPage: React.FC = () => {
             width: '80px',
             height: '80px',
             borderRadius: '50%',
-            background: 'linear-gradient(135deg, #2563eb, #7c3aed)',
+            background: 'linear-gradient(135deg, #1D3557, #457B9D)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -85,14 +85,14 @@ export const CreateOfferPage: React.FC = () => {
           <h3 style={{
             fontSize: '20px',
             fontWeight: '700',
-            color: '#1f2937',
+            color: '#2C2C2C',
             margin: '0 0 8px 0'
           }}>
             Loading Event Details
           </h3>
           <p style={{
             fontSize: '16px',
-            color: '#6b7280',
+            color: '#555555',
             margin: 0,
             fontWeight: '500'
           }}>
@@ -117,7 +117,7 @@ export const CreateOfferPage: React.FC = () => {
     return (
       <div style={{
         minHeight: '100vh',
-        background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+        background: 'linear-gradient(135deg, #F7F7F7 0%, #FFFFFF 100%)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -149,14 +149,14 @@ export const CreateOfferPage: React.FC = () => {
           <h1 style={{
             fontSize: '28px',
             fontWeight: '800',
-            color: '#1f2937',
+            color: '#2C2C2C',
             margin: '0 0 12px 0'
           }}>
             Event Not Found
           </h1>
           <p style={{
             fontSize: '16px',
-            color: '#6b7280',
+            color: '#555555',
             margin: '0 0 32px 0',
             lineHeight: '1.6',
             fontWeight: '500'
@@ -169,17 +169,17 @@ export const CreateOfferPage: React.FC = () => {
               padding: '16px 32px',
               fontSize: '16px',
               fontWeight: '700',
-              background: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)',
+              background: 'linear-gradient(135deg, #1D3557 0%, #457B9D 100%)',
               color: 'white',
               border: 'none',
               borderRadius: '12px',
               cursor: 'pointer',
               transition: 'all 0.2s ease',
-              boxShadow: '0 4px 16px rgba(37, 99, 235, 0.4)'
+              boxShadow: '0 4px 16px rgba(29, 53, 87, 0.4)'
             }}
             onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => {
               e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow = '0 8px 25px rgba(37, 99, 235, 0.6)';
+              e.currentTarget.style.boxShadow = '0 8px 25px rgba(29, 53, 87, 0.6)';
             }}
             onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => {
               e.currentTarget.style.transform = 'translateY(0)';
@@ -216,7 +216,7 @@ export const CreateOfferPage: React.FC = () => {
             transform: 'translateX(-50%)',
             width: '200px',
             height: '200px',
-            background: 'linear-gradient(135deg, #2563eb15, #7c3aed15, #dc262615)',
+            background: 'linear-gradient(135deg, #1D355715, #457B9D15, #A8DADC15)',
             borderRadius: '50%',
             filter: 'blur(60px)',
             zIndex: 0
@@ -228,23 +228,23 @@ export const CreateOfferPage: React.FC = () => {
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
-                color: '#2563eb',
+                color: '#1D3557',
                 fontSize: '16px',
                 fontWeight: '600',
                 marginBottom: '24px',
                 padding: '12px 20px',
-                background: 'rgba(37, 99, 235, 0.1)',
+                background: 'rgba(29, 53, 87, 0.1)',
                 border: 'none',
                 borderRadius: '12px',
                 cursor: 'pointer',
                 transition: 'all 0.2s ease'
               }}
               onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => {
-                e.currentTarget.style.background = 'rgba(37, 99, 235, 0.2)';
+                e.currentTarget.style.background = 'rgba(29, 53, 87, 0.2)';
                 e.currentTarget.style.transform = 'translateX(-2px)';
               }}
               onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => {
-                e.currentTarget.style.background = 'rgba(37, 99, 235, 0.1)';
+                e.currentTarget.style.background = 'rgba(29, 53, 87, 0.1)';
                 e.currentTarget.style.transform = 'translateX(0)';
               }}
             >
@@ -258,10 +258,7 @@ export const CreateOfferPage: React.FC = () => {
               <h1 style={{
                 fontSize: 'clamp(28px, 5vw, 40px)',
                 fontWeight: '800',
-                background: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 50%, #dc2626 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
+                color: '#1D3557',
                 margin: '0 0 16px 0',
                 letterSpacing: '-0.02em'
               }}>
@@ -269,7 +266,7 @@ export const CreateOfferPage: React.FC = () => {
               </h1>
               <p style={{
                 fontSize: 'clamp(16px, 2vw, 20px)',
-                color: '#475569',
+                color: '#555555',
                 margin: '0 auto',
                 fontWeight: '500',
                 maxWidth: '600px',

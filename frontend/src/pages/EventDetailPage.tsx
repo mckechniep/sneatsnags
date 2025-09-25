@@ -164,7 +164,7 @@ export const EventDetailPage: React.FC = () => {
     return (
       <div style={{
         minHeight: '100vh',
-        background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+        background: 'linear-gradient(135deg, #F7F7F7 0%, #FFFFFF 100%)',
         padding: '40px 20px'
       }}>
         <div style={{
@@ -184,7 +184,7 @@ export const EventDetailPage: React.FC = () => {
               width: '120px',
               height: '120px',
               borderRadius: '50%',
-              background: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)',
+              background: 'linear-gradient(135deg, #1D3557 0%, #457B9D 100%)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -205,10 +205,7 @@ export const EventDetailPage: React.FC = () => {
             <h3 style={{
               fontSize: '28px',
               fontWeight: '800',
-              background: 'linear-gradient(135deg, #1f2937 0%, #374151 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
+              color: '#1D3557',
               marginBottom: '16px'
             }}>
               Loading Event Details
@@ -216,7 +213,7 @@ export const EventDetailPage: React.FC = () => {
             
             <p style={{
               fontSize: '18px',
-              color: '#6b7280',
+              color: '#555555',
               fontWeight: '500'
             }}>
               Please wait while we fetch the event information...
@@ -242,7 +239,7 @@ export const EventDetailPage: React.FC = () => {
     return (
       <div style={{
         minHeight: '100vh',
-        background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+        background: 'linear-gradient(135deg, #F7F7F7 0%, #FFFFFF 100%)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -285,7 +282,7 @@ export const EventDetailPage: React.FC = () => {
           </h1>
           <p style={{
             fontSize: '18px',
-            color: '#6b7280',
+            color: '#555555',
             margin: '0 0 40px 0',
             lineHeight: '1.6',
             fontWeight: '500'
@@ -300,7 +297,7 @@ export const EventDetailPage: React.FC = () => {
               padding: '16px 32px',
               fontSize: '16px',
               fontWeight: '700',
-              background: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)',
+              background: 'linear-gradient(135deg, #1D3557 0%, #457B9D 100%)',
               color: 'white',
               border: 'none',
               borderRadius: '16px',
@@ -369,28 +366,28 @@ export const EventDetailPage: React.FC = () => {
             style={{
               display: 'inline-flex',
               alignItems: 'center',
-              color: '#2563eb',
+              color: '#1D3557',
               fontSize: '16px',
               fontWeight: '700',
               marginBottom: '32px',
               padding: '16px 24px',
-              background: 'rgba(37, 99, 235, 0.1)',
+              background: 'rgba(29, 53, 87, 0.1)',
               backdropFilter: 'blur(8px)',
               border: 'none',
               borderRadius: '16px',
               cursor: 'pointer',
               transition: 'all 0.3s ease',
-              boxShadow: '0 4px 16px rgba(37, 99, 235, 0.2)'
+              boxShadow: '0 4px 16px rgba(29, 53, 87, 0.2)'
             }}
             onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => {
-              e.currentTarget.style.background = 'rgba(37, 99, 235, 0.2)';
+              e.currentTarget.style.background = 'rgba(29, 53, 87, 0.2)';
               e.currentTarget.style.transform = 'translateX(-4px)';
-              e.currentTarget.style.boxShadow = '0 8px 25px rgba(37, 99, 235, 0.3)';
+              e.currentTarget.style.boxShadow = '0 8px 25px rgba(29, 53, 87, 0.3)';
             }}
             onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => {
-              e.currentTarget.style.background = 'rgba(37, 99, 235, 0.1)';
+              e.currentTarget.style.background = 'rgba(29, 53, 87, 0.1)';
               e.currentTarget.style.transform = 'translateX(0)';
-              e.currentTarget.style.boxShadow = '0 4px 16px rgba(37, 99, 235, 0.2)';
+              e.currentTarget.style.boxShadow = '0 4px 16px rgba(29, 53, 87, 0.2)';
             }}
           >
             <ArrowLeft style={{ width: '20px', height: '20px', marginRight: '12px' }} />
@@ -490,7 +487,7 @@ export const EventDetailPage: React.FC = () => {
                 </h1>
                 <p style={{
                   fontSize: '18px',
-                  color: '#4b5563',
+                  color: '#555555',
                   lineHeight: '1.8',
                   fontWeight: '500'
                 }}>
@@ -521,7 +518,7 @@ export const EventDetailPage: React.FC = () => {
                     width: '52px',
                     height: '52px',
                     borderRadius: '16px',
-                    background: 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)',
+                    background: 'linear-gradient(135deg, #1D3557 0%, #457B9D 100%)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center'
@@ -531,7 +528,7 @@ export const EventDetailPage: React.FC = () => {
                   <h3 style={{
                     fontSize: '20px',
                     fontWeight: '800',
-                    color: '#1f2937',
+                    color: '#2C2C2C',
                     marginLeft: '16px'
                   }}>
                     Event Information
@@ -546,10 +543,10 @@ export const EventDetailPage: React.FC = () => {
                     borderRadius: '12px',
                     border: '1px solid #e2e8f0'
                   }}>
-                    <Calendar style={{ width: '20px', height: '20px', color: '#2563eb', marginRight: '16px', marginTop: '2px' }} />
+                    <Calendar style={{ width: '20px', height: '20px', color: '#1D3557', marginRight: '16px', marginTop: '2px' }} />
                     <div>
                       <div style={{ fontWeight: '700', color: '#1f2937', marginBottom: '4px' }}>{formatDate(event.eventDate)}</div>
-                      <div style={{ fontSize: '14px', color: '#6b7280', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Event Date</div>
+                      <div style={{ fontSize: '14px', color: '#555555', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Event Date</div>
                     </div>
                   </div>
                   <div style={{
@@ -560,10 +557,10 @@ export const EventDetailPage: React.FC = () => {
                     borderRadius: '12px',
                     border: '1px solid #e2e8f0'
                   }}>
-                    <Clock style={{ width: '20px', height: '20px', color: '#2563eb', marginRight: '16px', marginTop: '2px' }} />
+                    <Clock style={{ width: '20px', height: '20px', color: '#1D3557', marginRight: '16px', marginTop: '2px' }} />
                     <div>
                       <div style={{ fontWeight: '700', color: '#1f2937', marginBottom: '4px' }}>{formatTime(event.eventDate)}</div>
-                      <div style={{ fontSize: '14px', color: '#6b7280', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Start Time</div>
+                      <div style={{ fontSize: '14px', color: '#555555', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Start Time</div>
                     </div>
                   </div>
                   <div style={{
@@ -574,10 +571,10 @@ export const EventDetailPage: React.FC = () => {
                     borderRadius: '12px',
                     border: '1px solid #e2e8f0'
                   }}>
-                    <MapPin style={{ width: '20px', height: '20px', color: '#2563eb', marginRight: '16px', marginTop: '2px' }} />
+                    <MapPin style={{ width: '20px', height: '20px', color: '#1D3557', marginRight: '16px', marginTop: '2px' }} />
                     <div>
                       <div style={{ fontWeight: '700', color: '#1f2937', marginBottom: '4px' }}>{event.venue}</div>
-                      <div style={{ fontSize: '14px', color: '#6b7280', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{event.city}, {event.state}</div>
+                      <div style={{ fontSize: '14px', color: '#555555', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{event.city}, {event.state}</div>
                     </div>
                   </div>
                   <div style={{
@@ -588,10 +585,10 @@ export const EventDetailPage: React.FC = () => {
                     borderRadius: '12px',
                     border: '1px solid #e2e8f0'
                   }}>
-                    <Users style={{ width: '20px', height: '20px', color: '#2563eb', marginRight: '16px', marginTop: '2px' }} />
+                    <Users style={{ width: '20px', height: '20px', color: '#1D3557', marginRight: '16px', marginTop: '2px' }} />
                     <div>
                       <div style={{ fontWeight: '700', color: '#1f2937', marginBottom: '4px' }}>{event.totalSeats?.toLocaleString() || 'N/A'}</div>
-                      <div style={{ fontSize: '14px', color: '#6b7280', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Total Capacity</div>
+                      <div style={{ fontSize: '14px', color: '#555555', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Total Capacity</div>
                     </div>
                   </div>
                 </div>
@@ -613,7 +610,7 @@ export const EventDetailPage: React.FC = () => {
                     width: '52px',
                     height: '52px',
                     borderRadius: '16px',
-                    background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                    background: 'linear-gradient(135deg, #457B9D 0%, #A8DADC 100%)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center'
@@ -623,7 +620,7 @@ export const EventDetailPage: React.FC = () => {
                   <h3 style={{
                     fontSize: '20px',
                     fontWeight: '800',
-                    color: '#1f2937',
+                    color: '#2C2C2C',
                     marginLeft: '16px'
                   }}>
                     Pricing & Availability
@@ -631,7 +628,7 @@ export const EventDetailPage: React.FC = () => {
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
                   <div style={{
-                    background: 'linear-gradient(135deg, #2563eb10 0%, #7c3aed10 100%)',
+                    background: 'linear-gradient(135deg, rgba(29, 53, 87, 0.1) 0%, rgba(168, 218, 220, 0.1) 100%)',
                     padding: '32px',
                     borderRadius: '16px',
                     border: '1px solid #e5e7eb',
@@ -639,7 +636,7 @@ export const EventDetailPage: React.FC = () => {
                   }}>
                     <div style={{
                       fontSize: '14px',
-                      color: '#6b7280',
+                      color: '#555555',
                       fontWeight: '600',
                       textTransform: 'uppercase',
                       letterSpacing: '0.8px',
@@ -650,7 +647,7 @@ export const EventDetailPage: React.FC = () => {
                     <div style={{
                       fontSize: '28px',
                       fontWeight: '900',
-                      background: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)',
+                      background: 'linear-gradient(135deg, #1D3557 0%, #457B9D 100%)',
                       WebkitBackgroundClip: 'text',
                       WebkitTextFillColor: 'transparent',
                       backgroundClip: 'text'
@@ -663,18 +660,18 @@ export const EventDetailPage: React.FC = () => {
                     alignItems: 'center',
                     justifyContent: 'space-between',
                     padding: '20px 24px',
-                    background: 'linear-gradient(135deg, #10b98110 0%, #05966910 100%)',
+                    background: 'linear-gradient(135deg, rgba(69, 123, 157, 0.1) 0%, rgba(168, 218, 220, 0.1) 100%)',
                     borderRadius: '12px',
-                    border: '1px solid #10b981'
+                    border: '1px solid #457B9D'
                   }}>
                     <div>
                       <div style={{ fontWeight: '700', color: '#1f2937', marginBottom: '4px' }}>Available Tickets</div>
-                      <div style={{ fontSize: '14px', color: '#6b7280', fontWeight: '600' }}>Ready for offers</div>
+                      <div style={{ fontSize: '14px', color: '#555555', fontWeight: '600' }}>Ready for offers</div>
                     </div>
                     <div style={{
                       fontSize: '32px',
                       fontWeight: '900',
-                      color: '#10b981'
+                      color: '#457B9D'
                     }}>
                       {event.availableSeats?.toLocaleString() || 'N/A'}
                     </div>
@@ -701,7 +698,7 @@ export const EventDetailPage: React.FC = () => {
                     width: '52px',
                     height: '52px',
                     borderRadius: '16px',
-                    background: 'linear-gradient(135deg, #7c3aed 0%, #a855f7 100%)',
+                    background: 'linear-gradient(135deg, #1D3557 0%, #A8DADC 100%)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center'
@@ -711,7 +708,7 @@ export const EventDetailPage: React.FC = () => {
                   <h3 style={{
                     fontSize: '24px',
                     fontWeight: '800',
-                    color: '#1f2937',
+                    color: '#2C2C2C',
                     marginLeft: '16px'
                   }}>
                     Available Sections
@@ -736,9 +733,9 @@ export const EventDetailPage: React.FC = () => {
                         overflow: 'hidden'
                       }}
                       onMouseEnter={(e: React.MouseEvent<HTMLDivElement>) => {
-                        e.currentTarget.style.borderColor = '#2563eb';
+                        e.currentTarget.style.borderColor = '#1D3557';
                         e.currentTarget.style.transform = 'translateY(-2px)';
-                        e.currentTarget.style.boxShadow = '0 12px 25px rgba(37, 99, 235, 0.15)';
+                        e.currentTarget.style.boxShadow = '0 12px 25px rgba(29, 53, 87, 0.15)';
                       }}
                       onMouseLeave={(e: React.MouseEvent<HTMLDivElement>) => {
                         e.currentTarget.style.borderColor = '#e5e7eb';
@@ -748,7 +745,7 @@ export const EventDetailPage: React.FC = () => {
                     >
                       <h4 style={{
                         fontWeight: '800',
-                        color: '#1f2937',
+                        color: '#2C2C2C',
                         marginBottom: '12px',
                         fontSize: '18px',
                         transition: 'color 0.3s ease'
@@ -758,7 +755,7 @@ export const EventDetailPage: React.FC = () => {
                       {section.description && (
                         <p style={{
                           fontSize: '14px',
-                          color: '#6b7280',
+                          color: '#555555',
                           marginBottom: '20px',
                           lineHeight: '1.6',
                           fontWeight: '500'
@@ -778,7 +775,7 @@ export const EventDetailPage: React.FC = () => {
                           <span style={{
                             fontSize: '14px',
                             fontWeight: '600',
-                            color: '#4b5563',
+                            color: '#555555',
                             textTransform: 'uppercase',
                             letterSpacing: '0.5px'
                           }}>
@@ -786,7 +783,7 @@ export const EventDetailPage: React.FC = () => {
                           </span>
                           <span style={{
                             fontWeight: '800',
-                            color: '#1f2937',
+                            color: '#2C2C2C',
                             fontSize: '16px'
                           }}>
                             {section.seatCount?.toLocaleString() || 'N/A'}
@@ -803,7 +800,7 @@ export const EventDetailPage: React.FC = () => {
                           <span style={{
                             fontSize: '14px',
                             fontWeight: '600',
-                            color: '#4b5563',
+                            color: '#555555',
                             textTransform: 'uppercase',
                             letterSpacing: '0.5px'
                           }}>
@@ -811,7 +808,7 @@ export const EventDetailPage: React.FC = () => {
                           </span>
                           <span style={{
                             fontWeight: '800',
-                            background: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)',
+                            background: 'linear-gradient(135deg, #1D3557 0%, #457B9D 100%)',
                             WebkitBackgroundClip: 'text',
                             WebkitTextFillColor: 'transparent',
                             backgroundClip: 'text',
@@ -857,14 +854,14 @@ export const EventDetailPage: React.FC = () => {
                     <h3 style={{
                       fontSize: '24px',
                       fontWeight: '800',
-                      color: '#1f2937',
+                      color: '#2C2C2C',
                       margin: '0 0 4px 0'
                     }}>
                       Related Events
                     </h3>
                     <p style={{
                       fontSize: '16px',
-                      color: '#6b7280',
+                      color: '#555555',
                       margin: 0,
                       fontWeight: '500'
                     }}>
@@ -972,7 +969,7 @@ export const EventDetailPage: React.FC = () => {
                             <h4 style={{
                               fontSize: '16px',
                               fontWeight: '700',
-                              color: '#1f2937',
+                              color: '#2C2C2C',
                               margin: '0 0 8px 0',
                               lineHeight: '1.3',
                               display: '-webkit-box',
@@ -986,7 +983,7 @@ export const EventDetailPage: React.FC = () => {
                             <div style={{ 
                               display: 'flex', 
                               alignItems: 'center', 
-                              color: '#6b7280',
+                              color: '#555555',
                               fontSize: '13px',
                               fontWeight: '500',
                               marginBottom: '8px'
@@ -1004,7 +1001,7 @@ export const EventDetailPage: React.FC = () => {
                             <div style={{ 
                               display: 'flex', 
                               alignItems: 'center', 
-                              color: '#6b7280',
+                              color: '#555555',
                               fontSize: '13px',
                               fontWeight: '500',
                               marginBottom: '12px'
@@ -1026,7 +1023,7 @@ export const EventDetailPage: React.FC = () => {
                               <div>
                                 <span style={{
                                   fontSize: '10px',
-                                  color: '#6b7280',
+                                  color: '#555555',
                                   textTransform: 'uppercase',
                                   letterSpacing: '0.5px',
                                   fontWeight: '600',
@@ -1053,7 +1050,7 @@ export const EventDetailPage: React.FC = () => {
                                 </div>
                                 <div style={{
                                   fontSize: '10px',
-                                  color: '#6b7280',
+                                  color: '#555555',
                                   fontWeight: '500'
                                 }}>
                                   available
@@ -1085,7 +1082,7 @@ export const EventDetailPage: React.FC = () => {
               borderRadius: '24px',
               padding: '32px',
               boxShadow: '0 20px 40px rgba(0, 0, 0, 0.12)',
-              border: '2px solid rgba(37, 99, 235, 0.15)',
+              border: '2px solid rgba(29, 53, 87, 0.15)',
               position: 'sticky',
               top: '32px'
             }}>
@@ -1093,7 +1090,7 @@ export const EventDetailPage: React.FC = () => {
                 {/* Price Display */}
                 <div style={{
                   textAlign: 'center',
-                  background: 'linear-gradient(135deg, #2563eb10 0%, #7c3aed10 100%)',
+                  background: 'linear-gradient(135deg, rgba(29, 53, 87, 0.1) 0%, rgba(168, 218, 220, 0.1) 100%)',
                   padding: '32px 24px',
                   borderRadius: '16px',
                   border: '1px solid #e5e7eb'
@@ -1101,7 +1098,7 @@ export const EventDetailPage: React.FC = () => {
                   <div style={{
                     fontSize: '14px',
                     fontWeight: '700',
-                    color: '#6b7280',
+                    color: '#555555',
                     textTransform: 'uppercase',
                     letterSpacing: '0.8px',
                     marginBottom: '12px'
@@ -1111,7 +1108,7 @@ export const EventDetailPage: React.FC = () => {
                   <div style={{
                     fontSize: '48px',
                     fontWeight: '900',
-                    background: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)',
+                    background: 'linear-gradient(135deg, #1D3557 0%, #457B9D 100%)',
                     WebkitBackgroundClip: 'text',
                     WebkitTextFillColor: 'transparent',
                     backgroundClip: 'text',
@@ -1122,7 +1119,7 @@ export const EventDetailPage: React.FC = () => {
                   </div>
                   <div style={{
                     fontSize: '16px',
-                    color: '#6b7280',
+                    color: '#555555',
                     fontWeight: '600'
                   }}>
                     {event.availableSeats || 'N/A'} tickets available
@@ -1138,24 +1135,24 @@ export const EventDetailPage: React.FC = () => {
                       padding: '20px',
                       fontSize: '18px',
                       fontWeight: '800',
-                      background: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)',
+                      background: 'linear-gradient(135deg, #1D3557 0%, #457B9D 100%)',
                       color: 'white',
                       border: 'none',
                       borderRadius: '16px',
                       cursor: 'pointer',
                       transition: 'all 0.3s ease',
-                      boxShadow: '0 8px 25px rgba(37, 99, 235, 0.4)',
+                      boxShadow: '0 8px 25px rgba(29, 53, 87, 0.4)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center'
                     }}
                     onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => {
                       e.currentTarget.style.transform = 'translateY(-2px)';
-                      e.currentTarget.style.boxShadow = '0 12px 35px rgba(37, 99, 235, 0.6)';
+                      e.currentTarget.style.boxShadow = '0 12px 35px rgba(29, 53, 87, 0.6)';
                     }}
                     onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => {
                       e.currentTarget.style.transform = 'translateY(0)';
-                      e.currentTarget.style.boxShadow = '0 8px 25px rgba(37, 99, 235, 0.4)';
+                      e.currentTarget.style.boxShadow = '0 8px 25px rgba(29, 53, 87, 0.4)';
                     }}
                   >
                     <Plus style={{ width: '24px', height: '24px', marginRight: '12px' }} />
@@ -1171,13 +1168,13 @@ export const EventDetailPage: React.FC = () => {
                         padding: '20px',
                         fontSize: '18px',
                         fontWeight: '800',
-                        background: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)',
+                        background: 'linear-gradient(135deg, #1D3557 0%, #457B9D 100%)',
                         color: 'white',
                         border: 'none',
                         borderRadius: '16px',
                         cursor: 'pointer',
                         transition: 'all 0.3s ease',
-                        boxShadow: '0 8px 25px rgba(37, 99, 235, 0.4)'
+                        boxShadow: '0 8px 25px rgba(29, 53, 87, 0.4)'
                       }}>
                         Sign In to Make Offer
                       </button>
@@ -1189,8 +1186,8 @@ export const EventDetailPage: React.FC = () => {
                         fontSize: '18px',
                         fontWeight: '800',
                         background: 'transparent',
-                        color: '#2563eb',
-                        border: '2px solid #2563eb',
+                        color: '#1D3557',
+                        border: '2px solid #1D3557',
                         borderRadius: '16px',
                         cursor: 'pointer',
                         transition: 'all 0.3s ease'
@@ -1252,7 +1249,7 @@ export const EventDetailPage: React.FC = () => {
                       fontSize: '16px',
                       fontWeight: '700',
                       background: 'transparent',
-                      color: '#6b7280',
+                      color: '#555555',
                       border: '2px solid #d1d5db',
                       borderRadius: '12px',
                       cursor: 'pointer',
@@ -1294,7 +1291,7 @@ export const EventDetailPage: React.FC = () => {
                   width: '52px',
                   height: '52px',
                   borderRadius: '16px',
-                  background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                  background: 'linear-gradient(135deg, #457B9D 0%, #1D3557 100%)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center'
@@ -1320,13 +1317,13 @@ export const EventDetailPage: React.FC = () => {
                   <h4 style={{
                     fontWeight: '800',
                     fontSize: '18px',
-                    color: '#1f2937',
+                    color: '#2C2C2C',
                     marginBottom: '12px'
                   }}>
                     {event.venue}
                   </h4>
                   <p style={{
-                    color: '#6b7280',
+                    color: '#555555',
                     lineHeight: '1.6',
                     fontWeight: '500',
                     fontSize: '16px'
@@ -1346,8 +1343,8 @@ export const EventDetailPage: React.FC = () => {
                     fontSize: '16px',
                     fontWeight: '700',
                     background: 'transparent',
-                    color: '#3b82f6',
-                    border: '2px solid #3b82f6',
+                    color: '#457B9D',
+                    border: '2px solid #457B9D',
                     borderRadius: '12px',
                     cursor: 'pointer',
                     transition: 'all 0.3s ease',
@@ -1356,14 +1353,14 @@ export const EventDetailPage: React.FC = () => {
                     justifyContent: 'center'
                   }}
                   onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => {
-                    e.currentTarget.style.background = '#3b82f6';
+                    e.currentTarget.style.background = '#457B9D';
                     e.currentTarget.style.color = 'white';
                     e.currentTarget.style.transform = 'translateY(-1px)';
-                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.3)';
+                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(69, 123, 157, 0.3)';
                   }}
                   onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => {
                     e.currentTarget.style.background = 'transparent';
-                    e.currentTarget.style.color = '#3b82f6';
+                    e.currentTarget.style.color = '#457B9D';
                     e.currentTarget.style.transform = 'translateY(0)';
                     e.currentTarget.style.boxShadow = 'none';
                   }}
@@ -1391,7 +1388,7 @@ export const EventDetailPage: React.FC = () => {
                   width: '52px',
                   height: '52px',
                   borderRadius: '16px',
-                  background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+                  background: 'linear-gradient(135deg, #A8DADC 0%, #457B9D 100%)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center'
@@ -1419,7 +1416,7 @@ export const EventDetailPage: React.FC = () => {
                 }}>
                   <span style={{
                     fontWeight: '600',
-                    color: '#4b5563',
+                    color: '#555555',
                     fontSize: '16px'
                   }}>
                     Status
@@ -1432,7 +1429,7 @@ export const EventDetailPage: React.FC = () => {
                     textTransform: 'uppercase',
                     letterSpacing: '0.5px',
                     ...(event.status === 'ACTIVE' ? {
-                      background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                      background: 'linear-gradient(135deg, #457B9D 0%, #A8DADC 100%)',
                       color: 'white'
                     } : {
                       background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
@@ -1453,13 +1450,13 @@ export const EventDetailPage: React.FC = () => {
                 }}>
                   <span style={{
                     fontWeight: '600',
-                    color: '#4b5563',
+                    color: '#555555',
                     fontSize: '16px'
                   }}>
                     Listed
                   </span>
                   <span style={{
-                    color: '#1f2937',
+                    color: '#2C2C2C',
                     fontWeight: '700',
                     fontSize: '16px'
                   }}>
@@ -1477,13 +1474,13 @@ export const EventDetailPage: React.FC = () => {
                 }}>
                   <span style={{
                     fontWeight: '600',
-                    color: '#4b5563',
+                    color: '#555555',
                     fontSize: '16px'
                   }}>
                     Updated
                   </span>
                   <span style={{
-                    color: '#1f2937',
+                    color: '#2C2C2C',
                     fontWeight: '700',
                     fontSize: '16px'
                   }}>
