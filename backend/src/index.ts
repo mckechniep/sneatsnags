@@ -17,6 +17,7 @@ import { transactionRoutes } from "./routes/transaction";
 import { adminRoutes } from "./routes/admin";
 import webhookRoutes from "./routes/webhook";
 import testimonialRoutes from "./routes/testimonial";
+import ticketmasterRoutes from "./routes/ticketmaster";
 import { setupSwagger } from "./config/swagger";
 
 const app = express();
@@ -74,12 +75,13 @@ app.use("/api/listings", listingRoutes);
 app.use("/api/transactions", transactionRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/testimonials", testimonialRoutes);
+app.use("/api/ticketmaster", ticketmasterRoutes);
 
 //Error handling
 app.use(errorHandler);
 
 //404 Handler
-app.use("*", (req, res) => {
+app.use("*", (_req, res) => {
   res.status(404).json({ error: "Route not found" });
 });
 

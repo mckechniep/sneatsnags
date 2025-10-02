@@ -1,39 +1,96 @@
 import { Request, Response, NextFunction } from "express";
 import { successResponse, errorResponse } from "../utils/response";
 import { logger } from "../utils/logger";
-import { eventService } from "../services/eventService";
+import { ticketmasterService } from "../services/ticketmasterService";
 import {
   getPaginationParams,
   createPaginationResult,
 } from "../utils/pagination";
 import { AuthenticatedRequest } from "../types/auth";
-import {
-  createEventSchema,
-  updateEventSchema,
-  createEventSectionSchema,
-  updateEventSectionSchema,
-  eventSearchSchema,
-} from "../utils/validations";
 
 export const eventController = {
-  // Get all events (public)
+  // Get all events (public) - from Ticketmaster
   getEvents: async (req: Request, res: Response) => {
     try {
-      const { page, limit, skip } = getPaginationParams(req.query);
+      const { page, limit } = getPaginationParams(req.query);
       const { city, state, eventType, category, search, startDate, endDate } =
         req.query;
 
-      const result = await eventService.getEvents({
-        page,
-        limit,
-        city: city as string,
-        state: state as string,
-        eventType: eventType as string,
-        category: category as string,
-        search: search as string,
-        dateFrom: startDate as string,
-        dateTo: endDate as string,
+      // Prepare Ticketmaster search parameters
+      const searchParams: any = {
+        countryCode: 'US',
+        size: limit,
+        page: (page || 1) - 1, // TM uses 0-based pagination
+        sort: 'date,asc',
+      };
+
+      if (search) searchParams.keyword = search;
+      if (city) searchParams.city = city;
+      if (eventType) searchParams.classificationName = eventType;
+      if (startDate) searchParams.startDateTime = new Date(startDate as string).toISOString();
+      if (endDate) searchParams.endDateTime = new Date(endDate as string).toISOString();
+
+      const tmResponse = await ticketmasterService.searchEvents(searchParams);
+
+      if (!tmResponse || !tmResponse._embedded?.events) {
+        return res.json(successResponse({
+          data: [],
+          pagination: {
+            page: page || 1,
+            limit: limit || 20,
+            total: 0,
+            totalPages: 0,
+            hasNext: false,
+            hasPrev: false,
+          }
+        }, "No events found"));
+      }
+
+      // Transform Ticketmaster events to our format
+      const transformedEvents = tmResponse._embedded.events.map(tmEvent => {
+        const transformed = ticketmasterService.transformEventToInternal(tmEvent);
+        return {
+          ...transformed,
+          id: tmEvent.id,
+          date: transformed.eventDate.toISOString(),
+          time: transformed.eventDate.toISOString(),
+          totalCapacity: 0,
+          ticketsAvailable: 0,
+          sections: [],
+          _count: {
+            offers: 0,
+            listings: 0,
+            transactions: 0,
+          }
+        };
       });
+
+      // Apply additional filtering if needed
+      let filteredEvents = transformedEvents;
+
+      if (category) {
+        filteredEvents = filteredEvents.filter(event =>
+          event.category?.toLowerCase().includes((category as string).toLowerCase())
+        );
+      }
+
+      if (state) {
+        filteredEvents = filteredEvents.filter(event =>
+          event.state?.toLowerCase().includes((state as string).toLowerCase())
+        );
+      }
+
+      const result = {
+        data: filteredEvents,
+        pagination: {
+          page: tmResponse.page.number + 1, // Convert back to 1-based
+          limit: tmResponse.page.size,
+          total: tmResponse.page.totalElements,
+          totalPages: tmResponse.page.totalPages,
+          hasNext: tmResponse.page.number + 1 < tmResponse.page.totalPages,
+          hasPrev: tmResponse.page.number > 0,
+        }
+      };
 
       res.json(successResponse(result, "Events retrieved"));
     } catch (error) {
@@ -42,15 +99,32 @@ export const eventController = {
     }
   },
 
-  // Get single event by ID (public)
+  // Get single event by ID (public) - from Ticketmaster
   getEventById: async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
-      const event = await eventService.getEventById(id);
+      const tmEvent = await ticketmasterService.getEventById(id);
 
-      if (!event) {
+      if (!tmEvent) {
         return res.status(404).json(errorResponse("Event not found"));
       }
+
+      // Transform to our format
+      const transformed = ticketmasterService.transformEventToInternal(tmEvent);
+      const event = {
+        ...transformed,
+        id: tmEvent.id,
+        date: transformed.eventDate.toISOString(),
+        time: transformed.eventDate.toISOString(),
+        totalCapacity: 0,
+        ticketsAvailable: 0,
+        sections: [],
+        _count: {
+          offers: 0,
+          listings: 0,
+          transactions: 0,
+        }
+      };
 
       res.json(successResponse(event, "Event retrieved"));
     } catch (error) {
@@ -59,23 +133,29 @@ export const eventController = {
     }
   },
 
-  // Get event sections (public)
+  // Get event sections (public) - Ticketmaster events don't have local sections
   getEventSections: async (req: Request, res: Response) => {
     try {
-      const { id } = req.params;
-      const sections = await eventService.getEventSections(id);
-      res.json(successResponse(sections, "Event sections retrieved"));
+      // Ticketmaster events don't have sections in our local database
+      // Return empty array for now
+      res.json(successResponse([], "Event sections retrieved"));
     } catch (error) {
       logger.error("Get event sections error:", error);
       res.status(500).json(errorResponse("Failed to retrieve event sections"));
     }
   },
 
-  // Get event statistics (public)
+  // Get event statistics (public) - Default stats for Ticketmaster events
   getEventStats: async (req: Request, res: Response) => {
     try {
-      const { id } = req.params;
-      const stats = await eventService.getEventStats(id);
+      // Return default stats for Ticketmaster events
+      const stats = {
+        totalOffers: 0,
+        totalListings: 0,
+        totalTransactions: 0,
+        averageOfferPrice: 0,
+        averageListingPrice: 0,
+      };
       res.json(successResponse(stats, "Event statistics retrieved"));
     } catch (error) {
       logger.error("Get event stats error:", error);
@@ -85,115 +165,61 @@ export const eventController = {
     }
   },
 
-  // Create event (admin only)
+  // Create event (admin only) - Not supported with Ticketmaster-only events
   createEvent: async (
     req: AuthenticatedRequest,
     res: Response,
     next: NextFunction
   ) => {
-    try {
-      logger.info(
-        "Creating event with data:",
-        JSON.stringify(req.body, null, 2)
-      );
-      const validatedData = createEventSchema.parse(req.body);
-      const event = await eventService.createEvent(validatedData);
-      logger.info("Event created successfully:", event.id);
-      res
-        .status(201)
-        .json(successResponse(event, "Event created successfully"));
-    } catch (error) {
-      logger.error("Create event error:", error);
-      const errorMessage =
-        error instanceof Error ? error.message : "Failed to create event";
-      res.status(500).json(errorResponse(errorMessage));
-    }
+    res.status(501).json(errorResponse("Event creation not supported. Events are sourced from Ticketmaster."));
   },
 
+  // Update event (admin only) - Not supported with Ticketmaster-only events
   updateEvent: async (
-    req: AuthenticatedRequest,
+    _req: AuthenticatedRequest,
     res: Response,
-    next: NextFunction
+    _next: NextFunction
   ) => {
-    try {
-      const { id } = req.params;
-      const validatedData = updateEventSchema.parse(req.body);
-      const event = await eventService.updateEvent(id, validatedData);
-      res.json(successResponse(event, "Event updated successfully"));
-    } catch (error) {
-      next(error);
-    }
+    res.status(501).json(errorResponse("Event modification not supported. Events are sourced from Ticketmaster."));
   },
 
-  // Delete event (admin only)
+  // Delete event (admin only) - Not supported with Ticketmaster-only events
   deleteEvent: async (
-    req: AuthenticatedRequest,
+    _req: AuthenticatedRequest,
     res: Response,
-    next: NextFunction
+    _next: NextFunction
   ) => {
-    try {
-      const { id } = req.params;
-      await eventService.deleteEvent(id);
-      res.json(successResponse(null, "Event deleted successfully"));
-    } catch (error) {
-      next(error);
-    }
+    res.status(501).json(errorResponse("Event deletion not supported. Events are sourced from Ticketmaster."));
   },
 
-  // Create event section (admin only)
+  // Create event section (admin only) - Not supported with Ticketmaster-only events
   createSection: async (
-    req: AuthenticatedRequest,
+    _req: AuthenticatedRequest,
     res: Response,
-    next: NextFunction
+    _next: NextFunction
   ) => {
-    try {
-      const { id: eventId } = req.params;
-      const sectionData = { ...req.body, eventId };
-      const validatedData = createEventSectionSchema.parse(sectionData);
-      const section = await eventService.createSection(validatedData);
-      res
-        .status(201)
-        .json(successResponse(section, "Section created successfully"));
-    } catch (error) {
-      next(error);
-    }
+    res.status(501).json(errorResponse("Section management not supported. Events are sourced from Ticketmaster."));
   },
 
-  // Update event section (admin only)
+  // Update event section (admin only) - Not supported with Ticketmaster-only events
   updateSection: async (
-    req: AuthenticatedRequest,
+    _req: AuthenticatedRequest,
     res: Response,
-    next: NextFunction
+    _next: NextFunction
   ) => {
-    try {
-      const { sectionId } = req.params;
-      const validatedData = updateEventSectionSchema.parse(req.body);
-      const section = await eventService.updateSection(
-        sectionId,
-        validatedData
-      );
-      res.json(successResponse(section, "Section updated successfully"));
-    } catch (error) {
-      next(error);
-    }
+    res.status(501).json(errorResponse("Section management not supported. Events are sourced from Ticketmaster."));
   },
 
-  // Delete event section (admin only)
+  // Delete event section (admin only) - Not supported with Ticketmaster-only events
   deleteSection: async (
-    req: AuthenticatedRequest,
+    _req: AuthenticatedRequest,
     res: Response,
-    next: NextFunction
+    _next: NextFunction
   ) => {
-    try {
-      const { sectionId } = req.params;
-      await eventService.deleteSection(sectionId);
-      res.json(successResponse(null, "Section deleted successfully"));
-    } catch (error) {
-      next(error);
-    }
+    res.status(501).json(errorResponse("Section management not supported. Events are sourced from Ticketmaster."));
   },
 
-  // Search events (public)
+  // Search events (public) - from Ticketmaster
   searchEvents: async (req: Request, res: Response) => {
     try {
       const { q, city, state, eventType, limit = 10 } = req.query;
@@ -202,45 +228,126 @@ export const eventController = {
         return res.status(400).json(errorResponse("Search query is required"));
       }
 
-      const events = await eventService.searchEvents({
-        query: q as string,
+      const tmEvents = await ticketmasterService.searchEventsByKeyword(q as string, {
         city: city as string,
         state: state as string,
-        eventType: eventType as string,
-        limit: parseInt(limit as string),
+        countryCode: 'US',
+        classificationName: eventType as string,
+        size: parseInt(limit as string),
       });
 
-      res.json(successResponse(events, "Search completed"));
+      // Transform events to our format
+      const transformedEvents = tmEvents.map(tmEvent => {
+        const transformed = ticketmasterService.transformEventToInternal(tmEvent);
+        return {
+          ...transformed,
+          id: tmEvent.id,
+          date: transformed.eventDate.toISOString(),
+          time: transformed.eventDate.toISOString(),
+          totalCapacity: 0,
+          ticketsAvailable: 0,
+          sections: [],
+          _count: {
+            offers: 0,
+            listings: 0,
+            transactions: 0,
+          }
+        };
+      });
+
+      res.json(successResponse(transformedEvents, "Search completed"));
     } catch (error) {
       logger.error("Search events error:", error);
       res.status(500).json(errorResponse("Failed to search events"));
     }
   },
 
-  // Get popular events (public)
+  // Get popular events (public) - from Ticketmaster
   getPopularEvents: async (req: Request, res: Response) => {
     try {
       const { limit = 10 } = req.query;
-      const events = await eventService.getPopularEvents(
-        parseInt(limit as string)
-      );
-      res.json(successResponse(events, "Popular events retrieved"));
+
+      // Get popular music events from Ticketmaster
+      const tmEvents = await ticketmasterService.getEventsByClassification('music', {
+        countryCode: 'US',
+        size: parseInt(limit as string),
+      });
+
+      // Transform events to our format
+      const transformedEvents = tmEvents.map(tmEvent => {
+        const transformed = ticketmasterService.transformEventToInternal(tmEvent);
+        return {
+          ...transformed,
+          id: tmEvent.id,
+          date: transformed.eventDate.toISOString(),
+          time: transformed.eventDate.toISOString(),
+          totalCapacity: 0,
+          ticketsAvailable: 0,
+          sections: [],
+          _count: {
+            offers: 0,
+            listings: 0,
+            transactions: 0,
+          }
+        };
+      });
+
+      res.json(successResponse(transformedEvents, "Popular events retrieved"));
     } catch (error) {
       logger.error("Get popular events error:", error);
       res.status(500).json(errorResponse("Failed to retrieve popular events"));
     }
   },
 
-  // Get upcoming events (public)
+  // Get upcoming events (public) - from Ticketmaster
   getUpcomingEvents: async (req: Request, res: Response) => {
     try {
       const { limit = 10, city, state } = req.query;
-      const events = await eventService.getUpcomingEvents({
-        limit: parseInt(limit as string),
-        city: city as string,
-        state: state as string,
+
+      // Prepare search parameters for upcoming events
+      const searchParams: any = {
+        countryCode: 'US',
+        size: parseInt(limit as string),
+        sort: 'date,asc',
+        startDateTime: new Date().toISOString(), // Only future events
+      };
+
+      if (city) searchParams.city = city;
+
+      const tmResponse = await ticketmasterService.searchEvents(searchParams);
+
+      let tmEvents: any[] = [];
+      if (tmResponse?._embedded?.events) {
+        tmEvents = tmResponse._embedded.events;
+      }
+
+      // Transform events to our format
+      let transformedEvents = tmEvents.map(tmEvent => {
+        const transformed = ticketmasterService.transformEventToInternal(tmEvent);
+        return {
+          ...transformed,
+          id: tmEvent.id,
+          date: transformed.eventDate.toISOString(),
+          time: transformed.eventDate.toISOString(),
+          totalCapacity: 0,
+          ticketsAvailable: 0,
+          sections: [],
+          _count: {
+            offers: 0,
+            listings: 0,
+            transactions: 0,
+          }
+        };
       });
-      res.json(successResponse(events, "Upcoming events retrieved"));
+
+      // Filter by state if provided
+      if (state) {
+        transformedEvents = transformedEvents.filter(event =>
+          event.state?.toLowerCase().includes((state as string).toLowerCase())
+        );
+      }
+
+      res.json(successResponse(transformedEvents, "Upcoming events retrieved"));
     } catch (error) {
       logger.error("Get upcoming events error:", error);
       res.status(500).json(errorResponse("Failed to retrieve upcoming events"));
