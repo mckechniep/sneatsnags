@@ -9,26 +9,137 @@ import {
 import { AuthenticatedRequest } from "../types/auth";
 
 export const eventController = {
-  // Get all events (public) - from Ticketmaster
+  // Get all events (public) - from Ticketmaster with comprehensive search criteria
   getEvents: async (req: Request, res: Response) => {
     try {
       const { page, limit } = getPaginationParams(req.query);
-      const { city, state, eventType, category, search, startDate, endDate } =
-        req.query;
+      const {
+        // Location filters
+        city,
+        state,
+        countryCode,
+        postalCode,
+        radius,
+        unit,
+        dmaId,
+
+        // Event classification filters
+        eventType,
+        category,
+        segment,
+        genre,
+        subGenre,
+        classificationName,
+        segmentId,
+        genreId,
+        subGenreId,
+
+        // Search and keyword
+        search,
+        keyword,
+
+        // Date and time filters
+        startDate,
+        endDate,
+        startDateTime,
+        endDateTime,
+
+        // Price filters
+        minPrice,
+        maxPrice,
+
+        // Source and availability
+        source,
+        ageRestrictions,
+        includeTBD,
+        includeTBA,
+        includeTest,
+
+        // Venue and attraction filters
+        venueId,
+        attractionId,
+        promoterId,
+
+        // Sorting and display
+        sort,
+        sortOrder,
+        locale,
+
+        // Additional filters
+        onSaleStartFrom,
+        onSaleStartTo,
+        onSaleEndFrom,
+        onSaleEndTo,
+      } = req.query;
 
       // Prepare Ticketmaster search parameters
       const searchParams: any = {
-        countryCode: 'US',
+        countryCode: (countryCode as string) || 'US',
         size: limit,
         page: (page || 1) - 1, // TM uses 0-based pagination
-        sort: 'date,asc',
+        sort: (sort as string) || 'date,asc',
+        includeTBD: (includeTBD as string) || 'yes',
+        includeTBA: (includeTBA as string) || 'yes',
+        includeTest: (includeTest as string) || 'no',
       };
 
-      if (search) searchParams.keyword = search;
-      if (city) searchParams.city = city;
-      if (eventType) searchParams.classificationName = eventType;
-      if (startDate) searchParams.startDateTime = new Date(startDate as string).toISOString();
-      if (endDate) searchParams.endDateTime = new Date(endDate as string).toISOString();
+      // Add search/keyword parameters
+      if (search || keyword) {
+        searchParams.keyword = (search || keyword) as string;
+      }
+
+      // Add location parameters
+      if (city) searchParams.city = city as string;
+      if (state) searchParams.stateCode = state as string;
+      if (postalCode) searchParams.postalCode = postalCode as string;
+      if (radius) searchParams.radius = radius as string;
+      if (unit) searchParams.unit = unit as string; // miles or km
+      if (dmaId) searchParams.dmaId = dmaId as string;
+
+      // Add classification parameters
+      if (eventType || classificationName) {
+        searchParams.classificationName = (eventType || classificationName) as string;
+      }
+      if (segment) searchParams.segmentName = segment as string;
+      if (genre) searchParams.genreName = genre as string;
+      if (subGenre) searchParams.subGenreName = subGenre as string;
+      if (segmentId) searchParams.segmentId = segmentId as string;
+      if (genreId) searchParams.genreId = genreId as string;
+      if (subGenreId) searchParams.subGenreId = subGenreId as string;
+
+      // Add date/time parameters - default to current/future events only
+      if (startDate) {
+        searchParams.startDateTime = new Date(startDate as string).toISOString().split('.')[0] + 'Z';
+      } else if (!startDateTime) {
+        // Default: only show current and future events
+        searchParams.startDateTime = new Date().toISOString().split('.')[0] + 'Z';
+      }
+
+      if (endDate) {
+        searchParams.endDateTime = new Date(endDate as string).toISOString().split('.')[0] + 'Z';
+      }
+      if (startDateTime) {
+        searchParams.startDateTime = new Date(startDateTime as string).toISOString().split('.')[0] + 'Z';
+      }
+      if (endDateTime) {
+        searchParams.endDateTime = new Date(endDateTime as string).toISOString().split('.')[0] + 'Z';
+      }
+
+      // Add additional filters
+      if (source) searchParams.source = source as string;
+      if (venueId) searchParams.venueId = venueId as string;
+      if (attractionId) searchParams.attractionId = attractionId as string;
+      if (promoterId) searchParams.promoterId = promoterId as string;
+      if (locale) searchParams.locale = locale as string;
+      if (ageRestrictions) searchParams.ageRestrictions = ageRestrictions as string;
+
+      // Add on-sale date filters
+      if (onSaleStartFrom) {
+        searchParams.onsaleStartDateTime = new Date(onSaleStartFrom as string).toISOString().split('.')[0] + 'Z';
+      }
+      if (onSaleEndFrom) {
+        searchParams.onsaleEndDateTime = new Date(onSaleEndFrom as string).toISOString().split('.')[0] + 'Z';
+      }
 
       const tmResponse = await ticketmasterService.searchEvents(searchParams);
 
@@ -65,21 +176,39 @@ export const eventController = {
         };
       });
 
-      // Apply additional filtering if needed
+      // Apply additional client-side filtering if needed
       let filteredEvents = transformedEvents;
 
+      // Filter by category if specified (post-processing since TM might not have exact category matches)
       if (category) {
         filteredEvents = filteredEvents.filter(event =>
-          event.category?.toLowerCase().includes((category as string).toLowerCase())
+          event.category?.toLowerCase().includes((category as string).toLowerCase()) ||
+          event.genre?.toLowerCase().includes((category as string).toLowerCase()) ||
+          event.segment?.toLowerCase().includes((category as string).toLowerCase())
         );
       }
 
-      if (state) {
-        filteredEvents = filteredEvents.filter(event =>
-          event.state?.toLowerCase().includes((state as string).toLowerCase())
-        );
+      // Filter by price range if specified (post-processing)
+      if (minPrice || maxPrice) {
+        filteredEvents = filteredEvents.filter(event => {
+          const eventMinPrice = event.minPrice || 0;
+          const eventMaxPrice = event.maxPrice || 0;
+
+          let priceMatches = true;
+
+          if (minPrice && eventMaxPrice > 0) {
+            priceMatches = priceMatches && eventMaxPrice >= parseFloat(minPrice as string);
+          }
+
+          if (maxPrice && eventMinPrice > 0) {
+            priceMatches = priceMatches && eventMinPrice <= parseFloat(maxPrice as string);
+          }
+
+          return priceMatches;
+        });
       }
 
+      // Enhanced pagination response with metadata
       const result = {
         data: filteredEvents,
         pagination: {
@@ -89,6 +218,25 @@ export const eventController = {
           totalPages: tmResponse.page.totalPages,
           hasNext: tmResponse.page.number + 1 < tmResponse.page.totalPages,
           hasPrev: tmResponse.page.number > 0,
+          filteredTotal: filteredEvents.length, // Events after client-side filtering
+          maxPages: Math.min(tmResponse.page.totalPages, 1000), // TM limit
+        },
+        metadata: {
+          searchCriteria: {
+            location: { city, state, countryCode: searchParams.countryCode },
+            classification: { eventType: eventType || classificationName, segment, genre, subGenre },
+            dateRange: { startDate, endDate },
+            priceRange: { minPrice, maxPrice },
+            keyword: search || keyword,
+            source: source || 'all',
+            sorting: searchParams.sort,
+          },
+          responseInfo: {
+            source: 'Ticketmaster Discovery API v2',
+            apiResponseTime: Date.now(),
+            totalAvailableEvents: tmResponse.page.totalElements,
+            currentPageEvents: filteredEvents.length,
+          }
         }
       };
 

@@ -565,6 +565,7 @@ export class TicketmasterService {
       includeTBD: 'yes',
       includeTBA: 'yes',
       includeTest: 'no',
+      startDateTime: new Date().toISOString().split('.')[0] + 'Z', // Only current/future events
       ...options,
     };
 
@@ -588,7 +589,7 @@ export class TicketmasterService {
       includeTBD: 'yes',
       includeTBA: 'yes',
       includeTest: 'no',
-      startDateTime: options.startDate,
+      startDateTime: options.startDate || new Date().toISOString().split('.')[0] + 'Z', // Default to current/future events
       endDateTime: options.endDate,
       classificationName: options.classificationName,
     };
@@ -612,6 +613,7 @@ export class TicketmasterService {
       includeTBD: 'yes',
       includeTBA: 'yes',
       includeTest: 'no',
+      startDateTime: new Date().toISOString().split('.')[0] + 'Z', // Only current/future events
       ...options,
     };
 

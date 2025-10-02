@@ -1,35 +1,27 @@
 import { useState, useEffect } from 'react';
-import { 
-  Box, 
-  Typography, 
-  Grid, 
-  Card, 
-  CardContent, 
-  Avatar, 
-  IconButton,
-  Chip,
-  Divider,
+import {
+  Box,
+  Typography,
+  Grid,
+  Card,
+  CardContent,
+  Avatar,
   LinearProgress,
   Stack,
   Paper,
   useTheme,
   alpha
 } from '@mui/material';
-import { 
-  TrendingUp, 
-  ShoppingCart, 
-  Assignment, 
+import {
+  ShoppingCart,
   Event as EventIcon,
-  Search,
   LocalOffer,
   ArrowForward,
   Timeline,
   CheckCircle,
-  AccessTime,
-  Star,
-  CardGiftcard
+  AccessTime
 } from '@mui/icons-material';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { buyerService } from '../../services/buyerService';
 import { Button } from '../ui/Button';
@@ -64,13 +56,12 @@ export const BuyerDashboard = () => {
   const fetchBuyerStats = async () => {
     try {
       setLoading(true);
-      const [offersResponse, transactionsResponse] = await Promise.all([
-        buyerService.getMyOffers(),
-        buyerService.getTransactions()
+      const [offersResponse] = await Promise.all([
+        buyerService.getMyOffers()
       ]);
       
       const offers = offersResponse.data || [];
-      const activeOffers = offers.filter(offer => offer.status === 'PENDING').length;
+      const activeOffers = offers.filter(offer => offer.status === 'ACTIVE').length;
       const acceptedOffers = offers.filter(offer => offer.status === 'ACCEPTED').length;
       const totalOffers = offers.length;
       
@@ -123,13 +114,12 @@ export const BuyerDashboard = () => {
             </Typography>
           </Box>
         </Box>
-        <Button 
-          component={Link} 
-          to="/events" 
-          variant="gradient" 
+        <Button
+          onClick={() => navigate('/events')}
+          variant="gradient"
           size="lg"
           startIcon={<EventIcon />}
-          sx={{ 
+          sx={{
             borderRadius: 3,
             textTransform: 'none',
             fontWeight: 600,
@@ -289,10 +279,9 @@ export const BuyerDashboard = () => {
                     </Typography>
                   </Box>
                 </Box>
-                <Button 
-                  component={Link} 
-                  to="/events" 
-                  variant="primary" 
+                <Button
+                  onClick={() => navigate('/events')}
+                  variant="primary"
                   size="sm"
                   endIcon={<ArrowForward />}
                   sx={{ width: { xs: '100%', sm: 'auto' } }}
@@ -327,10 +316,9 @@ export const BuyerDashboard = () => {
                     </Typography>
                   </Box>
                 </Box>
-                <Button 
-                  component={Link} 
-                  to="/listings" 
-                  variant="secondary" 
+                <Button
+                  onClick={() => navigate('/listings')}
+                  variant="secondary"
                   size="sm"
                   endIcon={<ArrowForward />}
                   sx={{ width: { xs: '100%', sm: 'auto' } }}
@@ -365,10 +353,9 @@ export const BuyerDashboard = () => {
                     </Typography>
                   </Box>
                 </Box>
-                <Button 
-                  component={Link} 
-                  to="/offers" 
-                  variant="outline" 
+                <Button
+                  onClick={() => navigate('/offers')}
+                  variant="outline"
                   size="sm"
                   endIcon={<ArrowForward />}
                   sx={{ width: { xs: '100%', sm: 'auto' } }}
@@ -394,15 +381,14 @@ export const BuyerDashboard = () => {
           </Typography>
           <Grid container spacing={3}>
             <Grid item xs={12} sm={6} md={6}>
-              <Button 
-                component={Link} 
-                to="/listings" 
-                variant="gradient" 
+              <Button
+                onClick={() => navigate('/listings')}
+                variant="gradient"
                 size="lg"
                 fullWidth
                 startIcon={<ShoppingCart />}
-                sx={{ 
-                  py: 2, 
+                sx={{
+                  py: 2,
                   borderRadius: 2,
                   textTransform: 'none',
                   fontWeight: 600,
@@ -413,15 +399,14 @@ export const BuyerDashboard = () => {
               </Button>
             </Grid>
             <Grid item xs={12} sm={6} md={6}>
-              <Button 
-                component={Link} 
-                to="/my-offers" 
-                variant="outline" 
+              <Button
+                onClick={() => navigate('/my-offers')}
+                variant="outline"
                 size="lg"
                 fullWidth
                 startIcon={<LocalOffer />}
-                sx={{ 
-                  py: 2, 
+                sx={{
+                  py: 2,
                   borderRadius: 2,
                   textTransform: 'none',
                   fontWeight: 600,

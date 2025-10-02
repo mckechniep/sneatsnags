@@ -1,28 +1,17 @@
 import React, { useState } from 'react';
 import {
   Calendar,
-  MapPin,
-  Clock,
   Users,
-  DollarSign,
   Plus,
-  Edit,
-  Trash2,
-  Eye,
-  Search,
-  Download,
-  Upload,
   RefreshCw,
   AlertTriangle,
   CheckCircle,
-  XCircle,
   Save,
   X,
   ImageIcon,
 } from 'lucide-react';
-import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
-import type { Event, CreateEventRequest, EventType, EventSection } from '../../types/events';
+import type { Event } from '../../types/events';
 
 interface EventFormData {
   name: string;

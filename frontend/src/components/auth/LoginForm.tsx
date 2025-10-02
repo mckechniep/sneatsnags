@@ -18,7 +18,6 @@ import {
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useAuth } from '../../hooks/useAuth';
 import { Button } from '../ui/Button';
-import { Card, CardContent, CardHeader } from '../ui/Card';
 import type { ApiError } from '../../types/api';
 import { socialAuthService } from '../../services/socialAuthService';
 import SweetAlert from '../../utils/sweetAlert';
