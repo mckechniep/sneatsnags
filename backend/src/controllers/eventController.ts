@@ -54,9 +54,9 @@ export const eventController = {
           id: tmEvent.id,
           date: transformed.eventDate.toISOString(),
           time: transformed.eventDate.toISOString(),
-          totalCapacity: 0,
-          ticketsAvailable: 0,
-          sections: [],
+          totalCapacity: transformed.totalSeats || 0,
+          ticketsAvailable: transformed.availableSeats || 0,
+          sections: transformed.sections || [],
           _count: {
             offers: 0,
             listings: 0,
@@ -116,9 +116,9 @@ export const eventController = {
         id: tmEvent.id,
         date: transformed.eventDate.toISOString(),
         time: transformed.eventDate.toISOString(),
-        totalCapacity: 0,
-        ticketsAvailable: 0,
-        sections: [],
+        totalCapacity: transformed.totalSeats || 0,
+        ticketsAvailable: transformed.availableSeats || 0,
+        sections: transformed.sections || [],
         _count: {
           offers: 0,
           listings: 0,
@@ -244,9 +244,9 @@ export const eventController = {
           id: tmEvent.id,
           date: transformed.eventDate.toISOString(),
           time: transformed.eventDate.toISOString(),
-          totalCapacity: 0,
-          ticketsAvailable: 0,
-          sections: [],
+          totalCapacity: transformed.totalSeats || 0,
+          ticketsAvailable: transformed.availableSeats || 0,
+          sections: transformed.sections || [],
           _count: {
             offers: 0,
             listings: 0,
@@ -281,9 +281,9 @@ export const eventController = {
           id: tmEvent.id,
           date: transformed.eventDate.toISOString(),
           time: transformed.eventDate.toISOString(),
-          totalCapacity: 0,
-          ticketsAvailable: 0,
-          sections: [],
+          totalCapacity: transformed.totalSeats || 0,
+          ticketsAvailable: transformed.availableSeats || 0,
+          sections: transformed.sections || [],
           _count: {
             offers: 0,
             listings: 0,
@@ -309,7 +309,7 @@ export const eventController = {
         countryCode: 'US',
         size: parseInt(limit as string),
         sort: 'date,asc',
-        startDateTime: new Date().toISOString(), // Only future events
+        startDateTime: new Date().toISOString().split('.')[0] + 'Z', // Only future events
       };
 
       if (city) searchParams.city = city;
@@ -329,9 +329,9 @@ export const eventController = {
           id: tmEvent.id,
           date: transformed.eventDate.toISOString(),
           time: transformed.eventDate.toISOString(),
-          totalCapacity: 0,
-          ticketsAvailable: 0,
-          sections: [],
+          totalCapacity: transformed.totalSeats || 0,
+          ticketsAvailable: transformed.availableSeats || 0,
+          sections: transformed.sections || [],
           _count: {
             offers: 0,
             listings: 0,
